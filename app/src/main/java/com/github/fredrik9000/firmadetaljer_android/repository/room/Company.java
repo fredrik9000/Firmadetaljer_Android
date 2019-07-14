@@ -1,10 +1,13 @@
 package com.github.fredrik9000.firmadetaljer_android.repository.room;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "copmany_table")
-public class Company {
+public class Company implements Parcelable {
     @PrimaryKey
     private int organisasjonsnummer;
 
@@ -58,6 +61,70 @@ public class Company {
     private String beliggenhetsadresseKommune;
     private String beliggenhetsadresseLandkode;
     private String beliggenhetsadresseLand;
+
+    public Company() {}
+
+    protected Company(Parcel in) {
+        organisasjonsnummer = in.readInt();
+        navn = in.readString();
+        stiftelsesdato = in.readString();
+        registreringsdatoEnhetsregisteret = in.readString();
+        oppstartsdato = in.readString();
+        datoEierskifte = in.readString();
+        organisasjonsform = in.readString();
+        hjemmeside = in.readString();
+        registertIFrivillighetsregisteret = in.readString();
+        registrertIMvaregisteret = in.readString();
+        registrertIForetaksregisteret = in.readString();
+        registrertIStiftelsesregisteret = in.readString();
+        antallAnsatte = in.readInt();
+        sisteInnsendteAarsregnskap = in.readInt();
+        konkurs = in.readString();
+        underAvvikling = in.readString();
+        underTvangsavviklingEllerTvangsopplosning = in.readString();
+        overordnetEnhet = in.readInt();
+        institusjonellSektorkodeKode = in.readString();
+        institusjonellSektorkodeBeskrivelse = in.readString();
+        naeringskode1Kode = in.readString();
+        naeringskode1Beskrivelse = in.readString();
+        naeringskode2Kode = in.readString();
+        naeringskode2Beskrivelse = in.readString();
+        naeringskode3Kode = in.readString();
+        naeringskode3Beskrivelse = in.readString();
+        postadresseAdresse = in.readString();
+        postadressePostnummer = in.readString();
+        postadressePoststed = in.readString();
+        postadresseKommunenummer = in.readString();
+        postadresseKommune = in.readString();
+        postadresseLandkode = in.readString();
+        postadresseLand = in.readString();
+        forretningsadresseAdresse = in.readString();
+        forretningsadressePostnummer = in.readString();
+        forretningsadressePoststed = in.readString();
+        forretningsadresseKommunenummer = in.readString();
+        forretningsadresseKommune = in.readString();
+        forretningsadresseLandkode = in.readString();
+        forretningsadresseLand = in.readString();
+        beliggenhetsadresseAdresse = in.readString();
+        beliggenhetsadressePostnummer = in.readString();
+        beliggenhetsadressePoststed = in.readString();
+        beliggenhetsadresseKommunenummer = in.readString();
+        beliggenhetsadresseKommune = in.readString();
+        beliggenhetsadresseLandkode = in.readString();
+        beliggenhetsadresseLand = in.readString();
+    }
+
+    public static final Creator<Company> CREATOR = new Creator<Company>() {
+        @Override
+        public Company createFromParcel(Parcel in) {
+            return new Company(in);
+        }
+
+        @Override
+        public Company[] newArray(int size) {
+            return new Company[size];
+        }
+    };
 
     public int getOrganisasjonsnummer() {
         return organisasjonsnummer;
@@ -433,5 +500,61 @@ public class Company {
 
     public void setBeliggenhetsadresseLand(String beliggenhetsadresseLand) {
         this.beliggenhetsadresseLand = beliggenhetsadresseLand;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(organisasjonsnummer);
+        parcel.writeString(navn);
+        parcel.writeString(stiftelsesdato);
+        parcel.writeString(registreringsdatoEnhetsregisteret);
+        parcel.writeString(oppstartsdato);
+        parcel.writeString(datoEierskifte);
+        parcel.writeString(organisasjonsform);
+        parcel.writeString(hjemmeside);
+        parcel.writeString(registertIFrivillighetsregisteret);
+        parcel.writeString(registrertIMvaregisteret);
+        parcel.writeString(registrertIForetaksregisteret);
+        parcel.writeString(registrertIStiftelsesregisteret);
+        parcel.writeInt(antallAnsatte);
+        parcel.writeInt(sisteInnsendteAarsregnskap);
+        parcel.writeString(konkurs);
+        parcel.writeString(underAvvikling);
+        parcel.writeString(underTvangsavviklingEllerTvangsopplosning);
+        parcel.writeInt(overordnetEnhet);
+        parcel.writeString(institusjonellSektorkodeKode);
+        parcel.writeString(institusjonellSektorkodeBeskrivelse);
+        parcel.writeString(naeringskode1Kode);
+        parcel.writeString(naeringskode1Beskrivelse);
+        parcel.writeString(naeringskode2Kode);
+        parcel.writeString(naeringskode2Beskrivelse);
+        parcel.writeString(naeringskode3Kode);
+        parcel.writeString(naeringskode3Beskrivelse);
+        parcel.writeString(postadresseAdresse);
+        parcel.writeString(postadressePostnummer);
+        parcel.writeString(postadressePoststed);
+        parcel.writeString(postadresseKommunenummer);
+        parcel.writeString(postadresseKommune);
+        parcel.writeString(postadresseLandkode);
+        parcel.writeString(postadresseLand);
+        parcel.writeString(forretningsadresseAdresse);
+        parcel.writeString(forretningsadressePostnummer);
+        parcel.writeString(forretningsadressePoststed);
+        parcel.writeString(forretningsadresseKommunenummer);
+        parcel.writeString(forretningsadresseKommune);
+        parcel.writeString(forretningsadresseLandkode);
+        parcel.writeString(forretningsadresseLand);
+        parcel.writeString(beliggenhetsadresseAdresse);
+        parcel.writeString(beliggenhetsadressePostnummer);
+        parcel.writeString(beliggenhetsadressePoststed);
+        parcel.writeString(beliggenhetsadresseKommunenummer);
+        parcel.writeString(beliggenhetsadresseKommune);
+        parcel.writeString(beliggenhetsadresseLandkode);
+        parcel.writeString(beliggenhetsadresseLand);
     }
 }

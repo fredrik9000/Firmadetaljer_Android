@@ -2,6 +2,7 @@ package com.github.fredrik9000.firmadetaljer_android;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
     private CompanyListViewModel companyListViewModel;
     private CompanyAdapter adapter;
     private static final String TAG = "MainActivity";
+    private boolean isTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,13 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
         setTitle(R.string.main_activity_title);
         progressBar = binding.progress;
         companyListViewModel = ViewModelProviders.of(this).get(CompanyListViewModel.class);
+
+        if (findViewById(R.id.company_detail_container) != null) {
+            // The detail container view will be present only in the large-screen layouts (res/values-w900dp).
+            // If this view is present, then the activity should be in two-pane mode.
+            isTwoPane = true;
+        }
+
         RecyclerView recyclerView = binding.companylist;
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -104,6 +113,19 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
 
     @Override
     public void onItemClick(Company company) {
+        if (isTwoPane) {
+            Bundle arguments = new Bundle();
+            arguments.putParcelable(CompanyDetailFragment.ARG_COMPANY, company);
+            CompanyDetailFragment fragment = new CompanyDetailFragment();
+            fragment.setArguments(arguments);
+            this.getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.company_detail_container, fragment)
+                    .commit();
+        } else {
+            Intent intent = new Intent(MainActivity.this, CompanyDetailActivity.class);
+            intent.putExtra(CompanyDetailFragment.ARG_COMPANY, company);
 
+            this.startActivity(intent);
+        }
     }
 }

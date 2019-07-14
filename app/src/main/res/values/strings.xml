@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">Firmadetaljer</string>
-    <string name="main_activity_title">Firmadetaljer</string>
+    <string name="main_activity_title">Firmasøk</string>
     <string name="search_item_title">Søk</string>
     <string name="search_request_error_message">Kunne ikke søke etter firma</string>
     <string name="company_search_hint">Søk etter firma…</string>
+    <string name="title_activity_company_detail">Firmadetaljer</string>
 </resources>

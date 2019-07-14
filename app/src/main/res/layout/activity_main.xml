@@ -3,23 +3,23 @@
     <data>
         <variable name="company_list" type="com.github.fredrik9000.firmadetaljer_android.MainActivity"/>
     </data>
-<RelativeLayout
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
-    <ProgressBar
-        android:id="@+id/progress"
-        android:layout_centerInParent="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/companylist"
+    <RelativeLayout
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
 
-</RelativeLayout>
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/companylist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </RelativeLayout>
 </layout>
