@@ -59,21 +59,18 @@ public class CompanyRepository {
                     //Todo: Handle error
                     return;
                 }
-                    CompaniesJson companiesJson = response.body();
-                    List<CompanyJson> companyJsonList = companiesJson.getData();
-                    List<Company> companies = new ArrayList<>();
-                    if (companyJsonList == null) {
-                        companyResponseMutableLiveData.setValue(new CompanyResponse(companies));
-                        return;
-                    }
+                CompaniesJson companiesJson = response.body();
+                List<CompanyJson> companyJsonList = companiesJson.getData();
+                List<Company> companies = new ArrayList<>();
+                if (companyJsonList == null) {
+                    companyResponseMutableLiveData.setValue(new CompanyResponse(companies));
+                    return;
+                }
 
-                    //Todo: map data to a list of Company objects
-
-                    for(CompanyJson companyJson : companyJsonList) {
-                        Company company = new Company();
-                        company.setNavn(companyJson.getNavn());
-                        companies.add(company);
-                    }
+                for (CompanyJson companyJson : companyJsonList) {
+                    Company company = createCompanyFromJson(companyJson);
+                    companies.add(company);
+                }
 
                 companyResponseMutableLiveData.setValue(new CompanyResponse(companies));
             }
@@ -85,7 +82,45 @@ public class CompanyRepository {
         });
     }
 
-    public MutableLiveData<Company> getCompanyWithOrgNumber(Integer orgNumber) {
+    private Company createCompanyFromJson(CompanyJson companyJson) {
+        return new Company(companyJson.getOrganisasjonsnummer(), companyJson.getNavn(), companyJson.getStiftelsesdato(),
+                companyJson.getRegistreringsdatoEnhetsregisteret(), companyJson.getOppstartsdato(), companyJson.getDatoEierskifte(),
+                companyJson.getOrganisasjonsform(), companyJson.getHjemmeside(), companyJson.getRegistertIFrivillighetsregisteret(),
+                companyJson.getRegistrertIMvaregisteret(), companyJson.getRegistrertIForetaksregisteret(), companyJson.getRegistrertIStiftelsesregisteret(),
+                companyJson.getAntallAnsatte(), companyJson.getSisteInnsendteAarsregnskap(), companyJson.getKonkurs(),
+                companyJson.getUnderAvvikling(), companyJson.getUnderTvangsavviklingEllerTvangsopplosning(), companyJson.getOverordnetEnhet(),
+                companyJson.getInstitusjonellSektorkode() != null ? companyJson.getInstitusjonellSektorkode().getKode() : null,
+                companyJson.getInstitusjonellSektorkode() != null ? companyJson.getInstitusjonellSektorkode().getBeskrivelse() : null,
+                companyJson.getNaeringskode1() != null ? companyJson.getNaeringskode1().getKode() : null,
+                companyJson.getNaeringskode1() != null ? companyJson.getNaeringskode1().getBeskrivelse() : null,
+                companyJson.getNaeringskode2() != null ? companyJson.getNaeringskode2().getKode() : null,
+                companyJson.getNaeringskode2() != null ? companyJson.getNaeringskode2().getBeskrivelse() : null,
+                companyJson.getNaeringskode3() != null ? companyJson.getNaeringskode3().getKode() : null,
+                companyJson.getNaeringskode3() != null ? companyJson.getNaeringskode3().getBeskrivelse() : null,
+                companyJson.getPostadresse() != null ? companyJson.getPostadresse().getAdresse() : null,
+                companyJson.getPostadresse() != null ? companyJson.getPostadresse().getPostnummer() : null,
+                companyJson.getPostadresse() != null ? companyJson.getPostadresse().getPoststed() : null,
+                companyJson.getPostadresse() != null ? companyJson.getPostadresse().getKommunenummer() : null,
+                companyJson.getPostadresse() != null ? companyJson.getPostadresse().getKommune() : null,
+                companyJson.getPostadresse() != null ? companyJson.getPostadresse().getLandkode() : null,
+                companyJson.getPostadresse() != null ? companyJson.getPostadresse().getLand() : null,
+                companyJson.getForretningsadresse() != null ? companyJson.getForretningsadresse().getAdresse() : null,
+                companyJson.getForretningsadresse() != null ? companyJson.getForretningsadresse().getPostnummer() : null,
+                companyJson.getForretningsadresse() != null ? companyJson.getForretningsadresse().getPoststed() : null,
+                companyJson.getForretningsadresse() != null ? companyJson.getForretningsadresse().getKommunenummer() : null,
+                companyJson.getForretningsadresse() != null ? companyJson.getForretningsadresse().getKommune() : null,
+                companyJson.getForretningsadresse() != null ? companyJson.getForretningsadresse().getLandkode() : null,
+                companyJson.getForretningsadresse() != null ? companyJson.getForretningsadresse().getLand() : null,
+                companyJson.getBeliggenhetsadresse() != null ? companyJson.getBeliggenhetsadresse().getAdresse() : null,
+                companyJson.getBeliggenhetsadresse() != null ? companyJson.getBeliggenhetsadresse().getPostnummer() : null,
+                companyJson.getBeliggenhetsadresse() != null ? companyJson.getBeliggenhetsadresse().getPoststed() : null,
+                companyJson.getBeliggenhetsadresse() != null ? companyJson.getBeliggenhetsadresse().getKommunenummer() : null,
+                companyJson.getBeliggenhetsadresse() != null ? companyJson.getBeliggenhetsadresse().getKommune() : null,
+                companyJson.getBeliggenhetsadresse() != null ? companyJson.getBeliggenhetsadresse().getLandkode() : null,
+                companyJson.getBeliggenhetsadresse() != null ? companyJson.getBeliggenhetsadresse().getLand() : null);
+    }
+
+    /*public MutableLiveData<Company> getCompanyWithOrgNumber(Integer orgNumber) {
         final MutableLiveData<Company> data = new MutableLiveData<>();
         Call<CompaniesJson> call = service.getCompanyWithOrgNumber(orgNumber);
         call.enqueue(new Callback<CompaniesJson>() {
@@ -107,7 +142,7 @@ public class CompanyRepository {
             }
         });
         return data;
-    }
+    }*/
 
     private static class InsertCompanyAsyncTask extends AsyncTask<Company, Void, Void> {
 

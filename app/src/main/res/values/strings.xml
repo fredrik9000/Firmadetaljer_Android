@@ -5,4 +5,44 @@
     <string name="search_request_error_message">Kunne ikke søke etter firma</string>
     <string name="company_search_hint">Søk etter firma…</string>
     <string name="title_activity_company_detail">Firmadetaljer</string>
+
+    <string name="company_detail_heading_details">Firmadetaljer</string>
+    <string name="company_detail_heading_institusjonell_sektor_kode">Institusjonell sektorkode</string>
+    <string name="company_detail_heading_naeringskode1">Næringskode 1</string>
+    <string name="company_detail_heading_naeringskode2">Næringskode 2</string>
+    <string name="company_detail_heading_naeringskode3">Næringskode 3</string>
+    <string name="company_detail_heading_postadresse">Postadresse</string>
+    <string name="company_detail_heading_forettningsadresse">Forretningsadresse</string>
+    <string name="company_detail_heading_beliggenhetsadresse">Beliggenhetsadresse</string>
+
+    <string name="company_detail_details_firmanavn">Firmanavn</string>
+    <string name="company_detail_details_organisasjonsnummer">Organisasjonsnummer</string>
+    <string name="company_detail_details_stiftelsesdato">Stiftelsesdato</string>
+    <string name="company_detail_details_registrert_i_enhetsregisteret">Registrert i enhetsregisteret</string>
+    <string name="company_detail_details_oppstartsdato">Oppstartsdato</string>
+    <string name="company_detail_details_eierskife">Eierskifte</string>
+    <string name="company_detail_details_organisasjonsform">Organisasjonsform</string>
+    <string name="company_detail_details_hjemmeside">Hjemmeside</string>
+    <string name="company_detail_details_registrert_i_frivillighetsregisteret">Registrert i frivillighetsregisteret</string>
+    <string name="company_detail_details_registrert_i_mva_registeret">Registrert i MVA-registeret</string>
+    <string name="company_detail_details_registrert_i_foretaksregisteret">Registrert i foretaksregisteret</string>
+    <string name="company_detail_details_registrert_i_stiftelsesregisteret">Registrert i stiftelsesregisteret</string>
+    <string name="company_detail_details_antall_ansatte">Antall ansatte</string>
+    <string name="company_detail_details_sist_innsendte_årsregnskap">Sist innsendte årsregnskap</string>
+    <string name="company_detail_details_konkurs">Konkurs</string>
+    <string name="company_detail_details_under_avvikling">Under avvikling</string>
+    <string name="company_detail_details_under_tvangsavvikling_eller_tvangsoppløsning">Under tvangsavvikling eller tvangsoppløsning</string>
+    <string name="company_detail_details_overordnet_enhet">Overordnet enhet</string>
+
+    <string name="company_detail_kode_kode">Kode</string>
+    <string name="company_detail_kode_beskrivelse">Beskrivelse</string>
+
+    <string name="company_detail_adresse_adresse">Adresse</string>
+    <string name="company_detail_adresse_postnummer">Postnummer</string>
+    <string name="company_detail_adresse_poststed">Poststed</string>
+    <string name="company_detail_adresse_kommunenummer">Kommunenummer</string>
+    <string name="company_detail_adresse_kommune">Kommune</string>
+    <string name="company_detail_adresse_landskode">Landskode</string>
+    <string name="company_detail_adresse_land">Land</string>
+
 </resources>

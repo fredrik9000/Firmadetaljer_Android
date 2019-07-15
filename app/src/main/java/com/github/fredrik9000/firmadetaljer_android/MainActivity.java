@@ -3,6 +3,7 @@ package com.github.fredrik9000.firmadetaljer_android;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -35,6 +36,9 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
     private CompanyAdapter adapter;
     private static final String TAG = "MainActivity";
     private boolean isTwoPane;
+    private static final String SEARCH_KEY = "search";
+    private SearchView searchView;
+    private String searchString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,24 +76,36 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
                 }
             }
         });
+
+        if (savedInstanceState != null) {
+            searchString = savedInstanceState.getString(SEARCH_KEY);
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
-        SearchManager searchManager = (SearchManager)getSystemService(Context.SEARCH_SERVICE);
-        final SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
 
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setQueryHint(getString(R.string.company_search_hint));
+
+        if (searchString != null && !searchString.isEmpty()) {
+            searchView.setIconified(false);
+            searchView.setQuery(searchString, true);
+            searchView.clearFocus();
+        }
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 if (query.length() > 2) {
                     progressBar.setVisibility(View.VISIBLE);
                     companyListViewModel.searchForCompaniesThatStartsWith(query);
+                    searchView.clearFocus(); // This closes the full screen search view for phones in landscape mode.
                     return true;
                 }
                 return false;
@@ -127,5 +143,12 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
 
             this.startActivity(intent);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        searchString = searchView.getQuery().toString();
+        outState.putString(SEARCH_KEY, searchString);
     }
 }

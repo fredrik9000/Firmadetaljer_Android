@@ -4,12 +4,13 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "copmany_table")
 public class Company implements Parcelable {
     @PrimaryKey
-    private int organisasjonsnummer;
+    private Integer organisasjonsnummer;
 
     private String navn;
     private String stiftelsesdato;
@@ -22,12 +23,12 @@ public class Company implements Parcelable {
     private String registrertIMvaregisteret;
     private String registrertIForetaksregisteret;
     private String registrertIStiftelsesregisteret;
-    private int antallAnsatte;
-    private int sisteInnsendteAarsregnskap;
+    private Integer antallAnsatte;
+    private Integer sisteInnsendteAarsregnskap;
     private String konkurs;
     private String underAvvikling;
     private String underTvangsavviklingEllerTvangsopplosning;
-    private int overordnetEnhet;
+    private Integer overordnetEnhet;
 
     private String institusjonellSektorkodeKode;
     private String institusjonellSektorkodeBeskrivelse;
@@ -64,8 +65,76 @@ public class Company implements Parcelable {
 
     public Company() {}
 
+    @Ignore
+    public Company(Integer organisasjonsnummer, String navn, String stiftelsesdato, String registreringsdatoEnhetsregisteret,
+                   String oppstartsdato, String datoEierskifte, String organisasjonsform, String hjemmeside,
+                   String registertIFrivillighetsregisteret, String registrertIMvaregisteret, String registrertIForetaksregisteret,
+                   String registrertIStiftelsesregisteret, Integer antallAnsatte, Integer sisteInnsendteAarsregnskap, String konkurs,
+                   String underAvvikling, String underTvangsavviklingEllerTvangsopplosning, Integer overordnetEnhet,
+                   String institusjonellSektorkodeKode, String institusjonellSektorkodeBeskrivelse, String naeringskode1Kode,
+                   String naeringskode1Beskrivelse, String naeringskode2Kode, String naeringskode2Beskrivelse, String naeringskode3Kode,
+                   String naeringskode3Beskrivelse, String postadresseAdresse, String postadressePostnummer, String postadressePoststed,
+                   String postadresseKommunenummer, String postadresseKommune, String postadresseLandkode, String postadresseLand,
+                   String forretningsadresseAdresse, String forretningsadressePostnummer, String forretningsadressePoststed,
+                   String forretningsadresseKommunenummer, String forretningsadresseKommune, String forretningsadresseLandkode,
+                   String forretningsadresseLand, String beliggenhetsadresseAdresse, String beliggenhetsadressePostnummer,
+                   String beliggenhetsadressePoststed, String beliggenhetsadresseKommunenummer, String beliggenhetsadresseKommune,
+                   String beliggenhetsadresseLandkode, String beliggenhetsadresseLand) {
+        this.organisasjonsnummer = organisasjonsnummer;
+        this.navn = navn;
+        this.stiftelsesdato = stiftelsesdato;
+        this.registreringsdatoEnhetsregisteret = registreringsdatoEnhetsregisteret;
+        this.oppstartsdato = oppstartsdato;
+        this.datoEierskifte = datoEierskifte;
+        this.organisasjonsform = organisasjonsform;
+        this.hjemmeside = hjemmeside;
+        this.registertIFrivillighetsregisteret = registertIFrivillighetsregisteret;
+        this.registrertIMvaregisteret = registrertIMvaregisteret;
+        this.registrertIForetaksregisteret = registrertIForetaksregisteret;
+        this.registrertIStiftelsesregisteret = registrertIStiftelsesregisteret;
+        this.antallAnsatte = antallAnsatte;
+        this.sisteInnsendteAarsregnskap = sisteInnsendteAarsregnskap;
+        this.konkurs = konkurs;
+        this.underAvvikling = underAvvikling;
+        this.underTvangsavviklingEllerTvangsopplosning = underTvangsavviklingEllerTvangsopplosning;
+        this.overordnetEnhet = overordnetEnhet;
+        this.institusjonellSektorkodeKode = institusjonellSektorkodeKode;
+        this.institusjonellSektorkodeBeskrivelse = institusjonellSektorkodeBeskrivelse;
+        this.naeringskode1Kode = naeringskode1Kode;
+        this.naeringskode1Beskrivelse = naeringskode1Beskrivelse;
+        this.naeringskode2Kode = naeringskode2Kode;
+        this.naeringskode2Beskrivelse = naeringskode2Beskrivelse;
+        this.naeringskode3Kode = naeringskode3Kode;
+        this.naeringskode3Beskrivelse = naeringskode3Beskrivelse;
+        this.postadresseAdresse = postadresseAdresse;
+        this.postadressePostnummer = postadressePostnummer;
+        this.postadressePoststed = postadressePoststed;
+        this.postadresseKommunenummer = postadresseKommunenummer;
+        this.postadresseKommune = postadresseKommune;
+        this.postadresseLandkode = postadresseLandkode;
+        this.postadresseLand = postadresseLand;
+        this.forretningsadresseAdresse = forretningsadresseAdresse;
+        this.forretningsadressePostnummer = forretningsadressePostnummer;
+        this.forretningsadressePoststed = forretningsadressePoststed;
+        this.forretningsadresseKommunenummer = forretningsadresseKommunenummer;
+        this.forretningsadresseKommune = forretningsadresseKommune;
+        this.forretningsadresseLandkode = forretningsadresseLandkode;
+        this.forretningsadresseLand = forretningsadresseLand;
+        this.beliggenhetsadresseAdresse = beliggenhetsadresseAdresse;
+        this.beliggenhetsadressePostnummer = beliggenhetsadressePostnummer;
+        this.beliggenhetsadressePoststed = beliggenhetsadressePoststed;
+        this.beliggenhetsadresseKommunenummer = beliggenhetsadresseKommunenummer;
+        this.beliggenhetsadresseKommune = beliggenhetsadresseKommune;
+        this.beliggenhetsadresseLandkode = beliggenhetsadresseLandkode;
+        this.beliggenhetsadresseLand = beliggenhetsadresseLand;
+    }
+
     protected Company(Parcel in) {
-        organisasjonsnummer = in.readInt();
+        if (in.readByte() == 0) {
+            organisasjonsnummer = null;
+        } else {
+            organisasjonsnummer = in.readInt();
+        }
         navn = in.readString();
         stiftelsesdato = in.readString();
         registreringsdatoEnhetsregisteret = in.readString();
@@ -77,12 +146,24 @@ public class Company implements Parcelable {
         registrertIMvaregisteret = in.readString();
         registrertIForetaksregisteret = in.readString();
         registrertIStiftelsesregisteret = in.readString();
-        antallAnsatte = in.readInt();
-        sisteInnsendteAarsregnskap = in.readInt();
+        if (in.readByte() == 0) {
+            antallAnsatte = null;
+        } else {
+            antallAnsatte = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            sisteInnsendteAarsregnskap = null;
+        } else {
+            sisteInnsendteAarsregnskap = in.readInt();
+        }
         konkurs = in.readString();
         underAvvikling = in.readString();
         underTvangsavviklingEllerTvangsopplosning = in.readString();
-        overordnetEnhet = in.readInt();
+        if (in.readByte() == 0) {
+            overordnetEnhet = null;
+        } else {
+            overordnetEnhet = in.readInt();
+        }
         institusjonellSektorkodeKode = in.readString();
         institusjonellSektorkodeBeskrivelse = in.readString();
         naeringskode1Kode = in.readString();
@@ -114,6 +195,82 @@ public class Company implements Parcelable {
         beliggenhetsadresseLand = in.readString();
     }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        if (organisasjonsnummer == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(organisasjonsnummer);
+        }
+        dest.writeString(navn);
+        dest.writeString(stiftelsesdato);
+        dest.writeString(registreringsdatoEnhetsregisteret);
+        dest.writeString(oppstartsdato);
+        dest.writeString(datoEierskifte);
+        dest.writeString(organisasjonsform);
+        dest.writeString(hjemmeside);
+        dest.writeString(registertIFrivillighetsregisteret);
+        dest.writeString(registrertIMvaregisteret);
+        dest.writeString(registrertIForetaksregisteret);
+        dest.writeString(registrertIStiftelsesregisteret);
+        if (antallAnsatte == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(antallAnsatte);
+        }
+        if (sisteInnsendteAarsregnskap == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(sisteInnsendteAarsregnskap);
+        }
+        dest.writeString(konkurs);
+        dest.writeString(underAvvikling);
+        dest.writeString(underTvangsavviklingEllerTvangsopplosning);
+        if (overordnetEnhet == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(overordnetEnhet);
+        }
+        dest.writeString(institusjonellSektorkodeKode);
+        dest.writeString(institusjonellSektorkodeBeskrivelse);
+        dest.writeString(naeringskode1Kode);
+        dest.writeString(naeringskode1Beskrivelse);
+        dest.writeString(naeringskode2Kode);
+        dest.writeString(naeringskode2Beskrivelse);
+        dest.writeString(naeringskode3Kode);
+        dest.writeString(naeringskode3Beskrivelse);
+        dest.writeString(postadresseAdresse);
+        dest.writeString(postadressePostnummer);
+        dest.writeString(postadressePoststed);
+        dest.writeString(postadresseKommunenummer);
+        dest.writeString(postadresseKommune);
+        dest.writeString(postadresseLandkode);
+        dest.writeString(postadresseLand);
+        dest.writeString(forretningsadresseAdresse);
+        dest.writeString(forretningsadressePostnummer);
+        dest.writeString(forretningsadressePoststed);
+        dest.writeString(forretningsadresseKommunenummer);
+        dest.writeString(forretningsadresseKommune);
+        dest.writeString(forretningsadresseLandkode);
+        dest.writeString(forretningsadresseLand);
+        dest.writeString(beliggenhetsadresseAdresse);
+        dest.writeString(beliggenhetsadressePostnummer);
+        dest.writeString(beliggenhetsadressePoststed);
+        dest.writeString(beliggenhetsadresseKommunenummer);
+        dest.writeString(beliggenhetsadresseKommune);
+        dest.writeString(beliggenhetsadresseLandkode);
+        dest.writeString(beliggenhetsadresseLand);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
     public static final Creator<Company> CREATOR = new Creator<Company>() {
         @Override
         public Company createFromParcel(Parcel in) {
@@ -126,11 +283,11 @@ public class Company implements Parcelable {
         }
     };
 
-    public int getOrganisasjonsnummer() {
+    public Integer getOrganisasjonsnummer() {
         return organisasjonsnummer;
     }
 
-    public void setOrganisasjonsnummer(int organisasjonsnummer) {
+    public void setOrganisasjonsnummer(Integer organisasjonsnummer) {
         this.organisasjonsnummer = organisasjonsnummer;
     }
 
@@ -222,19 +379,19 @@ public class Company implements Parcelable {
         this.registrertIStiftelsesregisteret = registrertIStiftelsesregisteret;
     }
 
-    public int getAntallAnsatte() {
+    public Integer getAntallAnsatte() {
         return antallAnsatte;
     }
 
-    public void setAntallAnsatte(int antallAnsatte) {
+    public void setAntallAnsatte(Integer antallAnsatte) {
         this.antallAnsatte = antallAnsatte;
     }
 
-    public int getSisteInnsendteAarsregnskap() {
+    public Integer getSisteInnsendteAarsregnskap() {
         return sisteInnsendteAarsregnskap;
     }
 
-    public void setSisteInnsendteAarsregnskap(int sisteInnsendteAarsregnskap) {
+    public void setSisteInnsendteAarsregnskap(Integer sisteInnsendteAarsregnskap) {
         this.sisteInnsendteAarsregnskap = sisteInnsendteAarsregnskap;
     }
 
@@ -262,11 +419,11 @@ public class Company implements Parcelable {
         this.underTvangsavviklingEllerTvangsopplosning = underTvangsavviklingEllerTvangsopplosning;
     }
 
-    public int getOverordnetEnhet() {
+    public Integer getOverordnetEnhet() {
         return overordnetEnhet;
     }
 
-    public void setOverordnetEnhet(int overordnetEnhet) {
+    public void setOverordnetEnhet(Integer overordnetEnhet) {
         this.overordnetEnhet = overordnetEnhet;
     }
 
@@ -500,61 +657,5 @@ public class Company implements Parcelable {
 
     public void setBeliggenhetsadresseLand(String beliggenhetsadresseLand) {
         this.beliggenhetsadresseLand = beliggenhetsadresseLand;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(organisasjonsnummer);
-        parcel.writeString(navn);
-        parcel.writeString(stiftelsesdato);
-        parcel.writeString(registreringsdatoEnhetsregisteret);
-        parcel.writeString(oppstartsdato);
-        parcel.writeString(datoEierskifte);
-        parcel.writeString(organisasjonsform);
-        parcel.writeString(hjemmeside);
-        parcel.writeString(registertIFrivillighetsregisteret);
-        parcel.writeString(registrertIMvaregisteret);
-        parcel.writeString(registrertIForetaksregisteret);
-        parcel.writeString(registrertIStiftelsesregisteret);
-        parcel.writeInt(antallAnsatte);
-        parcel.writeInt(sisteInnsendteAarsregnskap);
-        parcel.writeString(konkurs);
-        parcel.writeString(underAvvikling);
-        parcel.writeString(underTvangsavviklingEllerTvangsopplosning);
-        parcel.writeInt(overordnetEnhet);
-        parcel.writeString(institusjonellSektorkodeKode);
-        parcel.writeString(institusjonellSektorkodeBeskrivelse);
-        parcel.writeString(naeringskode1Kode);
-        parcel.writeString(naeringskode1Beskrivelse);
-        parcel.writeString(naeringskode2Kode);
-        parcel.writeString(naeringskode2Beskrivelse);
-        parcel.writeString(naeringskode3Kode);
-        parcel.writeString(naeringskode3Beskrivelse);
-        parcel.writeString(postadresseAdresse);
-        parcel.writeString(postadressePostnummer);
-        parcel.writeString(postadressePoststed);
-        parcel.writeString(postadresseKommunenummer);
-        parcel.writeString(postadresseKommune);
-        parcel.writeString(postadresseLandkode);
-        parcel.writeString(postadresseLand);
-        parcel.writeString(forretningsadresseAdresse);
-        parcel.writeString(forretningsadressePostnummer);
-        parcel.writeString(forretningsadressePoststed);
-        parcel.writeString(forretningsadresseKommunenummer);
-        parcel.writeString(forretningsadresseKommune);
-        parcel.writeString(forretningsadresseLandkode);
-        parcel.writeString(forretningsadresseLand);
-        parcel.writeString(beliggenhetsadresseAdresse);
-        parcel.writeString(beliggenhetsadressePostnummer);
-        parcel.writeString(beliggenhetsadressePoststed);
-        parcel.writeString(beliggenhetsadresseKommunenummer);
-        parcel.writeString(beliggenhetsadresseKommune);
-        parcel.writeString(beliggenhetsadresseLandkode);
-        parcel.writeString(beliggenhetsadresseLand);
     }
 }
