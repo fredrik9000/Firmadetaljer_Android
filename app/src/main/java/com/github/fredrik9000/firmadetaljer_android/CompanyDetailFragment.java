@@ -59,6 +59,7 @@ public class CompanyDetailFragment extends Fragment {
                     companyDetailsInterface.navigateToCompanyDetails(company.getOverordnetEnhet());
                     return true;
                 } else if (companyDetailDescription.getLabel().equals(getResources().getString(R.string.company_detail_details_hjemmeside))) {
+                    companyDetailsInterface.navigateToHomepage(company.getHjemmeside());
                     return true;
                 }
                 return false;

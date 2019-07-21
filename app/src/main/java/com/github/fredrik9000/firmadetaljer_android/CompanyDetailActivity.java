@@ -60,12 +60,20 @@ public class CompanyDetailActivity extends AppCompatActivity implements ICompany
 
     @Override
     public void navigateToCompanyDetails(Integer organisasjonsnummer) {
-        if (organisasjonsnummer == null) {
-            Toast.makeText(getApplicationContext(), R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show();
-        }
-
         progressBarDetails.setVisibility(View.VISIBLE);
         companyDetailsViewModel.searchForCompanyWithOrgNumber(organisasjonsnummer);
+    }
+
+    @Override
+    public void navigateToHomepage(String url) {
+        Bundle arguments = new Bundle();
+        arguments.putString(HomepageFragment.ARG_URL, url);
+        HomepageFragment fragment = new HomepageFragment();
+        fragment.setArguments(arguments);
+        this.getSupportFragmentManager().beginTransaction()
+                .replace(R.id.company_detail_container, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     public void inflateCompanyDetailFragment(Company company, boolean addToBackStack) {
