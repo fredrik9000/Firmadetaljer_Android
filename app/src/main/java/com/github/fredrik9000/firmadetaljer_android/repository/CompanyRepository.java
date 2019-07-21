@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompaniesJson;
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyJson;
+import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyListResponse;
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse;
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyService;
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company;
@@ -50,7 +51,7 @@ public class CompanyRepository {
         new DeleteCompanyAsyncTask(companyDao).execute(todo);
     }
 
-    public void getAllCompaniesThatStartsWith(final MutableLiveData<CompanyResponse> companyResponseMutableLiveData, String text) {
+    public void getAllCompaniesThatStartsWith(final MutableLiveData<CompanyListResponse> companyResponseMutableLiveData, String text) {
         Call<CompaniesJson> call = service.getCompanies("startswith(navn,'" + text + "')");
         call.enqueue(new Callback<CompaniesJson>() {
             @Override
@@ -63,7 +64,7 @@ public class CompanyRepository {
                 List<CompanyJson> companyJsonList = companiesJson.getData();
                 List<Company> companies = new ArrayList<>();
                 if (companyJsonList == null) {
-                    companyResponseMutableLiveData.setValue(new CompanyResponse(companies));
+                    companyResponseMutableLiveData.setValue(new CompanyListResponse(companies));
                     return;
                 }
 
@@ -72,11 +73,32 @@ public class CompanyRepository {
                     companies.add(company);
                 }
 
-                companyResponseMutableLiveData.setValue(new CompanyResponse(companies));
+                companyResponseMutableLiveData.setValue(new CompanyListResponse(companies));
             }
 
             @Override
             public void onFailure(Call<CompaniesJson> call, Throwable t) {
+                companyResponseMutableLiveData.setValue(new CompanyListResponse(t));
+            }
+        });
+    }
+
+    public void getCompanyWithOrgNumber(final MutableLiveData<CompanyResponse> companyResponseMutableLiveData, Integer orgNumber) {
+        Call<CompanyJson> call = service.getCompanyWithOrgNumber(orgNumber);
+        call.enqueue(new Callback<CompanyJson>() {
+            @Override
+            public void onResponse(Call<CompanyJson> call, Response<CompanyJson> response) {
+                if (!response.isSuccessful()) {
+                    //Todo: Handle error
+                    return;
+                }
+                CompanyJson companyJson = response.body();
+                Company company = createCompanyFromJson(companyJson);
+                companyResponseMutableLiveData.setValue(new CompanyResponse(company));
+            }
+
+            @Override
+            public void onFailure(Call<CompanyJson> call, Throwable t) {
                 companyResponseMutableLiveData.setValue(new CompanyResponse(t));
             }
         });
@@ -119,30 +141,6 @@ public class CompanyRepository {
                 companyJson.getBeliggenhetsadresse() != null ? companyJson.getBeliggenhetsadresse().getLandkode() : null,
                 companyJson.getBeliggenhetsadresse() != null ? companyJson.getBeliggenhetsadresse().getLand() : null);
     }
-
-    /*public MutableLiveData<Company> getCompanyWithOrgNumber(Integer orgNumber) {
-        final MutableLiveData<Company> data = new MutableLiveData<>();
-        Call<CompaniesJson> call = service.getCompanyWithOrgNumber(orgNumber);
-        call.enqueue(new Callback<CompaniesJson>() {
-            @Override
-            public void onResponse(Call<CompaniesJson> call, Response<CompaniesJson> response) {
-                if (!response.isSuccessful()) {
-                    //Todo: Handle error
-                    return;
-                }
-                CompaniesJson companiesJson = response.body();
-                Company company = new Company();
-                //Todo: map data to Company object
-                data.setValue(company);
-            }
-
-            @Override
-            public void onFailure(Call<CompaniesJson> call, Throwable t) {
-                //Todo: Handle error;
-            }
-        });
-        return data;
-    }*/
 
     private static class InsertCompanyAsyncTask extends AsyncTask<Company, Void, Void> {
 

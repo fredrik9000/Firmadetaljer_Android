@@ -10,5 +10,5 @@ public interface CompanyService {
     Call<CompaniesJson> getCompanies(@Query("$filter") String filter);
 
     @GET("enhet/{orgNumber}.json")
-    Call<CompaniesJson> getCompanyWithOrgNumber(@Path("$orgNumber") Integer orgNumber);
+    Call<CompanyJson> getCompanyWithOrgNumber(@Path("orgNumber") Integer orgNumber);
 }

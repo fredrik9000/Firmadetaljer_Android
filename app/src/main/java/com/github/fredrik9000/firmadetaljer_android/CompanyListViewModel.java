@@ -7,11 +7,10 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import com.github.fredrik9000.firmadetaljer_android.repository.CompanyRepository;
-import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse;
-import com.github.fredrik9000.firmadetaljer_android.repository.room.Company;
+import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyListResponse;
 
 public class CompanyListViewModel extends AndroidViewModel {
-    private MutableLiveData<CompanyResponse> companyListLiveData;
+    private MutableLiveData<CompanyListResponse> companyListLiveData;
     private CompanyRepository repository;
 
     public CompanyListViewModel(@NonNull Application application) {
@@ -20,19 +19,7 @@ public class CompanyListViewModel extends AndroidViewModel {
         companyListLiveData = new MutableLiveData<>();
     }
 
-    public void insert(Company company) {
-        repository.insert(company);
-    }
-
-    public void delete(Company company) {
-        repository.delete(company);
-    }
-
-    public void update(Company company) {
-        repository.update(company);
-    }
-
-    public MutableLiveData<CompanyResponse> getCompanyList() {
+    public MutableLiveData<CompanyListResponse> getCompanyList() {
         return companyListLiveData;
     }
 
@@ -40,5 +27,5 @@ public class CompanyListViewModel extends AndroidViewModel {
         repository.getAllCompaniesThatStartsWith(companyListLiveData, text);
     }
 
-    //Handle search for organization number.
+    // TODO: search for companies by organisasjonsnummer
 }

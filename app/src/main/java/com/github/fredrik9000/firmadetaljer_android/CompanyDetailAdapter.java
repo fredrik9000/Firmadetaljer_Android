@@ -1,5 +1,6 @@
 package com.github.fredrik9000.firmadetaljer_android;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +14,10 @@ public class CompanyDetailAdapter extends BaseExpandableListAdapter {
 
     private List<String> companyDetailGroups;
     private Map<String, List<CompanyDetailDescription>> companyDetailItems;
+    private Context context;
 
-    public CompanyDetailAdapter(List<String> companyDetailGroups, Map<String, List<CompanyDetailDescription>> companyDetailItems) {
+    public CompanyDetailAdapter(Context context, List<String> companyDetailGroups, Map<String, List<CompanyDetailDescription>> companyDetailItems) {
+        this.context = context;
         this.companyDetailGroups = companyDetailGroups;
         this.companyDetailItems = companyDetailItems;
     }
@@ -84,12 +87,21 @@ public class CompanyDetailAdapter extends BaseExpandableListAdapter {
         TextView descriptionTextView = view.findViewById(R.id.description);
         descriptionTextView.setText(detail.getDescription());
 
+        CompanyDetailDescription childElement = (CompanyDetailDescription) getChild(i, i1);
+        if(childElement.getLabel().equals(context.getResources().getString(R.string.company_detail_details_hjemmeside))
+        || childElement.getLabel().equals(context.getResources().getString(R.string.company_detail_details_overordnet_enhet))) {
+            view.findViewById(R.id.arrow_forward).setVisibility(View.VISIBLE);
+        } else {
+            view.findViewById(R.id.arrow_forward).setVisibility(View.GONE);
+        }
+
         return view;
     }
 
     @Override
     public boolean isChildSelectable(int i, int i1) {
-        //TODO: The homepage and parent company should be selectable
-        return false;
+        CompanyDetailDescription childElement = (CompanyDetailDescription) getChild(i, i1);
+        return childElement.getLabel().equals(context.getResources().getString(R.string.company_detail_details_hjemmeside))
+                || childElement.getLabel().equals(context.getResources().getString(R.string.company_detail_details_overordnet_enhet));
     }
 }

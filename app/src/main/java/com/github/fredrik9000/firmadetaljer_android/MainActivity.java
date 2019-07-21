@@ -3,7 +3,6 @@ package com.github.fredrik9000.firmadetaljer_android;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -17,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -24,15 +24,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.fredrik9000.firmadetaljer_android.databinding.ActivityMainBinding;
+import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyListResponse;
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse;
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements CompanyAdapter.OnItemClickListener {
+public class MainActivity extends AppCompatActivity implements CompanyAdapter.OnItemClickListener, ICompanyDetails {
 
-    private ProgressBar progressBar;
+    private ProgressBar progressBarList, progressBarDetails;
     private CompanyListViewModel companyListViewModel;
+    private CompanyDetailsViewModel companyDetailsViewModel;
     private CompanyAdapter adapter;
     private static final String TAG = "MainActivity";
     private boolean isTwoPane;
@@ -45,13 +47,15 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
         super.onCreate(savedInstanceState);
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         setTitle(R.string.main_activity_title);
-        progressBar = binding.progress;
+        progressBarList = binding.progressCompanyList;
+        progressBarDetails = binding.progressCompanyDetails;
         companyListViewModel = ViewModelProviders.of(this).get(CompanyListViewModel.class);
 
         if (findViewById(R.id.company_detail_container) != null) {
             // The detail container view will be present only in the large-screen layouts (res/values-w900dp).
             // If this view is present, then the activity should be in two-pane mode.
             isTwoPane = true;
+            companyDetailsViewModel = ViewModelProviders.of(this).get(CompanyDetailsViewModel.class);
         }
 
         RecyclerView recyclerView = binding.companylist;
@@ -64,18 +68,33 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
                 layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        companyListViewModel.getCompanyList().observe(this, new Observer<CompanyResponse>() {
+        companyListViewModel.getCompanyList().observe(this, new Observer<CompanyListResponse>() {
             @Override
-            public void onChanged(@Nullable CompanyResponse companyResponse) {
-                progressBar.setVisibility(View.GONE);
-                if (companyResponse.getCompanies() != null) {
-                    adapter.update(companyResponse.getCompanies());
+            public void onChanged(@Nullable CompanyListResponse companyListResponse) {
+                progressBarList.setVisibility(View.GONE);
+                if (companyListResponse.getCompanies() != null) {
+                    adapter.update(companyListResponse.getCompanies());
                 } else {
                     Toast.makeText(getApplicationContext(), R.string.search_request_error_message, Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "onChanged() called with companyResponse error = " + companyResponse.getError());
+                    Log.d(TAG, "onChanged() called with companyListResponse error = " + companyListResponse.getError());
                 }
             }
         });
+
+        if (isTwoPane) {
+            companyDetailsViewModel.getCompany().observe(this, new Observer<CompanyResponse>() {
+                @Override
+                public void onChanged(@Nullable CompanyResponse companyResponse) {
+                    progressBarDetails.setVisibility(View.GONE);
+                    if (companyResponse.getCompany() != null) {
+                        inflateCompanyDetailFragment(companyResponse.getCompany(), true);
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "onChanged() called with companyResponse error = " + companyResponse.getError());
+                    }
+                }
+            });
+        }
 
         if (savedInstanceState != null) {
             searchString = savedInstanceState.getString(SEARCH_KEY);
@@ -103,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
             @Override
             public boolean onQueryTextSubmit(String query) {
                 if (query.length() > 2) {
-                    progressBar.setVisibility(View.VISIBLE);
+                    progressBarList.setVisibility(View.VISIBLE);
                     companyListViewModel.searchForCompaniesThatStartsWith(query);
                     searchView.clearFocus(); // This closes the full screen search view for phones in landscape mode.
                     return true;
@@ -114,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (newText.length() > 2) {
-                    progressBar.setVisibility(View.VISIBLE);
+                    progressBarList.setVisibility(View.VISIBLE);
                     companyListViewModel.searchForCompaniesThatStartsWith(newText);
                     return true;
                 }
@@ -130,13 +149,7 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
     @Override
     public void onItemClick(Company company) {
         if (isTwoPane) {
-            Bundle arguments = new Bundle();
-            arguments.putParcelable(CompanyDetailFragment.ARG_COMPANY, company);
-            CompanyDetailFragment fragment = new CompanyDetailFragment();
-            fragment.setArguments(arguments);
-            this.getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.company_detail_container, fragment)
-                    .commit();
+            inflateCompanyDetailFragment(company, false);
         } else {
             Intent intent = new Intent(MainActivity.this, CompanyDetailActivity.class);
             intent.putExtra(CompanyDetailFragment.ARG_COMPANY, company);
@@ -150,5 +163,29 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
         super.onSaveInstanceState(outState);
         searchString = searchView.getQuery().toString();
         outState.putString(SEARCH_KEY, searchString);
+    }
+
+    // This is only called when in two pane mode
+    @Override
+    public void navigateToCompanyDetails(Integer organisasjonsnummer) {
+        if (organisasjonsnummer == null) {
+            Toast.makeText(getApplicationContext(), R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show();
+        }
+
+        progressBarDetails.setVisibility(View.VISIBLE);
+        companyDetailsViewModel.searchForCompanyWithOrgNumber(organisasjonsnummer);
+    }
+
+    public void inflateCompanyDetailFragment(Company company, boolean addToBackStack) {
+        Bundle arguments = new Bundle();
+        arguments.putParcelable(CompanyDetailFragment.ARG_COMPANY, company);
+        CompanyDetailFragment fragment = new CompanyDetailFragment();
+        fragment.setArguments(arguments);
+        FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction()
+                .replace(R.id.company_detail_container, fragment);
+        if (addToBackStack) {
+            transaction.addToBackStack(null);
+        }
+        transaction.commit();
     }
 }

@@ -5,6 +5,7 @@
     <string name="search_request_error_message">Kunne ikke søke etter firma</string>
     <string name="company_search_hint">Søk etter firma…</string>
     <string name="title_activity_company_detail">Firmadetaljer</string>
+    <string name="company_detail_not_loaded">Kunne ikke laste inn firmadetaljer</string>
 
     <string name="company_detail_heading_details">Firmadetaljer</string>
     <string name="company_detail_heading_institusjonell_sektor_kode">Institusjonell sektorkode</string>

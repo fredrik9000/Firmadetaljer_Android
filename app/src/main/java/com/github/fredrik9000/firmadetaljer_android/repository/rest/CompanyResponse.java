@@ -2,24 +2,22 @@ package com.github.fredrik9000.firmadetaljer_android.repository.rest;
 
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company;
 
-import java.util.List;
-
 public class CompanyResponse {
-    private List<Company> companies;
+    private Company company;
     private Throwable error;
-    public CompanyResponse(List<Company> companies) {
-        this.companies = companies;
+    public CompanyResponse(Company company) {
+        this.company = company;
         this.error = null;
     }
     public CompanyResponse(Throwable error) {
         this.error = error;
-        this.companies = null;
+        this.company = null;
     }
-    public List<Company> getCompanies() {
-        return companies;
+    public Company getCompany() {
+        return company;
     }
-    public void setCompanies(List<Company> companies) {
-        this.companies = companies;
+    public void setCompany(Company company) {
+        this.company = company;
     }
     public Throwable getError() {
         return error;

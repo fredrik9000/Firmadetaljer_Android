@@ -1,11 +1,11 @@
 package com.github.fredrik9000.firmadetaljer_android;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +25,9 @@ public class CompanyDetailFragment extends Fragment {
 
     private Company company;
     private List<String> companyDetailGroups;
-    private Map<String, List<CompanyDetailDescription>> companyDetailItem;
+    private Map<String, List<CompanyDetailDescription>> companyDetailItems;
+
+    private ICompanyDetails companyDetailsInterface;
 
     public CompanyDetailFragment() {}
 
@@ -46,9 +48,22 @@ public class CompanyDetailFragment extends Fragment {
 
         fillData();
 
-        CompanyDetailAdapter adapter = new CompanyDetailAdapter(companyDetailGroups, companyDetailItem);
+        CompanyDetailAdapter adapter = new CompanyDetailAdapter(this.getContext(), companyDetailGroups, companyDetailItems);
         expandableListView.setAdapter(adapter);
 
+        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
+                CompanyDetailDescription companyDetailDescription = companyDetailItems.get(companyDetailGroups.get(i)).get(i1);
+                if (companyDetailDescription.getLabel().equals(getResources().getString(R.string.company_detail_details_overordnet_enhet))) {
+                    companyDetailsInterface.navigateToCompanyDetails(company.getOverordnetEnhet());
+                    return true;
+                } else if (companyDetailDescription.getLabel().equals(getResources().getString(R.string.company_detail_details_hjemmeside))) {
+                    return true;
+                }
+                return false;
+            }
+        });
         expandGroups(expandableListView, adapter);
 
         return view;
@@ -136,9 +151,9 @@ public class CompanyDetailFragment extends Fragment {
             detailsList.add(new CompanyDetailDescription(getResources().getString(R.string.company_detail_details_overordnet_enhet), Integer.toString(company.getOverordnetEnhet())));
         }
 
-        companyDetailItem = new HashMap<>();
+        companyDetailItems = new HashMap<>();
         String detailsHeading = getResources().getString(R.string.company_detail_heading_details);
-        companyDetailItem.put(detailsHeading, detailsList);
+        companyDetailItems.put(detailsHeading, detailsList);
         companyDetailGroups.add(detailsHeading);
 
         List<CompanyDetailDescription> institusjonellSektorKodeList = new ArrayList<>();
@@ -153,7 +168,7 @@ public class CompanyDetailFragment extends Fragment {
 
         if (institusjonellSektorKodeList.size() > 0) {
             String institusjonellSektorKodeHeading = getResources().getString(R.string.company_detail_heading_institusjonell_sektor_kode);
-            companyDetailItem.put(institusjonellSektorKodeHeading, institusjonellSektorKodeList);
+            companyDetailItems.put(institusjonellSektorKodeHeading, institusjonellSektorKodeList);
             companyDetailGroups.add(institusjonellSektorKodeHeading);
         }
 
@@ -169,7 +184,7 @@ public class CompanyDetailFragment extends Fragment {
 
         if (naeringskode1List.size() > 0) {
             String naeringsKode1Heading = getResources().getString(R.string.company_detail_heading_naeringskode1);
-            companyDetailItem.put(naeringsKode1Heading, naeringskode1List);
+            companyDetailItems.put(naeringsKode1Heading, naeringskode1List);
             companyDetailGroups.add(naeringsKode1Heading);
         }
 
@@ -185,7 +200,7 @@ public class CompanyDetailFragment extends Fragment {
 
         if (naeringskode2List.size() > 0) {
             String naeringsKode2Heading = getResources().getString(R.string.company_detail_heading_naeringskode1);
-            companyDetailItem.put(naeringsKode2Heading, naeringskode2List);
+            companyDetailItems.put(naeringsKode2Heading, naeringskode2List);
             companyDetailGroups.add(naeringsKode2Heading);
         }
 
@@ -201,7 +216,7 @@ public class CompanyDetailFragment extends Fragment {
 
         if (naeringskode3List.size() > 0) {
             String naeringsKode3Heading = getResources().getString(R.string.company_detail_heading_naeringskode1);
-            companyDetailItem.put(naeringsKode3Heading, naeringskode3List);
+            companyDetailItems.put(naeringsKode3Heading, naeringskode3List);
             companyDetailGroups.add(naeringsKode3Heading);
         }
 
@@ -237,7 +252,7 @@ public class CompanyDetailFragment extends Fragment {
 
         if (postadresseList.size() > 0) {
             String postadresseHeading = getResources().getString(R.string.company_detail_heading_postadresse);
-            companyDetailItem.put(postadresseHeading, postadresseList);
+            companyDetailItems.put(postadresseHeading, postadresseList);
             companyDetailGroups.add(postadresseHeading);
         }
 
@@ -273,7 +288,7 @@ public class CompanyDetailFragment extends Fragment {
 
         if (forretningsadresseList.size() > 0) {
             String forretningsadresseHeading = getResources().getString(R.string.company_detail_heading_forettningsadresse);
-            companyDetailItem.put(forretningsadresseHeading, forretningsadresseList);
+            companyDetailItems.put(forretningsadresseHeading, forretningsadresseList);
             companyDetailGroups.add(forretningsadresseHeading);
         }
 
@@ -309,8 +324,14 @@ public class CompanyDetailFragment extends Fragment {
 
         if (beliggenhetsadresseList.size() > 0) {
             String beliggenhetsadresseHeading = getResources().getString(R.string.company_detail_heading_beliggenhetsadresse);
-            companyDetailItem.put(beliggenhetsadresseHeading, beliggenhetsadresseList);
+            companyDetailItems.put(beliggenhetsadresseHeading, beliggenhetsadresseList);
             companyDetailGroups.add(beliggenhetsadresseHeading);
         }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        companyDetailsInterface = (ICompanyDetails) getActivity();
     }
 }
