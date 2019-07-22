@@ -59,7 +59,7 @@ public class CompanyDetailActivity extends AppCompatActivity implements ICompany
     }
 
     @Override
-    public void navigateToCompanyDetails(Integer organisasjonsnummer) {
+    public void navigateToParentCompany(Integer organisasjonsnummer) {
         progressBarDetails.setVisibility(View.VISIBLE);
         companyDetailsViewModel.searchForCompanyWithOrgNumber(organisasjonsnummer);
     }

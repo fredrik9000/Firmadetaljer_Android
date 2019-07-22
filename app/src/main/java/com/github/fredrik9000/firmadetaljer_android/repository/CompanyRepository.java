@@ -19,6 +19,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.HttpException;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -57,7 +58,7 @@ public class CompanyRepository {
             @Override
             public void onResponse(Call<CompaniesJson> call, Response<CompaniesJson> response) {
                 if (!response.isSuccessful()) {
-                    //Todo: Handle error
+                    companyResponseMutableLiveData.setValue(new CompanyListResponse(new HttpException(response)));
                     return;
                 }
                 CompaniesJson companiesJson = response.body();
@@ -89,7 +90,10 @@ public class CompanyRepository {
             @Override
             public void onResponse(Call<CompanyJson> call, Response<CompanyJson> response) {
                 if (!response.isSuccessful()) {
-                    //Todo: Handle error
+                    // When a company doesn't exist a 400 status will return here.
+                    // This is different from when searching for companies by name,
+                    // because then the response will be successful with an empty list.
+                    companyResponseMutableLiveData.setValue(new CompanyResponse(new HttpException(response)));
                     return;
                 }
                 CompanyJson companyJson = response.body();
@@ -100,6 +104,32 @@ public class CompanyRepository {
             @Override
             public void onFailure(Call<CompanyJson> call, Throwable t) {
                 companyResponseMutableLiveData.setValue(new CompanyResponse(t));
+            }
+        });
+    }
+
+    public void getCompaniesWithOrgNumber(final MutableLiveData<CompanyListResponse> companyResponseMutableLiveData, Integer orgNumber) {
+        Call<CompanyJson> call = service.getCompanyWithOrgNumber(orgNumber);
+        call.enqueue(new Callback<CompanyJson>() {
+            @Override
+            public void onResponse(Call<CompanyJson> call, Response<CompanyJson> response) {
+                if (!response.isSuccessful()) {
+                    // When a company doesn't exist a 400 status will return here.
+                    // This is different from when searching for companies by name,
+                    // because then the response will be successful with an empty list.
+                    companyResponseMutableLiveData.setValue(new CompanyListResponse(new HttpException(response)));
+                    return;
+                }
+                CompanyJson companyJson = response.body();
+                Company company = createCompanyFromJson(companyJson);
+                List<Company> companyList = new ArrayList<>();
+                companyList.add(company);
+                companyResponseMutableLiveData.setValue(new CompanyListResponse(companyList));
+            }
+
+            @Override
+            public void onFailure(Call<CompanyJson> call, Throwable t) {
+                companyResponseMutableLiveData.setValue(new CompanyListResponse(t));
             }
         });
     }

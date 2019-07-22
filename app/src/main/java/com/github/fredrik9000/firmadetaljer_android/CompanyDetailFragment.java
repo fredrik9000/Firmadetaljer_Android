@@ -56,7 +56,7 @@ public class CompanyDetailFragment extends Fragment {
             public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
                 CompanyDetailDescription companyDetailDescription = companyDetailItems.get(companyDetailGroups.get(i)).get(i1);
                 if (companyDetailDescription.getLabel().equals(getResources().getString(R.string.company_detail_details_overordnet_enhet))) {
-                    companyDetailsInterface.navigateToCompanyDetails(company.getOverordnetEnhet());
+                    companyDetailsInterface.navigateToParentCompany(company.getOverordnetEnhet());
                     return true;
                 } else if (companyDetailDescription.getLabel().equals(getResources().getString(R.string.company_detail_details_hjemmeside))) {
                     companyDetailsInterface.navigateToHomepage(company.getHjemmeside());

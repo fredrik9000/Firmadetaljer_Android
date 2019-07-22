@@ -27,5 +27,11 @@ public class CompanyListViewModel extends AndroidViewModel {
         repository.getAllCompaniesThatStartsWith(companyListLiveData, text);
     }
 
-    // TODO: search for companies by organisasjonsnummer
+    // Searching by org number can only return 1 company, so the implementation isn't optimal
+    // The result will be displayed in the same way as for when searching text,
+    // which is why the same live data is passed in here.
+    // TODO: Improve implementation
+    public void searchForCompaniesWithOrgNumber(Integer orgNumber) {
+        repository.getCompaniesWithOrgNumber(companyListLiveData, orgNumber);
+    }
 }

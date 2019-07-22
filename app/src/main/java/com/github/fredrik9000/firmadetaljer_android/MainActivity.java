@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,7 +31,9 @@ import com.github.fredrik9000.firmadetaljer_android.repository.room.Company;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements CompanyAdapter.OnItemClickListener, ICompanyDetails {
+import retrofit2.HttpException;
+
+public class MainActivity extends AppCompatActivity implements CompanyAdapter.OnItemClickListener, ICompanyDetails, FilterChoiceDialog.OnSelectDialogInteractionListener {
 
     private ProgressBar progressBarList, progressBarDetails;
     private CompanyListViewModel companyListViewModel;
@@ -38,9 +41,11 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
     private CompanyAdapter adapter;
     private static final String TAG = "MainActivity";
     private boolean isTwoPane;
-    private static final String SEARCH_KEY = "search";
+    private static final String SEARCH_KEY = "SEARCH";
+    private static final String SEARCH_BY_ORG_NUMBER_KEY = "SEARCH_BY_ORG_NUMBER";
     private SearchView searchView;
     private String searchString;
+    private boolean isSearchingByOrgNumber = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +80,16 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
                 if (companyListResponse.getCompanies() != null) {
                     adapter.update(companyListResponse.getCompanies());
                 } else {
-                    Toast.makeText(getApplicationContext(), R.string.search_request_error_message, Toast.LENGTH_SHORT).show();
+                    String toastMessage;
+                    if (isSearchingByOrgNumber && companyListResponse.getError() instanceof HttpException
+                    && (((HttpException) companyListResponse.getError()).code() == 400)
+                    || ((HttpException) companyListResponse.getError()).code() == 404) {
+                        // When an organization number is not found, the service can return either 400 or 404.
+                        toastMessage = getResources().getString(R.string.company_not_found);
+                    } else {
+                        toastMessage = getResources().getString(R.string.search_request_error_message);
+                    }
+                    Toast.makeText(getApplicationContext(), toastMessage, Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "onChanged() called with companyListResponse error = " + companyListResponse.getError());
                 }
             }
@@ -98,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
 
         if (savedInstanceState != null) {
             searchString = savedInstanceState.getString(SEARCH_KEY);
+            isSearchingByOrgNumber = savedInstanceState.getBoolean(SEARCH_BY_ORG_NUMBER_KEY);
         }
     }
 
@@ -110,7 +125,12 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
 
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setQueryHint(getString(R.string.company_search_hint));
+
+        if(isSearchingByOrgNumber) {
+            searchView.setQueryHint(getString(R.string.company_search_org_number_hint));
+        } else {
+            searchView.setQueryHint(getString(R.string.company_search_name_hint));
+        }
 
         if (searchString != null && !searchString.isEmpty()) {
             searchView.setIconified(false);
@@ -121,10 +141,16 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                if (query.length() > 2) {
+                if (!isSearchingByOrgNumber && query.length() > 2) {
                     progressBarList.setVisibility(View.VISIBLE);
                     companyListViewModel.searchForCompaniesThatStartsWith(query);
-                    searchView.clearFocus(); // This closes the full screen search view for phones in landscape mode.
+                    // clearFocus() closes the full screen search view for phones in landscape mode.
+                    searchView.clearFocus();
+                    return true;
+                } else if (isSearchingByOrgNumber && query.length() == 9 && TextUtils.isDigitsOnly(query)) {
+                    progressBarList.setVisibility(View.VISIBLE);
+                    companyListViewModel.searchForCompaniesWithOrgNumber(Integer.parseInt(query));
+                    searchView.clearFocus();
                     return true;
                 }
                 return false;
@@ -132,9 +158,13 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (newText.length() > 2) {
+                if (!isSearchingByOrgNumber && newText.length() > 2) {
                     progressBarList.setVisibility(View.VISIBLE);
                     companyListViewModel.searchForCompaniesThatStartsWith(newText);
+                    return true;
+                } else if (isSearchingByOrgNumber && newText.length() == 9 && TextUtils.isDigitsOnly(newText)) {
+                    progressBarList.setVisibility(View.VISIBLE);
+                    companyListViewModel.searchForCompaniesWithOrgNumber(Integer.parseInt(newText));
                     return true;
                 }
                 return false;
@@ -144,6 +174,18 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
         searchMenuItem.getIcon().setVisible(false, false);
 
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.search_mode) {
+            FilterChoiceDialog filterChoiceDialog = new FilterChoiceDialog();
+            filterChoiceDialog.show(getSupportFragmentManager(), "FilterChoiceDialog");
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -163,11 +205,12 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
         super.onSaveInstanceState(outState);
         searchString = searchView.getQuery().toString();
         outState.putString(SEARCH_KEY, searchString);
+        outState.putBoolean(SEARCH_BY_ORG_NUMBER_KEY, isSearchingByOrgNumber);
     }
 
     // This is only called when in two pane mode
     @Override
-    public void navigateToCompanyDetails(Integer organisasjonsnummer) {
+    public void navigateToParentCompany(Integer organisasjonsnummer) {
         if (organisasjonsnummer == null) {
             Toast.makeText(getApplicationContext(), R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show();
         }
@@ -199,5 +242,17 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
             transaction.addToBackStack(null);
         }
         transaction.commit();
+    }
+
+    @Override
+    public void onSelectDialogInteraction(int choice) {
+        if (choice == 0) {
+            isSearchingByOrgNumber = false;
+            searchView.setQueryHint(getString(R.string.company_search_name_hint));
+        } else if (choice == 1) {
+            isSearchingByOrgNumber = true;
+            searchView.setQueryHint(getString(R.string.company_search_org_number_hint));
+        }
+        searchView.setQuery("",false);
     }
 }
