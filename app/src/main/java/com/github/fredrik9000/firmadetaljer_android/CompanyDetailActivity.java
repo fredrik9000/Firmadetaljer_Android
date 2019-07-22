@@ -13,6 +13,7 @@ import com.github.fredrik9000.firmadetaljer_android.repository.room.Company;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -31,6 +32,11 @@ public class CompanyDetailActivity extends AppCompatActivity implements ICompany
         setContentView(R.layout.activity_company_detail);
         ActivityCompanyDetailBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_company_detail);
         progressBarDetails = binding.progressCompanyDetails;
+        Toolbar toolbar = binding.includedToolbar.toolbarDetail;
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         companyDetailsViewModel = ViewModelProviders.of(this).get(CompanyDetailsViewModel.class);
 
         companyDetailsViewModel.getCompany().observe(this, new Observer<CompanyResponse>() {
@@ -76,7 +82,7 @@ public class CompanyDetailActivity extends AppCompatActivity implements ICompany
                 .commit();
     }
 
-    public void inflateCompanyDetailFragment(Company company, boolean addToBackStack) {
+    private void inflateCompanyDetailFragment(Company company, boolean addToBackStack) {
         Bundle arguments = new Bundle();
         arguments.putParcelable(CompanyDetailFragment.ARG_COMPANY, company);
         CompanyDetailFragment fragment = new CompanyDetailFragment();

@@ -11,7 +11,7 @@
     <string name="company_not_found">Fant ikke firma</string>
     <string name="select_search_filter">Velg hva du søker på</string>
     <string name="select_firmanavn">Firmanavn</string>
-    <string name="select_org_number">Organisasjonsnummer</string>
+    <string name="select_org_number">Org. nummer</string>
 
     <string name="company_detail_heading_details">Firmadetaljer</string>
     <string name="company_detail_heading_institusjonell_sektor_kode">Institusjonell sektorkode</string>

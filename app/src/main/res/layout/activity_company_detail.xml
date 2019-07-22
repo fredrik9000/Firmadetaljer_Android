@@ -3,23 +3,32 @@
     <data>
         <variable name="company_detail" type="com.github.fredrik9000.firmadetaljer_android.MainActivity"/>
     </data>
-    <RelativeLayout
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         tools:context=".CompanyDetailActivity">
 
-        <ProgressBar
-            android:id="@+id/progress_company_details"
-            android:layout_centerInParent="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"/>
+        <include
+            android:id="@+id/included_toolbar"
+            layout="@layout/activity_company_detail_toolbar" />
 
-        <FrameLayout
-            android:id="@+id/company_detail_container"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
 
-    </RelativeLayout>
+            <ProgressBar
+                android:id="@+id/progress_company_details"
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+
+            <FrameLayout
+                android:id="@+id/company_detail_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </RelativeLayout>
+    </LinearLayout>
 </layout>

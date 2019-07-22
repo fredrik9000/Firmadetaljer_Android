@@ -6,16 +6,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
@@ -33,7 +32,7 @@ import java.util.ArrayList;
 
 import retrofit2.HttpException;
 
-public class MainActivity extends AppCompatActivity implements CompanyAdapter.OnItemClickListener, ICompanyDetails, FilterChoiceDialog.OnSelectDialogInteractionListener {
+public class MainActivity extends AppCompatActivity implements CompanyAdapter.OnItemClickListener, ICompanyDetails {
 
     private ProgressBar progressBarList, progressBarDetails;
     private CompanyListViewModel companyListViewModel;
@@ -50,10 +49,14 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
+        final ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         setTitle(R.string.main_activity_title);
         progressBarList = binding.progressCompanyList;
         progressBarDetails = binding.progressCompanyDetails;
+        Toolbar toolbar = binding.includedToolbar.toolbarMain;
+        setSupportActionBar(toolbar);
+
         companyListViewModel = ViewModelProviders.of(this).get(CompanyListViewModel.class);
 
         if (findViewById(R.id.company_detail_container) != null) {
@@ -82,8 +85,8 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
                 } else {
                     String toastMessage;
                     if (isSearchingByOrgNumber && companyListResponse.getError() instanceof HttpException
-                    && (((HttpException) companyListResponse.getError()).code() == 400)
-                    || ((HttpException) companyListResponse.getError()).code() == 404) {
+                            && (((HttpException) companyListResponse.getError()).code() == 400)
+                            || ((HttpException) companyListResponse.getError()).code() == 404) {
                         // When an organization number is not found, the service can return either 400 or 404.
                         toastMessage = getResources().getString(R.string.company_not_found);
                     } else {
@@ -114,19 +117,16 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
             searchString = savedInstanceState.getString(SEARCH_KEY);
             isSearchingByOrgNumber = savedInstanceState.getBoolean(SEARCH_BY_ORG_NUMBER_KEY);
         }
+
+        setupSearch(toolbar, binding);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
+    private void setupSearch(Toolbar toolbar, final ActivityMainBinding binding) {
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-
+        searchView = toolbar.findViewById(R.id.action_search);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
-        if(isSearchingByOrgNumber) {
+        if (isSearchingByOrgNumber) {
             searchView.setQueryHint(getString(R.string.company_search_org_number_hint));
         } else {
             searchView.setQueryHint(getString(R.string.company_search_name_hint));
@@ -162,30 +162,33 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
                     progressBarList.setVisibility(View.VISIBLE);
                     companyListViewModel.searchForCompaniesThatStartsWith(newText);
                     return true;
-                } else if (isSearchingByOrgNumber && newText.length() == 9 && TextUtils.isDigitsOnly(newText)) {
-                    progressBarList.setVisibility(View.VISIBLE);
-                    companyListViewModel.searchForCompaniesWithOrgNumber(Integer.parseInt(newText));
+                } else if (isSearchingByOrgNumber) {
+                    if (newText.length() > 9) {
+                        // Organization numbers are always 9 digits long.
+                        searchView.setQuery(newText.substring(0, 9), false);
+                    } else if (newText.length() == 9 && TextUtils.isDigitsOnly(newText)) {
+                        progressBarList.setVisibility(View.VISIBLE);
+                        companyListViewModel.searchForCompaniesWithOrgNumber(Integer.parseInt(newText));
+                    }
                     return true;
                 }
                 return false;
             }
         });
 
-        searchMenuItem.getIcon().setVisible(false, false);
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.search_mode) {
-            FilterChoiceDialog filterChoiceDialog = new FilterChoiceDialog();
-            filterChoiceDialog.show(getSupportFragmentManager(), "FilterChoiceDialog");
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        binding.includedToolbar.toggle.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                if (i == binding.includedToolbar.searchFirmName.getId()) {
+                    isSearchingByOrgNumber = false;
+                    searchView.setQueryHint(getString(R.string.company_search_name_hint));
+                } else {
+                    isSearchingByOrgNumber = true;
+                    searchView.setQueryHint(getString(R.string.company_search_org_number_hint));
+                }
+                searchView.setQuery("",false);
+            }
+        });
     }
 
     @Override
@@ -231,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
                 .commit();
     }
 
-    public void inflateCompanyDetailFragment(Company company, boolean addToBackStack) {
+    private void inflateCompanyDetailFragment(Company company, boolean addToBackStack) {
         Bundle arguments = new Bundle();
         arguments.putParcelable(CompanyDetailFragment.ARG_COMPANY, company);
         CompanyDetailFragment fragment = new CompanyDetailFragment();
@@ -242,17 +245,5 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
             transaction.addToBackStack(null);
         }
         transaction.commit();
-    }
-
-    @Override
-    public void onSelectDialogInteraction(int choice) {
-        if (choice == 0) {
-            isSearchingByOrgNumber = false;
-            searchView.setQueryHint(getString(R.string.company_search_name_hint));
-        } else if (choice == 1) {
-            isSearchingByOrgNumber = true;
-            searchView.setQueryHint(getString(R.string.company_search_org_number_hint));
-        }
-        searchView.setQuery("",false);
     }
 }
