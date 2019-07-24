@@ -13,10 +13,10 @@ import java.util.Map;
 public class CompanyDetailAdapter extends BaseExpandableListAdapter {
 
     private List<String> companyDetailGroups;
-    private Map<String, List<CompanyDetailDescription>> companyDetailItems;
+    private Map<String, List<CompanyDetailsDescription>> companyDetailItems;
     private Context context;
 
-    public CompanyDetailAdapter(Context context, List<String> companyDetailGroups, Map<String, List<CompanyDetailDescription>> companyDetailItems) {
+    public CompanyDetailAdapter(Context context, List<String> companyDetailGroups, Map<String, List<CompanyDetailsDescription>> companyDetailItems) {
         this.context = context;
         this.companyDetailGroups = companyDetailGroups;
         this.companyDetailItems = companyDetailItems;
@@ -63,7 +63,7 @@ public class CompanyDetailAdapter extends BaseExpandableListAdapter {
 
         if (view == null) {
             LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-            view = inflater.inflate(R.layout.company_detail_listview_parent, viewGroup, false);
+            view = inflater.inflate(R.layout.company_details_listview_parent, viewGroup, false);
         }
 
         TextView textView = view.findViewById(R.id.group_heading);
@@ -74,11 +74,11 @@ public class CompanyDetailAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int i, int i1, boolean b, View view, ViewGroup viewGroup) {
-        CompanyDetailDescription detail = (CompanyDetailDescription)getChild(i, i1);
+        CompanyDetailsDescription detail = (CompanyDetailsDescription)getChild(i, i1);
 
         if (view == null) {
             LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-            view = inflater.inflate(R.layout.company_detail_listview_child, viewGroup, false);
+            view = inflater.inflate(R.layout.company_details_listview_child, viewGroup, false);
         }
 
         TextView labelTextView = view.findViewById(R.id.label);
@@ -87,7 +87,7 @@ public class CompanyDetailAdapter extends BaseExpandableListAdapter {
         TextView descriptionTextView = view.findViewById(R.id.description);
         descriptionTextView.setText(detail.getDescription());
 
-        CompanyDetailDescription childElement = (CompanyDetailDescription) getChild(i, i1);
+        CompanyDetailsDescription childElement = (CompanyDetailsDescription) getChild(i, i1);
         if(childElement.getLabel().equals(context.getResources().getString(R.string.company_detail_details_hjemmeside))
         || childElement.getLabel().equals(context.getResources().getString(R.string.company_detail_details_overordnet_enhet))) {
             view.findViewById(R.id.arrow_forward).setVisibility(View.VISIBLE);
@@ -100,7 +100,7 @@ public class CompanyDetailAdapter extends BaseExpandableListAdapter {
 
     @Override
     public boolean isChildSelectable(int i, int i1) {
-        CompanyDetailDescription childElement = (CompanyDetailDescription) getChild(i, i1);
+        CompanyDetailsDescription childElement = (CompanyDetailsDescription) getChild(i, i1);
         return childElement.getLabel().equals(context.getResources().getString(R.string.company_detail_details_hjemmeside))
                 || childElement.getLabel().equals(context.getResources().getString(R.string.company_detail_details_overordnet_enhet));
     }

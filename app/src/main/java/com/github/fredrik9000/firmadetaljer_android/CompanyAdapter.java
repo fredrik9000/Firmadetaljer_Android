@@ -36,8 +36,6 @@ public class CompanyAdapter extends RecyclerView.Adapter<CompanyAdapter.ViewHold
     public void onBindViewHolder(@NonNull final ViewHolder companyItemViewHolder, final int position) {
         Company companyItem = companyList.get(position);
         companyItemViewHolder.bind(companyItem);
-
-        //TODO
     }
 
     @Override

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
-        <variable name="company_fragment_detail" type="com.github.fredrik9000.firmadetaljer_android.CompanyDetailFragment"/>
+        <variable name="company_fragment_details" type="com.github.fredrik9000.firmadetaljer_android.CompanyDetailsFragment"/>
     </data>
     <FrameLayout
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".CompanyDetailFragment">
+        tools:context=".CompanyDetailsFragment">
 
         <ExpandableListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/company_detail_list"/>
+            android:id="@+id/company_details_list"/>
 
     </FrameLayout>
 </layout>

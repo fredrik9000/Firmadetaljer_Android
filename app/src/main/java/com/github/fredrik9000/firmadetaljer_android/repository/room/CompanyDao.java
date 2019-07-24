@@ -5,7 +5,6 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
-import androidx.room.Update;
 
 import java.util.List;
 
@@ -15,12 +14,9 @@ public interface CompanyDao {
     @Insert
     void insert(Company company);
 
-    @Update
-    void update(Company company);
-
     @Delete
     void delete(Company company);
 
-    @Query("SELECT * FROM copmany_table ORDER BY navn DESC")
-    LiveData<List<Company>> getAllCompanies();
+    @Query("SELECT * FROM company_table ORDER BY id DESC")
+    LiveData<List<Company>> getAllCompaniesOrderedByLastInserted();
 }

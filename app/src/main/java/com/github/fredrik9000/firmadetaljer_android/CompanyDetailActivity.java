@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.github.fredrik9000.firmadetaljer_android.databinding.ActivityCompanyDetailBinding;
+import com.github.fredrik9000.firmadetaljer_android.databinding.ActivityCompanyDetailsBinding;
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse;
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company;
 
@@ -29,10 +29,10 @@ public class CompanyDetailActivity extends AppCompatActivity implements ICompany
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_company_detail);
-        ActivityCompanyDetailBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_company_detail);
+        setContentView(R.layout.activity_company_details);
+        ActivityCompanyDetailsBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_company_details);
         progressBarDetails = binding.progressCompanyDetails;
-        Toolbar toolbar = binding.includedToolbar.toolbarDetail;
+        Toolbar toolbar = binding.includedToolbar.toolbarCompanyDetails;
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -44,7 +44,7 @@ public class CompanyDetailActivity extends AppCompatActivity implements ICompany
             public void onChanged(@Nullable CompanyResponse companyResponse) {
                 progressBarDetails.setVisibility(View.GONE);
                 if (companyResponse.getCompany() != null) {
-                    inflateCompanyDetailFragment(companyResponse.getCompany(), true);
+                    inflateCompanyDetailsFragment(companyResponse.getCompany(), true);
                 } else {
                     Toast.makeText(getApplicationContext(), R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "onChanged() called with companyResponse error = " + companyResponse.getError());
@@ -60,7 +60,7 @@ public class CompanyDetailActivity extends AppCompatActivity implements ICompany
         //
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity using a fragment transaction.
-            inflateCompanyDetailFragment((Company) getIntent().getParcelableExtra(CompanyDetailFragment.ARG_COMPANY), false);
+            inflateCompanyDetailsFragment((Company) getIntent().getParcelableExtra(CompanyDetailsFragment.ARG_COMPANY), false);
         }
     }
 
@@ -77,18 +77,18 @@ public class CompanyDetailActivity extends AppCompatActivity implements ICompany
         HomepageFragment fragment = new HomepageFragment();
         fragment.setArguments(arguments);
         this.getSupportFragmentManager().beginTransaction()
-                .replace(R.id.company_detail_container, fragment)
+                .replace(R.id.company_details_container, fragment)
                 .addToBackStack(null)
                 .commit();
     }
 
-    private void inflateCompanyDetailFragment(Company company, boolean addToBackStack) {
+    private void inflateCompanyDetailsFragment(Company company, boolean addToBackStack) {
         Bundle arguments = new Bundle();
-        arguments.putParcelable(CompanyDetailFragment.ARG_COMPANY, company);
-        CompanyDetailFragment fragment = new CompanyDetailFragment();
+        arguments.putParcelable(CompanyDetailsFragment.ARG_COMPANY, company);
+        CompanyDetailsFragment fragment = new CompanyDetailsFragment();
         fragment.setArguments(arguments);
         FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction()
-                .replace(R.id.company_detail_container, fragment);
+                .replace(R.id.company_details_container, fragment);
         if (addToBackStack) {
             transaction.addToBackStack(null);
         }

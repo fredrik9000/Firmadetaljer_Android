@@ -15,6 +15,5 @@
         android:gravity="center_vertical|center"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="group heading"
         android:textStyle="bold"/>
 </LinearLayout>

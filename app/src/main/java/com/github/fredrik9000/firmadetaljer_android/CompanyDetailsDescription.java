@@ -1,10 +1,10 @@
 package com.github.fredrik9000.firmadetaljer_android;
 
-public class CompanyDetailDescription {
+public class CompanyDetailsDescription {
     private String label;
     private String description;
 
-    public CompanyDetailDescription(String label, String description) {
+    public CompanyDetailsDescription(String label, String description) {
         this.label = label;
         this.description = description;
     }

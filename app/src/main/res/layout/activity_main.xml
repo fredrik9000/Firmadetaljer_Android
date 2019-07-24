@@ -28,10 +28,10 @@
                 android:layout_centerInParent="true"
                 android:visibility="gone" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/companylist"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+            <include
+                android:id="@+id/included_company_list"
+                layout="@layout/company_list" />
+
         </RelativeLayout>
 
     </LinearLayout>

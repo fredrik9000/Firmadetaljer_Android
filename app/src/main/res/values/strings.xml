@@ -12,6 +12,8 @@
     <string name="select_search_filter">Velg hva du søker på</string>
     <string name="select_firmanavn">Firmanavn</string>
     <string name="select_org_number">Org. nummer</string>
+    <string name="last_viewed_companies_header">Sist viste firmadetaljer</string>
+    <string name="search_results_header">Søkeresultat</string>
 
     <string name="company_detail_heading_details">Firmadetaljer</string>
     <string name="company_detail_heading_institusjonell_sektor_kode">Institusjonell sektorkode</string>

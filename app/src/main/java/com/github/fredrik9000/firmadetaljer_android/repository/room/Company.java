@@ -7,11 +7,12 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "copmany_table")
+@Entity(tableName = "company_table")
 public class Company implements Parcelable {
-    @PrimaryKey
-    private Integer organisasjonsnummer;
+    @PrimaryKey(autoGenerate = true)
+    private int id;
 
+    private Integer organisasjonsnummer;
     private String navn;
     private String stiftelsesdato;
     private String registreringsdatoEnhetsregisteret;
@@ -130,6 +131,7 @@ public class Company implements Parcelable {
     }
 
     protected Company(Parcel in) {
+        id = in.readInt();
         if (in.readByte() == 0) {
             organisasjonsnummer = null;
         } else {
@@ -195,82 +197,6 @@ public class Company implements Parcelable {
         beliggenhetsadresseLand = in.readString();
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        if (organisasjonsnummer == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeInt(organisasjonsnummer);
-        }
-        dest.writeString(navn);
-        dest.writeString(stiftelsesdato);
-        dest.writeString(registreringsdatoEnhetsregisteret);
-        dest.writeString(oppstartsdato);
-        dest.writeString(datoEierskifte);
-        dest.writeString(organisasjonsform);
-        dest.writeString(hjemmeside);
-        dest.writeString(registertIFrivillighetsregisteret);
-        dest.writeString(registrertIMvaregisteret);
-        dest.writeString(registrertIForetaksregisteret);
-        dest.writeString(registrertIStiftelsesregisteret);
-        if (antallAnsatte == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeInt(antallAnsatte);
-        }
-        if (sisteInnsendteAarsregnskap == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeInt(sisteInnsendteAarsregnskap);
-        }
-        dest.writeString(konkurs);
-        dest.writeString(underAvvikling);
-        dest.writeString(underTvangsavviklingEllerTvangsopplosning);
-        if (overordnetEnhet == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeInt(overordnetEnhet);
-        }
-        dest.writeString(institusjonellSektorkodeKode);
-        dest.writeString(institusjonellSektorkodeBeskrivelse);
-        dest.writeString(naeringskode1Kode);
-        dest.writeString(naeringskode1Beskrivelse);
-        dest.writeString(naeringskode2Kode);
-        dest.writeString(naeringskode2Beskrivelse);
-        dest.writeString(naeringskode3Kode);
-        dest.writeString(naeringskode3Beskrivelse);
-        dest.writeString(postadresseAdresse);
-        dest.writeString(postadressePostnummer);
-        dest.writeString(postadressePoststed);
-        dest.writeString(postadresseKommunenummer);
-        dest.writeString(postadresseKommune);
-        dest.writeString(postadresseLandkode);
-        dest.writeString(postadresseLand);
-        dest.writeString(forretningsadresseAdresse);
-        dest.writeString(forretningsadressePostnummer);
-        dest.writeString(forretningsadressePoststed);
-        dest.writeString(forretningsadresseKommunenummer);
-        dest.writeString(forretningsadresseKommune);
-        dest.writeString(forretningsadresseLandkode);
-        dest.writeString(forretningsadresseLand);
-        dest.writeString(beliggenhetsadresseAdresse);
-        dest.writeString(beliggenhetsadressePostnummer);
-        dest.writeString(beliggenhetsadressePoststed);
-        dest.writeString(beliggenhetsadresseKommunenummer);
-        dest.writeString(beliggenhetsadresseKommune);
-        dest.writeString(beliggenhetsadresseLandkode);
-        dest.writeString(beliggenhetsadresseLand);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
     public static final Creator<Company> CREATOR = new Creator<Company>() {
         @Override
         public Company createFromParcel(Parcel in) {
@@ -282,6 +208,83 @@ public class Company implements Parcelable {
             return new Company[size];
         }
     };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        if (organisasjonsnummer == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(organisasjonsnummer);
+        }
+        parcel.writeString(navn);
+        parcel.writeString(stiftelsesdato);
+        parcel.writeString(registreringsdatoEnhetsregisteret);
+        parcel.writeString(oppstartsdato);
+        parcel.writeString(datoEierskifte);
+        parcel.writeString(organisasjonsform);
+        parcel.writeString(hjemmeside);
+        parcel.writeString(registertIFrivillighetsregisteret);
+        parcel.writeString(registrertIMvaregisteret);
+        parcel.writeString(registrertIForetaksregisteret);
+        parcel.writeString(registrertIStiftelsesregisteret);
+        if (antallAnsatte == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(antallAnsatte);
+        }
+        if (sisteInnsendteAarsregnskap == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(sisteInnsendteAarsregnskap);
+        }
+        parcel.writeString(konkurs);
+        parcel.writeString(underAvvikling);
+        parcel.writeString(underTvangsavviklingEllerTvangsopplosning);
+        if (overordnetEnhet == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(overordnetEnhet);
+        }
+        parcel.writeString(institusjonellSektorkodeKode);
+        parcel.writeString(institusjonellSektorkodeBeskrivelse);
+        parcel.writeString(naeringskode1Kode);
+        parcel.writeString(naeringskode1Beskrivelse);
+        parcel.writeString(naeringskode2Kode);
+        parcel.writeString(naeringskode2Beskrivelse);
+        parcel.writeString(naeringskode3Kode);
+        parcel.writeString(naeringskode3Beskrivelse);
+        parcel.writeString(postadresseAdresse);
+        parcel.writeString(postadressePostnummer);
+        parcel.writeString(postadressePoststed);
+        parcel.writeString(postadresseKommunenummer);
+        parcel.writeString(postadresseKommune);
+        parcel.writeString(postadresseLandkode);
+        parcel.writeString(postadresseLand);
+        parcel.writeString(forretningsadresseAdresse);
+        parcel.writeString(forretningsadressePostnummer);
+        parcel.writeString(forretningsadressePoststed);
+        parcel.writeString(forretningsadresseKommunenummer);
+        parcel.writeString(forretningsadresseKommune);
+        parcel.writeString(forretningsadresseLandkode);
+        parcel.writeString(forretningsadresseLand);
+        parcel.writeString(beliggenhetsadresseAdresse);
+        parcel.writeString(beliggenhetsadressePostnummer);
+        parcel.writeString(beliggenhetsadressePoststed);
+        parcel.writeString(beliggenhetsadresseKommunenummer);
+        parcel.writeString(beliggenhetsadresseKommune);
+        parcel.writeString(beliggenhetsadresseLandkode);
+        parcel.writeString(beliggenhetsadresseLand);
+    }
 
     public Integer getOrganisasjonsnummer() {
         return organisasjonsnummer;
@@ -657,5 +660,13 @@ public class Company implements Parcelable {
 
     public void setBeliggenhetsadresseLand(String beliggenhetsadresseLand) {
         this.beliggenhetsadresseLand = beliggenhetsadresseLand;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

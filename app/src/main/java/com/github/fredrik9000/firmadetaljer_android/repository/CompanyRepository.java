@@ -3,6 +3,7 @@ package com.github.fredrik9000.firmadetaljer_android.repository;
 import android.app.Application;
 import android.os.AsyncTask;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompaniesJson;
@@ -27,6 +28,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class CompanyRepository {
     private CompanyDao companyDao;
     private CompanyService service;
+    private LiveData<List<Company>> savedCompanies;
 
     public CompanyRepository(Application application) {
         CompanyDatabase database = CompanyDatabase.getInstance(application);
@@ -38,18 +40,16 @@ public class CompanyRepository {
                 .build();
 
         service = retrofit.create(CompanyService.class);
+
+        savedCompanies = companyDao.getAllCompaniesOrderedByLastInserted();
     }
 
-    public void insert(Company company) {
-        new InsertCompanyAsyncTask(companyDao).execute(company);
+    public LiveData<List<Company>> getAllSavedCompanies() {
+        return savedCompanies;
     }
 
-    public void update(Company todo) {
-        new UpdateCompanyAsyncTask(companyDao).execute(todo);
-    }
-
-    public void delete(Company todo) {
-        new DeleteCompanyAsyncTask(companyDao).execute(todo);
+    public void upsert(Company company) {
+        new UpsertCompanyAsyncTask(companyDao).execute(company);
     }
 
     public void getAllCompaniesThatStartsWith(final MutableLiveData<CompanyListResponse> companyResponseMutableLiveData, String text) {
@@ -172,47 +172,23 @@ public class CompanyRepository {
                 companyJson.getBeliggenhetsadresse() != null ? companyJson.getBeliggenhetsadresse().getLand() : null);
     }
 
-    private static class InsertCompanyAsyncTask extends AsyncTask<Company, Void, Void> {
+    private static class UpsertCompanyAsyncTask extends AsyncTask<Company, Void, Void> {
 
         private CompanyDao companyDao;
 
-        private InsertCompanyAsyncTask(CompanyDao companyDao) {
+        private UpsertCompanyAsyncTask(CompanyDao companyDao) {
             this.companyDao = companyDao;
         }
 
         @Override
         protected Void doInBackground(Company... companies) {
-            companyDao.insert(companies[0]);
-            return null;
-        }
-    }
-
-    private static class UpdateCompanyAsyncTask extends AsyncTask<Company, Void, Void> {
-
-        private CompanyDao companyDao;
-
-        private UpdateCompanyAsyncTask(CompanyDao companyDao) {
-            this.companyDao = companyDao;
-        }
-
-        @Override
-        protected Void doInBackground(Company... companies) {
-            companyDao.update(companies[0]);
-            return null;
-        }
-    }
-
-    private static class DeleteCompanyAsyncTask extends AsyncTask<Company, Void, Void> {
-
-        private CompanyDao companyDao;
-
-        private DeleteCompanyAsyncTask(CompanyDao companyDao) {
-            this.companyDao = companyDao;
-        }
-
-        @Override
-        protected Void doInBackground(Company... companies) {
-            companyDao.delete(companies[0]);
+            Company company = companies[0];
+            // When a company is updated it should appear on the top of last viewed companies list.
+            // In order to achieve this the company (if exists) is deleted before being inserted.
+            // It would be better with a modification date but this does the job in a simple way.
+            companyDao.delete(company);
+            company.setId(0);
+            companyDao.insert(company);
             return null;
         }
     }

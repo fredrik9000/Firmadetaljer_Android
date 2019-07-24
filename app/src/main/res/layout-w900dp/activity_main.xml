@@ -17,8 +17,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
             android:baselineAligned="false"
             android:divider="?android:attr/dividerHorizontal"
             android:orientation="horizontal"
@@ -34,10 +32,10 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone"/>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/companylist"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                <include
+                    android:id="@+id/included_company_list"
+                    layout="@layout/company_list" />
+
             </RelativeLayout>
 
             <RelativeLayout
@@ -53,7 +51,7 @@
                     android:visibility="gone"/>
 
                 <FrameLayout
-                    android:id="@+id/company_detail_container"
+                    android:id="@+id/company_details_container"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
             </RelativeLayout>
