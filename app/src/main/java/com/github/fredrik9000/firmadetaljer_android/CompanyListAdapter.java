@@ -14,12 +14,12 @@ import com.github.fredrik9000.firmadetaljer_android.repository.room.Company;
 import java.util.List;
 
 
-public class CompanyAdapter extends RecyclerView.Adapter<CompanyAdapter.ViewHolder> {
+public class CompanyListAdapter extends RecyclerView.Adapter<CompanyListAdapter.ViewHolder> {
 
     private final OnItemClickListener clickListener;
     private List<Company> companyList;
 
-    protected CompanyAdapter(OnItemClickListener clickListener, List<Company> companyList) {
+    protected CompanyListAdapter(OnItemClickListener clickListener, List<Company> companyList) {
         this.clickListener = clickListener;
         this.companyList = companyList;
     }

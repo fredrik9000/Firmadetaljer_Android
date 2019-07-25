@@ -33,21 +33,23 @@ import java.util.List;
 
 import retrofit2.HttpException;
 
-public class MainActivity extends AppCompatActivity implements CompanyAdapter.OnItemClickListener, ICompanyDetails {
+public class MainActivity extends AppCompatActivity implements CompanyListAdapter.OnItemClickListener, ICompanyDetails {
 
     private ProgressBar progressBarList, progressBarDetails;
     private CompanyListViewModel companyListViewModel;
     private CompanyDetailsViewModel companyDetailsViewModel;
-    private CompanyAdapter adapterSearchList, adapterSavedList;
+    private CompanyListAdapter adapterSearchList, adapterSavedList;
     private static final String TAG = "MainActivity";
     private boolean isTwoPane;
     private static final String SEARCH_KEY = "SEARCH";
     private static final String SEARCH_BY_ORG_NUMBER_KEY = "SEARCH_BY_ORG_NUMBER";
     private SearchView searchView;
-    private String searchString;
+    private String searchString = "";
     private boolean isSearchingByOrgNumber = false;
     private RecyclerView recyclerView;
-    private static final int MINIMUM_SEARCH_LENGTH = 3;
+    private static final int MINIMUM_SEARCH_LENGTH = 2;
+    private static final int ORGANIZATION_NUMBER_LENGTH = 9;
+    private List<Company> savedCompanies = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,14 +71,9 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
             companyDetailsViewModel = ViewModelProviders.of(this).get(CompanyDetailsViewModel.class);
         }
 
-        recyclerView = binding.includedCompanyList.companyList;
-        recyclerView.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(),
-                layoutManager.getOrientation()));
-        adapterSavedList = new CompanyAdapter(MainActivity.this, new ArrayList<Company>());
-        adapterSearchList = new CompanyAdapter(MainActivity.this, new ArrayList<Company>());
+        setupRecyclerView(binding);
+        adapterSavedList = new CompanyListAdapter(MainActivity.this, new ArrayList<Company>());
+        adapterSearchList = new CompanyListAdapter(MainActivity.this, new ArrayList<Company>());
 
         if (savedInstanceState != null) {
             searchString = savedInstanceState.getString(SEARCH_KEY);
@@ -85,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
 
         // In case the activity gets recreated (for example by rotating the device)
         // the correct adapter should be set.
-        if (searchString != null && !searchString.isEmpty() && searchString.length() >= MINIMUM_SEARCH_LENGTH) {
+        if (isValidFirmNameQuery() || isValidOrganizationNumberQuery()) {
             binding.includedCompanyList.companyListHeader.setText(R.string.search_results_header);
             recyclerView.setAdapter(adapterSearchList);
         } else {
@@ -93,8 +90,55 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
             recyclerView.setAdapter(adapterSavedList);
         }
 
-        setupSearch(toolbar, binding);
+        setupSearchView(toolbar, binding);
+        setupSearchResultObserver(binding);
+        setupSavedCompaniesObserver(binding);
 
+        if (isTwoPane) {
+            setupCompanyDetailsObserver();
+        }
+    }
+
+    private void setupRecyclerView(ActivityMainBinding binding) {
+        recyclerView = binding.includedCompanyList.companyList;
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(),
+                layoutManager.getOrientation()));
+    }
+
+    // Used for when navigating to a parent company from company details view
+    private void setupCompanyDetailsObserver() {
+        companyDetailsViewModel.getCompany().observe(this, new Observer<CompanyResponse>() {
+            @Override
+            public void onChanged(@Nullable CompanyResponse companyResponse) {
+                progressBarDetails.setVisibility(View.GONE);
+                if (companyResponse.getCompany() != null) {
+                    inflateCompanyDetailsFragment(companyResponse.getCompany(), true);
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "onChanged() called with companyResponse error = " + companyResponse.getError());
+                }
+            }
+        });
+    }
+
+    // Used for when updating saved companies (happens when viewing one)
+    // Saved companies is shown whenever the user isn't searching
+    private void setupSavedCompaniesObserver(final ActivityMainBinding binding) {
+        companyListViewModel.getSavedCompanyList().observe(this, new Observer<List<Company>>() {
+            @Override
+            public void onChanged(@Nullable List<Company> companyList) {
+                savedCompanies = companyList;
+                adapterSavedList.update(companyList);
+                checkForEmptyView(binding);
+            }
+        });
+    }
+
+    // Handles search results and updates the list
+    private void setupSearchResultObserver(final ActivityMainBinding binding) {
         companyListViewModel.getSearchResultCompanyList().observe(this, new Observer<CompanyListResponse>() {
             @Override
             public void onChanged(@Nullable CompanyListResponse companyListResponse) {
@@ -102,6 +146,8 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
                 if (companyListResponse.getCompanies() != null) {
                     adapterSearchList.update(companyListResponse.getCompanies());
                 } else {
+                    // If there was an error searching (or organization number not found) set results to empty.
+                    adapterSearchList.update(new ArrayList<Company>());
                     String toastMessage;
                     if (isSearchingByOrgNumber && companyListResponse.getError() instanceof HttpException
                             && (((HttpException) companyListResponse.getError()).code() == 400)
@@ -114,33 +160,13 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
                     Toast.makeText(getApplicationContext(), toastMessage, Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "onChanged() called with companyListResponse error = " + companyListResponse.getError());
                 }
+                binding.includedCompanyList.emptyView.setVisibility(View.GONE);
+                binding.includedCompanyList.companyListWithHeader.setVisibility(View.VISIBLE);
             }
         });
-
-        companyListViewModel.getSavedCompanyList().observe(this, new Observer<List<Company>>() {
-            @Override
-            public void onChanged(@Nullable List<Company> companyList) {
-                adapterSavedList.update(companyList);
-            }
-        });
-
-        if (isTwoPane) {
-            companyDetailsViewModel.getCompany().observe(this, new Observer<CompanyResponse>() {
-                @Override
-                public void onChanged(@Nullable CompanyResponse companyResponse) {
-                    progressBarDetails.setVisibility(View.GONE);
-                    if (companyResponse.getCompany() != null) {
-                        inflateCompanyDetailsFragment(companyResponse.getCompany(), true);
-                    } else {
-                        Toast.makeText(getApplicationContext(), R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "onChanged() called with companyResponse error = " + companyResponse.getError());
-                    }
-                }
-            });
-        }
     }
 
-    private void setupSearch(Toolbar toolbar, final ActivityMainBinding binding) {
+    private void setupSearchView(Toolbar toolbar, final ActivityMainBinding binding) {
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView = toolbar.findViewById(R.id.action_search);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
@@ -151,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
             searchView.setQueryHint(getString(R.string.company_search_name_hint));
         }
 
-        if (searchString != null && !searchString.isEmpty()) {
+        if (!searchString.isEmpty()) {
             searchView.setIconified(false);
             searchView.setQuery(searchString, true);
             searchView.clearFocus();
@@ -160,13 +186,13 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                if (!isSearchingByOrgNumber && query.length() >= MINIMUM_SEARCH_LENGTH) {
+                if (isValidFirmNameQuery()) {
                     progressBarList.setVisibility(View.VISIBLE);
                     companyListViewModel.searchForCompaniesThatStartsWith(query);
                     // clearFocus() closes the full screen search view for phones in landscape mode.
                     searchView.clearFocus();
                     return true;
-                } else if (isSearchingByOrgNumber && query.length() == 9 && TextUtils.isDigitsOnly(query)) {
+                } else if (isValidOrganizationNumberQuery()) {
                     progressBarList.setVisibility(View.VISIBLE);
                     companyListViewModel.searchForCompaniesWithOrgNumber(Integer.parseInt(query));
                     searchView.clearFocus();
@@ -177,26 +203,30 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (newText.length() >= MINIMUM_SEARCH_LENGTH && recyclerView.getAdapter() == adapterSavedList) {
+                searchString = newText;
+                checkForEmptyView(binding);
+
+                // Check the current state and set the correct adapter
+                if ((isValidFirmNameQuery() || isValidOrganizationNumberQuery()) && recyclerView.getAdapter() == adapterSavedList) {
                     binding.includedCompanyList.companyListHeader.setText(R.string.search_results_header);
                     recyclerView.setAdapter(adapterSearchList);
-                } else if (newText.length() < MINIMUM_SEARCH_LENGTH && recyclerView.getAdapter() == adapterSearchList) {
+                } else if (!isValidFirmNameQuery() && !isValidOrganizationNumberQuery() && recyclerView.getAdapter() == adapterSearchList) {
                     binding.includedCompanyList.companyListHeader.setText(R.string.last_viewed_companies_header);
                     recyclerView.setAdapter(adapterSavedList);
                 }
 
-                if (newText.length() >= MINIMUM_SEARCH_LENGTH) {
-                    progressBarList.setVisibility(View.VISIBLE);
-                    companyListViewModel.searchForCompaniesThatStartsWith(newText);
-                    return true;
-                } else if (isSearchingByOrgNumber) {
-                    if (newText.length() > 9) {
-                        // Organization numbers are always 9 digits long.
-                        searchView.setQuery(newText.substring(0, 9), false);
-                    } else if (newText.length() == 9 && TextUtils.isDigitsOnly(newText)) {
+                if (isSearchingByOrgNumber) {
+                    // Since organization number should be 9, it will be trimmed whenever the user tries to type more
+                    if (newText.length() > ORGANIZATION_NUMBER_LENGTH) {
+                        searchView.setQuery(newText.substring(0, ORGANIZATION_NUMBER_LENGTH), false);
+                    } else if (isValidOrganizationNumberQuery()) {
                         progressBarList.setVisibility(View.VISIBLE);
                         companyListViewModel.searchForCompaniesWithOrgNumber(Integer.parseInt(newText));
                     }
+                    return true;
+                } else if (newText.length() >= MINIMUM_SEARCH_LENGTH) {
+                    progressBarList.setVisibility(View.VISIBLE);
+                    companyListViewModel.searchForCompaniesThatStartsWith(newText);
                     return true;
                 }
                 return false;
@@ -262,6 +292,24 @@ public class MainActivity extends AppCompatActivity implements CompanyAdapter.On
                 .replace(R.id.company_details_container, fragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    private boolean isValidOrganizationNumberQuery() {
+        return isSearchingByOrgNumber && searchString.length() >= ORGANIZATION_NUMBER_LENGTH && TextUtils.isDigitsOnly(searchString);
+    }
+
+    private boolean isValidFirmNameQuery() {
+        return !isSearchingByOrgNumber && searchString.length() >= MINIMUM_SEARCH_LENGTH;
+    }
+
+    private void checkForEmptyView(ActivityMainBinding binding) {
+        if (!isValidFirmNameQuery() && !isValidOrganizationNumberQuery() && savedCompanies.isEmpty()) {
+            binding.includedCompanyList.companyListWithHeader.setVisibility(View.GONE);
+            binding.includedCompanyList.emptyView.setVisibility(View.VISIBLE);
+        } else {
+            binding.includedCompanyList.emptyView.setVisibility(View.GONE);
+            binding.includedCompanyList.companyListWithHeader.setVisibility(View.VISIBLE);
+        }
     }
 
     private void inflateCompanyDetailsFragment(Company company, boolean addToBackStack) {

@@ -1,28 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
-        xmlns:tools="http://schemas.android.com/tools"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:showIn="@layout/activity_main">
+        android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
+            android:id="@+id/empty_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/last_viewed_companies_header"
-            android:background="@color/colorPrimaryDark"
-            android:textColor="@android:color/white"
-            android:padding="10dp"
-            android:id="@+id/company_list_header"
-            android:elevation="4dp" />
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:visibility="gone"
+            android:text="@string/no_companies_viewed"
+            android:textSize="24sp"
+            android:layout_margin="16dp"
+            android:lineSpacingExtra="8sp"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/company_list"
+        <LinearLayout
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:showIn="@layout/activity_main"
+            android:id="@+id/company_list_with_header">
 
-    </LinearLayout>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/last_viewed_companies_header"
+                android:background="@color/colorPrimaryDark"
+                android:textColor="@android:color/white"
+                android:padding="10dp"
+                android:id="@+id/company_list_header"
+                android:elevation="4dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/company_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
 </layout>
