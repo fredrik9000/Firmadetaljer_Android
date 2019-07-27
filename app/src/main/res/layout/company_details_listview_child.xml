@@ -32,5 +32,6 @@
         android:layout_gravity="center"
         android:paddingLeft="12dp"
         android:visibility="gone"
-        android:id="@+id/arrow_forward"/>
+        android:id="@+id/arrow_forward"
+        android:contentDescription="@string/detail_navigation_image_view_description"/>
 </LinearLayout>

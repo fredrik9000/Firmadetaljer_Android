@@ -2,19 +2,18 @@
     <string name="app_name">Firmadetaljer</string>
     <string name="main_activity_title">Firmasøk</string>
     <string name="search_item_title">Søk</string>
-    <string name="search_mode_item_title">Søkemodus</string>
     <string name="search_request_error_message">Kunne ikke søke etter firma</string>
     <string name="company_search_name_hint">Firmanavn…</string>
     <string name="company_search_org_number_hint">Organisasjonsnummer(9 siffer)…</string>
     <string name="title_activity_company_detail">Firmadetaljer</string>
     <string name="company_detail_not_loaded">Kunne ikke laste inn firmadetaljer</string>
     <string name="company_not_found">Fant ikke firma</string>
-    <string name="select_search_filter">Velg hva du søker på</string>
     <string name="select_firmanavn">Firmanavn</string>
     <string name="select_org_number">Org. nummer</string>
     <string name="last_viewed_companies_header">Sist viste firmadetaljer</string>
     <string name="search_results_header">Søkeresultat</string>
     <string name="no_companies_viewed">Start ved å trykke på søkeikonet for å finne firma</string>
+    <string name="detail_navigation_image_view_description">Navigeringspil</string>
 
     <string name="company_detail_heading_details">Firmadetaljer</string>
     <string name="company_detail_heading_institusjonell_sektor_kode">Institusjonell sektorkode</string>
@@ -54,8 +53,5 @@
     <string name="company_detail_adresse_kommune">Kommune</string>
     <string name="company_detail_adresse_landskode">Landskode</string>
     <string name="company_detail_adresse_land">Land</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
