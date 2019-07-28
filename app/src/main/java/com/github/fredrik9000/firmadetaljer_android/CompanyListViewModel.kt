@@ -28,7 +28,7 @@ class CompanyListViewModel(application: Application) : AndroidViewModel(applicat
     // The result will be displayed in the same way as for when searching text,
     // which is why the same live data is passed in here.
     // TODO: Improve implementation
-    fun searchForCompaniesWithOrgNumber(orgNumber: Int?) {
+    fun searchForCompaniesWithOrgNumber(orgNumber: Int) {
         repository.getCompaniesWithOrgNumber(searchResultCompanyList, orgNumber)
     }
 

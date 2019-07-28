@@ -20,14 +20,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 import com.github.fredrik9000.firmadetaljer_android.databinding.ActivityMainBinding
+import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 
 import java.util.ArrayList
 
 import retrofit2.HttpException
 
-class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener, ICompanyDetails {
-
+class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener, ICompanyDetails, ICompanyResponseHandler {
     private lateinit var progressBarList: ProgressBar
     private var progressBarDetails: ProgressBar? = null // Not present on phones
     private lateinit var searchView: SearchView
@@ -93,10 +93,6 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
 
         setupSearchResultObserver(binding)
         setupSavedCompaniesObserver(binding)
-
-        if (isTwoPane) {
-            setupCompanyDetailsObserver()
-        }
     }
 
     private fun setupRecyclerView(binding: ActivityMainBinding) {
@@ -106,19 +102,6 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         recyclerView.layoutManager = layoutManager
         recyclerView.addItemDecoration(DividerItemDecoration(recyclerView.context,
                 layoutManager.orientation))
-    }
-
-    // Used for when navigating to a parent company from company details view
-    private fun setupCompanyDetailsObserver() {
-        companyDetailsViewModel.company.observe(this, Observer { companyResponse ->
-            progressBarDetails!!.visibility = View.GONE
-            if (companyResponse.company != null) {
-                inflateCompanyDetailsFragment(companyResponse.company!!, true)
-            } else {
-                Toast.makeText(applicationContext, R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show()
-                Log.d(TAG, "onChanged() called with companyResponse error = " + companyResponse.error!!)
-            }
-        })
     }
 
     // Used for when updating saved companies (happens when viewing one)
@@ -237,6 +220,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
 
     override fun onItemClick(company: Company) {
 
+        // Save company so that it will be shown in the last viewed companies list
         companyListViewModel.upsert(company)
 
         if (isTwoPane) {
@@ -256,10 +240,20 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         outState.putBoolean(SEARCH_BY_ORG_NUMBER_KEY, isSearchingByOrgNumber)
     }
 
+    override fun handleResponse(response: CompanyResponse) {
+        progressBarDetails!!.visibility = View.GONE
+        if (response.company != null) {
+            inflateCompanyDetailsFragment(response.company!!, true)
+        } else {
+            Toast.makeText(applicationContext, R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show()
+            Log.d(TAG, "handleResponse() called with companyResponse error = " + response.error!!)
+        }
+    }
+
     // This is only called when in two pane mode
     override fun navigateToParentCompany(organisasjonsnummer: Int) {
         progressBarDetails!!.visibility = View.VISIBLE
-        companyDetailsViewModel.searchForCompanyWithOrgNumber(organisasjonsnummer)
+        companyDetailsViewModel.searchForCompanyWithOrgNumber(this, organisasjonsnummer)
     }
 
     override fun navigateToHomepage(url: String) {

@@ -4,6 +4,8 @@ import android.app.Application
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.github.fredrik9000.firmadetaljer_android.ICompanyDetails
+import com.github.fredrik9000.firmadetaljer_android.ICompanyResponseHandler
 
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompaniesJson
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyJson
@@ -81,29 +83,7 @@ class CompanyRepository(application: Application) {
         })
     }
 
-    fun getCompanyWithOrgNumber(companyResponseMutableLiveData: MutableLiveData<CompanyResponse>, orgNumber: Int?) {
-        val call = service.getCompanyWithOrgNumber(orgNumber)
-        call.enqueue(object : Callback<CompanyJson> {
-            override fun onResponse(call: Call<CompanyJson>, response: Response<CompanyJson>) {
-                if (!response.isSuccessful) {
-                    // When a company doesn't exist a 400 status will return here.
-                    // This is different from when searching for companies by name,
-                    // because then the response will be successful with an empty list.
-                    companyResponseMutableLiveData.value = CompanyResponse(HttpException(response))
-                    return
-                }
-                val companyJson = response.body()
-                val company = createCompanyFromJson(companyJson!!)
-                companyResponseMutableLiveData.value = CompanyResponse(company)
-            }
-
-            override fun onFailure(call: Call<CompanyJson>, t: Throwable) {
-                companyResponseMutableLiveData.value = CompanyResponse(t)
-            }
-        })
-    }
-
-    fun getCompaniesWithOrgNumber(companyResponseMutableLiveData: MutableLiveData<CompanyListResponse>, orgNumber: Int?) {
+    fun getCompaniesWithOrgNumber(companyResponseMutableLiveData: MutableLiveData<CompanyListResponse>, orgNumber: Int) {
         val call = service.getCompanyWithOrgNumber(orgNumber)
         call.enqueue(object : Callback<CompanyJson> {
             override fun onResponse(call: Call<CompanyJson>, response: Response<CompanyJson>) {
@@ -123,6 +103,25 @@ class CompanyRepository(application: Application) {
 
             override fun onFailure(call: Call<CompanyJson>, t: Throwable) {
                 companyResponseMutableLiveData.value = CompanyListResponse(t)
+            }
+        })
+    }
+
+    fun getCompanyWithOrgNumber(callback: ICompanyResponseHandler, orgNumber: Int) {
+        val call = service.getCompanyWithOrgNumber(orgNumber)
+        call.enqueue(object : Callback<CompanyJson> {
+            override fun onResponse(call: Call<CompanyJson>, response: Response<CompanyJson>) {
+                if (!response.isSuccessful) {
+                    callback.handleResponse(CompanyResponse(HttpException(response)))
+                    return
+                }
+                val companyJson = response.body()
+                val company = createCompanyFromJson(companyJson!!)
+                callback.handleResponse(CompanyResponse(company))
+            }
+
+            override fun onFailure(call: Call<CompanyJson>, t: Throwable) {
+                callback.handleResponse(CompanyResponse(t))
             }
         })
     }

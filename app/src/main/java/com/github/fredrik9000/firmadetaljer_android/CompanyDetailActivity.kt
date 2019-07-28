@@ -11,11 +11,10 @@ import com.github.fredrik9000.firmadetaljer_android.databinding.ActivityCompanyD
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
 
-class CompanyDetailActivity : AppCompatActivity(), ICompanyDetails {
-
+class CompanyDetailActivity : AppCompatActivity(), ICompanyDetails, ICompanyResponseHandler {
     private lateinit var companyDetailsViewModel: CompanyDetailsViewModel
     private lateinit var progressBarDetails: ProgressBar
 
@@ -30,15 +29,6 @@ class CompanyDetailActivity : AppCompatActivity(), ICompanyDetails {
         supportActionBar!!.setDisplayShowHomeEnabled(true)
 
         companyDetailsViewModel = ViewModelProviders.of(this).get(CompanyDetailsViewModel::class.java)
-        companyDetailsViewModel.company.observe(this, Observer { companyResponse ->
-            progressBarDetails.visibility = View.GONE
-            if (companyResponse.company != null) {
-                inflateCompanyDetailsFragment(companyResponse.company!!, true)
-            } else {
-                Toast.makeText(applicationContext, R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show()
-                Log.d(TAG, "onChanged() called with companyResponse error = " + companyResponse.error!!)
-            }
-        })
 
         // savedInstanceState is non-null when there is fragment state saved from previous configurations of this activity
         // (e.g. when rotating the screen from portrait to landscape). In this case, the fragment will automatically be re-added
@@ -52,9 +42,19 @@ class CompanyDetailActivity : AppCompatActivity(), ICompanyDetails {
         }
     }
 
+    override fun handleResponse(response: CompanyResponse) {
+        progressBarDetails.visibility = View.GONE
+        if (response.company != null) {
+            inflateCompanyDetailsFragment(response.company!!, true)
+        } else {
+            Toast.makeText(applicationContext, R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show()
+            Log.d(TAG, "handleResponse() called with companyResponse error = " + response.error!!)
+        }
+    }
+
     override fun navigateToParentCompany(organisasjonsnummer: Int) {
         progressBarDetails.visibility = View.VISIBLE
-        companyDetailsViewModel.searchForCompanyWithOrgNumber(organisasjonsnummer)
+        companyDetailsViewModel.searchForCompanyWithOrgNumber(this, organisasjonsnummer)
     }
 
     override fun navigateToHomepage(url: String) {

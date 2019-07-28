@@ -10,5 +10,5 @@ interface CompanyService {
     fun getCompanies(@Query("\$filter") filter: String): Call<CompaniesJson>
 
     @GET("enhet/{orgNumber}.json")
-    fun getCompanyWithOrgNumber(@Path("orgNumber") orgNumber: Int?): Call<CompanyJson>
+    fun getCompanyWithOrgNumber(@Path("orgNumber") orgNumber: Int): Call<CompanyJson>
 }
