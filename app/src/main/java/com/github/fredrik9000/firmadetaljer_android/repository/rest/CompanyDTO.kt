@@ -1,6 +1,7 @@
 package com.github.fredrik9000.firmadetaljer_android.repository.rest
 
-class CompanyJson {
+// Property names are in Norwegian as this is the language of the rest API
+class CompanyDTO {
 
     val organisasjonsnummer: Int? = null
 
@@ -22,12 +23,12 @@ class CompanyJson {
     val underTvangsavviklingEllerTvangsopplosning: String? = null
     val overordnetEnhet: Int? = null
 
-    val institusjonellSektorkode: CodeJson? = null
-    val naeringskode1: CodeJson? = null
-    val naeringskode2: CodeJson? = null
-    val naeringskode3: CodeJson? = null
+    val institusjonellSektorkode: KodeDTO? = null
+    val naeringskode1: KodeDTO? = null
+    val naeringskode2: KodeDTO? = null
+    val naeringskode3: KodeDTO? = null
 
-    val postadresse: AddressJson? = null
-    val forretningsadresse: AddressJson? = null
-    val beliggenhetsadresse: AddressJson? = null
+    val postadresse: AdresseDTO? = null
+    val forretningsadresse: AdresseDTO? = null
+    val beliggenhetsadresse: AdresseDTO? = null
 }

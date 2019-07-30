@@ -5,6 +5,10 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
 
+// Property names are in Norwegian as this is the language of the rest API which gets the data.
+// This app is for Norwegian firms only, and some of these values are specific to Norway.
+// Therefore, in order to be consistent the properties are not translated to English.
+
 @Parcelize
 @Entity(tableName = "company_table")
 data class Company(@PrimaryKey(autoGenerate = true) var id: Int = 0,

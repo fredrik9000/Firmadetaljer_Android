@@ -4,11 +4,10 @@ import android.app.Application
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.github.fredrik9000.firmadetaljer_android.ICompanyDetails
 import com.github.fredrik9000.firmadetaljer_android.ICompanyResponseHandler
 
-import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompaniesJson
-import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyJson
+import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompaniesDTO
+import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyDTO
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyListResponse
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyService
@@ -55,29 +54,31 @@ class CompanyRepository(application: Application) {
 
     fun getAllCompaniesThatStartsWith(companyResponseMutableLiveData: MutableLiveData<CompanyListResponse>, text: String) {
         val call = service.getCompanies("startswith(navn,'$text')")
-        call.enqueue(object : Callback<CompaniesJson> {
-            override fun onResponse(call: Call<CompaniesJson>, response: Response<CompaniesJson>) {
+        call.enqueue(object : Callback<CompaniesDTO> {
+            override fun onResponse(call: Call<CompaniesDTO>, response: Response<CompaniesDTO>) {
                 if (!response.isSuccessful) {
                     companyResponseMutableLiveData.value = CompanyListResponse(HttpException(response))
                     return
                 }
-                val companiesJson = response.body()
-                val companyJsonList = companiesJson!!.data
+                val companiesDTO = response.body()
+                val companyDTOList = companiesDTO!!.data
                 val companies = ArrayList<Company>()
-                if (companyJsonList == null) {
+
+                // If data is null this means no companies were found, so return an empty list
+                if (companyDTOList == null) {
                     companyResponseMutableLiveData.value = CompanyListResponse(companies)
                     return
                 }
 
-                for (companyJson in companyJsonList) {
-                    val company = createCompanyFromJson(companyJson)
+                for (companyDTO in companyDTOList) {
+                    val company = createCompanyFromDTO(companyDTO)
                     companies.add(company)
                 }
 
                 companyResponseMutableLiveData.value = CompanyListResponse(companies)
             }
 
-            override fun onFailure(call: Call<CompaniesJson>, t: Throwable) {
+            override fun onFailure(call: Call<CompaniesDTO>, t: Throwable) {
                 companyResponseMutableLiveData.value = CompanyListResponse(t)
             }
         })
@@ -85,8 +86,8 @@ class CompanyRepository(application: Application) {
 
     fun getCompaniesWithOrgNumber(companyResponseMutableLiveData: MutableLiveData<CompanyListResponse>, orgNumber: Int) {
         val call = service.getCompanyWithOrgNumber(orgNumber)
-        call.enqueue(object : Callback<CompanyJson> {
-            override fun onResponse(call: Call<CompanyJson>, response: Response<CompanyJson>) {
+        call.enqueue(object : Callback<CompanyDTO> {
+            override fun onResponse(call: Call<CompanyDTO>, response: Response<CompanyDTO>) {
                 if (!response.isSuccessful) {
                     // When a company doesn't exist a 400 status will return here.
                     // This is different from when searching for companies by name,
@@ -94,14 +95,14 @@ class CompanyRepository(application: Application) {
                     companyResponseMutableLiveData.value = CompanyListResponse(HttpException(response))
                     return
                 }
-                val companyJson = response.body()
-                val company = createCompanyFromJson(companyJson!!)
+                val companyDTO = response.body()
+                val company = createCompanyFromDTO(companyDTO!!)
                 val companyList = ArrayList<Company>()
                 companyList.add(company)
                 companyResponseMutableLiveData.value = CompanyListResponse(companyList)
             }
 
-            override fun onFailure(call: Call<CompanyJson>, t: Throwable) {
+            override fun onFailure(call: Call<CompanyDTO>, t: Throwable) {
                 companyResponseMutableLiveData.value = CompanyListResponse(t)
             }
         })
@@ -109,58 +110,58 @@ class CompanyRepository(application: Application) {
 
     fun getCompanyWithOrgNumber(callback: ICompanyResponseHandler, orgNumber: Int) {
         val call = service.getCompanyWithOrgNumber(orgNumber)
-        call.enqueue(object : Callback<CompanyJson> {
-            override fun onResponse(call: Call<CompanyJson>, response: Response<CompanyJson>) {
+        call.enqueue(object : Callback<CompanyDTO> {
+            override fun onResponse(call: Call<CompanyDTO>, response: Response<CompanyDTO>) {
                 if (!response.isSuccessful) {
                     callback.handleResponse(CompanyResponse(HttpException(response)))
                     return
                 }
-                val companyJson = response.body()
-                val company = createCompanyFromJson(companyJson!!)
+                val companyDTO = response.body()
+                val company = createCompanyFromDTO(companyDTO!!)
                 callback.handleResponse(CompanyResponse(company))
             }
 
-            override fun onFailure(call: Call<CompanyJson>, t: Throwable) {
+            override fun onFailure(call: Call<CompanyDTO>, t: Throwable) {
                 callback.handleResponse(CompanyResponse(t))
             }
         })
     }
 
-    private fun createCompanyFromJson(companyJson: CompanyJson): Company {
-        return Company(0, companyJson.organisasjonsnummer, companyJson.navn, companyJson.stiftelsesdato,
-                companyJson.registreringsdatoEnhetsregisteret, companyJson.oppstartsdato, companyJson.datoEierskifte,
-                companyJson.organisasjonsform, companyJson.hjemmeside, companyJson.registertIFrivillighetsregisteret,
-                companyJson.registrertIMvaregisteret, companyJson.registrertIForetaksregisteret, companyJson.registrertIStiftelsesregisteret,
-                companyJson.antallAnsatte, companyJson.sisteInnsendteAarsregnskap, companyJson.konkurs,
-                companyJson.underAvvikling, companyJson.underTvangsavviklingEllerTvangsopplosning, companyJson.overordnetEnhet,
-                if (companyJson.institusjonellSektorkode != null) companyJson.institusjonellSektorkode.kode else null,
-                if (companyJson.institusjonellSektorkode != null) companyJson.institusjonellSektorkode.beskrivelse else null,
-                if (companyJson.naeringskode1 != null) companyJson.naeringskode1.kode else null,
-                if (companyJson.naeringskode1 != null) companyJson.naeringskode1.beskrivelse else null,
-                if (companyJson.naeringskode2 != null) companyJson.naeringskode2.kode else null,
-                if (companyJson.naeringskode2 != null) companyJson.naeringskode2.beskrivelse else null,
-                if (companyJson.naeringskode3 != null) companyJson.naeringskode3.kode else null,
-                if (companyJson.naeringskode3 != null) companyJson.naeringskode3.beskrivelse else null,
-                if (companyJson.postadresse != null) companyJson.postadresse.adresse else null,
-                if (companyJson.postadresse != null) companyJson.postadresse.postnummer else null,
-                if (companyJson.postadresse != null) companyJson.postadresse.poststed else null,
-                if (companyJson.postadresse != null) companyJson.postadresse.kommunenummer else null,
-                if (companyJson.postadresse != null) companyJson.postadresse.kommune else null,
-                if (companyJson.postadresse != null) companyJson.postadresse.landkode else null,
-                if (companyJson.postadresse != null) companyJson.postadresse.land else null,
-                if (companyJson.forretningsadresse != null) companyJson.forretningsadresse.adresse else null,
-                if (companyJson.forretningsadresse != null) companyJson.forretningsadresse.postnummer else null,
-                if (companyJson.forretningsadresse != null) companyJson.forretningsadresse.poststed else null,
-                if (companyJson.forretningsadresse != null) companyJson.forretningsadresse.kommunenummer else null,
-                if (companyJson.forretningsadresse != null) companyJson.forretningsadresse.kommune else null,
-                if (companyJson.forretningsadresse != null) companyJson.forretningsadresse.landkode else null,
-                if (companyJson.forretningsadresse != null) companyJson.forretningsadresse.land else null,
-                if (companyJson.beliggenhetsadresse != null) companyJson.beliggenhetsadresse.adresse else null,
-                if (companyJson.beliggenhetsadresse != null) companyJson.beliggenhetsadresse.postnummer else null,
-                if (companyJson.beliggenhetsadresse != null) companyJson.beliggenhetsadresse.poststed else null,
-                if (companyJson.beliggenhetsadresse != null) companyJson.beliggenhetsadresse.kommunenummer else null,
-                if (companyJson.beliggenhetsadresse != null) companyJson.beliggenhetsadresse.kommune else null,
-                if (companyJson.beliggenhetsadresse != null) companyJson.beliggenhetsadresse.landkode else null,
-                if (companyJson.beliggenhetsadresse != null) companyJson.beliggenhetsadresse.land else null)
+    private fun createCompanyFromDTO(companyDTO: CompanyDTO): Company {
+        return Company(0, companyDTO.organisasjonsnummer, companyDTO.navn, companyDTO.stiftelsesdato,
+                companyDTO.registreringsdatoEnhetsregisteret, companyDTO.oppstartsdato, companyDTO.datoEierskifte,
+                companyDTO.organisasjonsform, companyDTO.hjemmeside, companyDTO.registertIFrivillighetsregisteret,
+                companyDTO.registrertIMvaregisteret, companyDTO.registrertIForetaksregisteret, companyDTO.registrertIStiftelsesregisteret,
+                companyDTO.antallAnsatte, companyDTO.sisteInnsendteAarsregnskap, companyDTO.konkurs,
+                companyDTO.underAvvikling, companyDTO.underTvangsavviklingEllerTvangsopplosning, companyDTO.overordnetEnhet,
+                if (companyDTO.institusjonellSektorkode != null) companyDTO.institusjonellSektorkode.kode else null,
+                if (companyDTO.institusjonellSektorkode != null) companyDTO.institusjonellSektorkode.beskrivelse else null,
+                if (companyDTO.naeringskode1 != null) companyDTO.naeringskode1.kode else null,
+                if (companyDTO.naeringskode1 != null) companyDTO.naeringskode1.beskrivelse else null,
+                if (companyDTO.naeringskode2 != null) companyDTO.naeringskode2.kode else null,
+                if (companyDTO.naeringskode2 != null) companyDTO.naeringskode2.beskrivelse else null,
+                if (companyDTO.naeringskode3 != null) companyDTO.naeringskode3.kode else null,
+                if (companyDTO.naeringskode3 != null) companyDTO.naeringskode3.beskrivelse else null,
+                if (companyDTO.postadresse != null) companyDTO.postadresse.adresse else null,
+                if (companyDTO.postadresse != null) companyDTO.postadresse.postnummer else null,
+                if (companyDTO.postadresse != null) companyDTO.postadresse.poststed else null,
+                if (companyDTO.postadresse != null) companyDTO.postadresse.kommunenummer else null,
+                if (companyDTO.postadresse != null) companyDTO.postadresse.kommune else null,
+                if (companyDTO.postadresse != null) companyDTO.postadresse.landkode else null,
+                if (companyDTO.postadresse != null) companyDTO.postadresse.land else null,
+                if (companyDTO.forretningsadresse != null) companyDTO.forretningsadresse.adresse else null,
+                if (companyDTO.forretningsadresse != null) companyDTO.forretningsadresse.postnummer else null,
+                if (companyDTO.forretningsadresse != null) companyDTO.forretningsadresse.poststed else null,
+                if (companyDTO.forretningsadresse != null) companyDTO.forretningsadresse.kommunenummer else null,
+                if (companyDTO.forretningsadresse != null) companyDTO.forretningsadresse.kommune else null,
+                if (companyDTO.forretningsadresse != null) companyDTO.forretningsadresse.landkode else null,
+                if (companyDTO.forretningsadresse != null) companyDTO.forretningsadresse.land else null,
+                if (companyDTO.beliggenhetsadresse != null) companyDTO.beliggenhetsadresse.adresse else null,
+                if (companyDTO.beliggenhetsadresse != null) companyDTO.beliggenhetsadresse.postnummer else null,
+                if (companyDTO.beliggenhetsadresse != null) companyDTO.beliggenhetsadresse.poststed else null,
+                if (companyDTO.beliggenhetsadresse != null) companyDTO.beliggenhetsadresse.kommunenummer else null,
+                if (companyDTO.beliggenhetsadresse != null) companyDTO.beliggenhetsadresse.kommune else null,
+                if (companyDTO.beliggenhetsadresse != null) companyDTO.beliggenhetsadresse.landkode else null,
+                if (companyDTO.beliggenhetsadresse != null) companyDTO.beliggenhetsadresse.land else null)
     }
 }

@@ -1,6 +1,7 @@
 package com.github.fredrik9000.firmadetaljer_android.repository.rest
 
-class AddressJson {
+// Property names are in Norwegian as this is the language of the rest API
+class AdresseDTO {
     val adresse: String? = null
     val postnummer: String? = null
     val poststed: String? = null
