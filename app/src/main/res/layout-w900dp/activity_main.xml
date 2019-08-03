@@ -22,7 +22,7 @@
             android:orientation="horizontal"
             android:showDividers="middle">
             <RelativeLayout
-                android:layout_width="@dimen/item_width"
+                android:layout_width="@dimen/company_list_width"
                 android:layout_height="match_parent">
 
                 <ProgressBar
@@ -53,7 +53,7 @@
                 <FrameLayout
                     android:id="@+id/company_details_container"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"/>
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>

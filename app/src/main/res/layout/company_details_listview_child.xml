@@ -4,10 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/parent_layout"
-    android:padding="15dp">
+    android:paddingLeft="@dimen/list_item_padding"
+    android:paddingRight="@dimen/list_item_padding">
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/label"
-        android:textSize="20sp"
+        android:textSize="@dimen/list_item_company_details_child_text_size"
+        android:textColor="@color/colorListItemText"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="?android:attr/listPreferredItemHeightSmall"
@@ -17,7 +19,8 @@
         android:maxLines="1"/>
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/description"
-        android:textSize="20sp"
+        android:textSize="@dimen/list_item_company_details_child_text_size"
+        android:textColor="@color/colorListItemText"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="?android:attr/listPreferredItemHeightSmall"
@@ -30,7 +33,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_arrow_forward_black_24dp"
         android:layout_gravity="center"
-        android:paddingLeft="12dp"
+        android:layout_marginLeft="@dimen/list_item_arrow_forward_image_margin_left"
         android:visibility="gone"
         android:id="@+id/arrow_forward"
         android:contentDescription="@string/detail_navigation_image_view_description"/>

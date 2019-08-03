@@ -8,10 +8,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/parent_layout"
-        android:padding="15dp">
+        android:padding="@dimen/list_item_padding">
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/name"
-            android:textSize="20sp"
+            android:textSize="@dimen/list_item_text_size"
+            android:textColor="@color/colorListItemText"
             android:text="@{company.navn}"
             android:layout_width="0dp"
             android:layout_weight="1"

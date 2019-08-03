@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseExpandableListAdapter
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.github.fredrik9000.firmadetaljer_android.R
 
 class CompanyDetailsAdapter(
@@ -73,8 +74,10 @@ class CompanyDetailsAdapter(
 
         if (child.label == context.resources.getString(R.string.company_detail_details_hjemmeside) || child.label == context.resources.getString(R.string.company_detail_details_overordnet_enhet)) {
             viewMutable.findViewById<View>(R.id.arrow_forward).visibility = View.VISIBLE
+            descriptionTextView.setTextColor(ContextCompat.getColor(context, R.color.colorListItemTextNavigatableCompanyDetails))
         } else {
             viewMutable.findViewById<View>(R.id.arrow_forward).visibility = View.GONE
+            descriptionTextView.setTextColor(ContextCompat.getColor(context, R.color.colorListItemText))
         }
 
         return viewMutable

@@ -12,9 +12,9 @@
             android:gravity="center"
             android:visibility="gone"
             android:text="@string/no_companies_viewed"
-            android:textSize="24sp"
-            android:layout_margin="16dp"
-            android:lineSpacingExtra="8sp"/>
+            android:textSize="@dimen/empty_view_text_size"
+            android:layout_margin="@dimen/content_margin"
+            android:lineSpacingExtra="@dimen/empty_view_line_spacing_extra"/>
 
         <LinearLayout
             xmlns:tools="http://schemas.android.com/tools"
@@ -28,11 +28,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/last_viewed_companies_header"
-                android:background="@color/colorPrimaryDark"
-                android:textColor="@android:color/white"
-                android:padding="10dp"
+                android:background="@color/colorListHeaderBackground"
+                android:textColor="@color/colorListHeaderText"
+                android:padding="@dimen/list_header_padding"
                 android:id="@+id/company_list_header"
-                android:elevation="4dp" />
+                android:elevation="@dimen/toolbar_elevation" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/company_list"

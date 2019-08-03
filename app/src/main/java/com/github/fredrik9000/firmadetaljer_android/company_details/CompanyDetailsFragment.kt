@@ -102,19 +102,19 @@ class CompanyDetailsFragment : Fragment() {
         }
 
         if (company.registertIFrivillighetsregisteret != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_frivillighetsregisteret), company.registertIFrivillighetsregisteret!!))
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_frivillighetsregisteret), convertYesNoValue(company.registertIFrivillighetsregisteret!!)))
         }
 
         if (company.registrertIMvaregisteret != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_mva_registeret), company.registrertIMvaregisteret!!))
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_mva_registeret), convertYesNoValue(company.registrertIMvaregisteret!!)))
         }
 
         if (company.registrertIForetaksregisteret != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_foretaksregisteret), company.registrertIForetaksregisteret!!))
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_foretaksregisteret), convertYesNoValue(company.registrertIForetaksregisteret!!)))
         }
 
         if (company.registrertIStiftelsesregisteret != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_stiftelsesregisteret), company.registrertIStiftelsesregisteret!!))
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_stiftelsesregisteret), convertYesNoValue(company.registrertIStiftelsesregisteret!!)))
         }
 
         if (company.antallAnsatte != null) {
@@ -126,15 +126,15 @@ class CompanyDetailsFragment : Fragment() {
         }
 
         if (company.konkurs != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_konkurs), company.konkurs!!))
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_konkurs), convertYesNoValue(company.konkurs!!)))
         }
 
         if (company.underAvvikling != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_under_avvikling), company.underAvvikling!!))
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_under_avvikling), convertYesNoValue(company.underAvvikling!!)))
         }
 
         if (company.underTvangsavviklingEllerTvangsopplosning != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_under_tvangsavvikling_eller_tvangsoppløsning), company.underTvangsavviklingEllerTvangsopplosning!!))
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_under_tvangsavvikling_eller_tvangsoppløsning), convertYesNoValue(company.underTvangsavviklingEllerTvangsopplosning!!)))
         }
 
         if (company.overordnetEnhet != null) {
@@ -318,6 +318,14 @@ class CompanyDetailsFragment : Fragment() {
         }
 
         return Pair(companyDetailGroups, companyDetailItems)
+    }
+
+    private fun convertYesNoValue(description: String) : String {
+        return when(description) {
+            "J" -> resources.getString(R.string.yes)
+            "N" -> resources.getString(R.string.no)
+            else -> description
+        }
     }
 
     override fun onAttach(context: Context) {

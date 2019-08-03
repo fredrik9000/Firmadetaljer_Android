@@ -213,7 +213,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
             }
         })
 
-        binding.includedToolbar.toggle.setOnCheckedChangeListener { _, i ->
+        binding.includedToolbar.searchModeToggle.setOnCheckedChangeListener { _, i ->
             if (i == binding.includedToolbar.searchFirmName.id) {
                 isSearchingByOrgNumber = false
                 searchView.queryHint = getString(R.string.company_search_name_hint)

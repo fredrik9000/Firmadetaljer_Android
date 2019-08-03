@@ -54,4 +54,7 @@
     <string name="company_detail_adresse_landskode">Landskode</string>
     <string name="company_detail_adresse_land">Land</string>
 
+    <string name="yes">Ja</string>
+    <string name="no">Nei</string>
+
 </resources>

@@ -4,6 +4,12 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
 
+    <color name="colorListHeaderBackground">@color/colorPrimaryDark</color>
+    <color name="colorListHeaderText">@android:color/white</color>
+    <color name="colorListItemText">#DE000000</color>
+    <color name="colorListItemTextNavigatableCompanyDetails">#0000EE</color>
+    <color name="colorCompanyDetailsBackground">#F5F5F5</color>
+
     <color name="colorToggleOutline">#D81B60</color>
     <color name="colorTogglePressed">#AD1457</color>
     <color name="colorToggleSelected">#D81B60</color>
