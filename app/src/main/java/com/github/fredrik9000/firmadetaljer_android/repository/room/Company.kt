@@ -12,7 +12,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 @Entity(tableName = "company_table")
 data class Company(@PrimaryKey(autoGenerate = true) var id: Int = 0,
-              var organisasjonsnummer: Int? = null,
+              var organisasjonsnummer: Int,
               var navn: String? = null,
               var stiftelsesdato: String? = null,
               var registreringsdatoEnhetsregisteret: String? = null,

@@ -2,7 +2,6 @@ package com.github.fredrik9000.firmadetaljer_android.repository.room
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 
@@ -15,6 +14,6 @@ interface CompanyDao {
     @Insert
     suspend fun insert(company: Company)
 
-    @Delete
-    suspend fun delete(company: Company)
+    @Query("DELETE FROM company_table WHERE organisasjonsnummer = :organisasjonsnummer")
+    suspend fun deleteByOrganizationNumber(organisasjonsnummer: Int)
 }

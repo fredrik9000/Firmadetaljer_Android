@@ -73,9 +73,7 @@ class CompanyDetailsFragment : Fragment() {
             detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_firmanavn), company.navn!!))
         }
 
-        if (company.organisasjonsnummer != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_organisasjonsnummer), (company.organisasjonsnummer!!).toString()))
-        }
+        detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_organisasjonsnummer), (company.organisasjonsnummer).toString()))
 
         if (company.stiftelsesdato != null) {
             detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_stiftelsesdato), company.stiftelsesdato!!))

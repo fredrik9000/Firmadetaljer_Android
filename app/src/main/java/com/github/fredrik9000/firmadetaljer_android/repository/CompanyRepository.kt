@@ -47,7 +47,7 @@ class CompanyRepository(application: Application) {
     // In order to achieve this the company (if exists) is deleted before being inserted.
     // It would be better with a modification date but this does the job in a simple way.
     suspend fun upsert(company: Company) {
-        companyDao.delete(company)
+        companyDao.deleteByOrganizationNumber(company.organisasjonsnummer)
         company.id = 0
         companyDao.insert(company)
     }
@@ -71,8 +71,10 @@ class CompanyRepository(application: Application) {
                 }
 
                 for (companyDTO in companyDTOList) {
-                    val company = createCompanyFromDTO(companyDTO)
-                    companies.add(company)
+                    if (companyDTO.organisasjonsnummer != null) { //Should never be null
+                        val company = createCompanyFromDTO(companyDTO)
+                        companies.add(company)
+                    }
                 }
 
                 companyResponseMutableLiveData.value = CompanyListResponse(companies)
@@ -128,7 +130,7 @@ class CompanyRepository(application: Application) {
     }
 
     private fun createCompanyFromDTO(companyDTO: CompanyDTO): Company {
-        return Company(0, companyDTO.organisasjonsnummer, companyDTO.navn, companyDTO.stiftelsesdato,
+        return Company(0, companyDTO.organisasjonsnummer!!, companyDTO.navn, companyDTO.stiftelsesdato,
                 companyDTO.registreringsdatoEnhetsregisteret, companyDTO.oppstartsdato, companyDTO.datoEierskifte,
                 companyDTO.organisasjonsform, companyDTO.hjemmeside, companyDTO.registertIFrivillighetsregisteret,
                 companyDTO.registrertIMvaregisteret, companyDTO.registrertIForetaksregisteret, companyDTO.registrertIStiftelsesregisteret,
