@@ -1,4 +1,4 @@
-package com.github.fredrik9000.firmadetaljer_android
+package com.github.fredrik9000.firmadetaljer_android.company_details
 
 import android.content.Context
 import android.os.Bundle
@@ -10,6 +10,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ExpandableListView
+import com.github.fredrik9000.firmadetaljer_android.interfaces.ICompanyDetails
+import com.github.fredrik9000.firmadetaljer_android.R
 
 import com.github.fredrik9000.firmadetaljer_android.databinding.FragmentCompanyDetailsBinding
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
@@ -37,7 +39,7 @@ class CompanyDetailsFragment : Fragment() {
 
         val (companyDetailGroups, companyDetailItems) = fillData()
 
-        val adapter = CompanyDetailAdapter(this.context!!, companyDetailGroups, companyDetailItems)
+        val adapter = CompanyDetailsAdapter(this.context!!, companyDetailGroups, companyDetailItems)
         expandableListView.setAdapter(adapter)
 
         expandableListView.setOnChildClickListener(ExpandableListView.OnChildClickListener { _, _, groupPosition, childPosition, _ ->
@@ -56,7 +58,7 @@ class CompanyDetailsFragment : Fragment() {
         return view
     }
 
-    private fun expandGroups(expandableListView: ExpandableListView, adapter: CompanyDetailAdapter) {
+    private fun expandGroups(expandableListView: ExpandableListView, adapter: CompanyDetailsAdapter) {
         for (position in 1..adapter.groupCount)
             expandableListView.expandGroup(position - 1)
     }

@@ -1,4 +1,4 @@
-package com.github.fredrik9000.firmadetaljer_android
+package com.github.fredrik9000.firmadetaljer_android.company_details
 
 import android.os.Bundle
 import android.view.LayoutInflater

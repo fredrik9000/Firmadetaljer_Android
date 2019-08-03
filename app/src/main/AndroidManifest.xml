@@ -13,13 +13,13 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".CompanyDetailActivity"
+            android:name=".company_details.CompanyDetailsActivity"
             android:label="@string/title_activity_company_detail">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".company_list.MainActivity" />
         </activity>
-        <activity android:name=".MainActivity"
+        <activity android:name=".company_list.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

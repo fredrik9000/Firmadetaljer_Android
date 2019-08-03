@@ -1,4 +1,4 @@
-package com.github.fredrik9000.firmadetaljer_android
+package com.github.fredrik9000.firmadetaljer_android.company_details
 
 import android.os.Bundle
 import android.util.Log
@@ -12,9 +12,12 @@ import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
+import com.github.fredrik9000.firmadetaljer_android.interfaces.ICompanyDetails
+import com.github.fredrik9000.firmadetaljer_android.interfaces.ICompanyResponseHandler
+import com.github.fredrik9000.firmadetaljer_android.R
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
 
-class CompanyDetailActivity : AppCompatActivity(), ICompanyDetails, ICompanyResponseHandler {
+class CompanyDetailsActivity : AppCompatActivity(), ICompanyDetails, ICompanyResponseHandler {
     private lateinit var companyDetailsViewModel: CompanyDetailsViewModel
     private lateinit var progressBarDetails: ProgressBar
 
@@ -81,9 +84,9 @@ class CompanyDetailActivity : AppCompatActivity(), ICompanyDetails, ICompanyResp
         transaction.commit()
     }
 
-    // When there's nesting of company detail fragments, navigate back to the previous instead of the search results
+    // When there's nesting of company detail fragments, navigate back to the previous company instead of the search results
     // This will only happen when one has navigated to a parent company
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
             val fm = supportFragmentManager
             if (fm.backStackEntryCount > 0) {
@@ -95,6 +98,6 @@ class CompanyDetailActivity : AppCompatActivity(), ICompanyDetails, ICompanyResp
     }
 
     companion object {
-        private const val TAG = "CompanyDetailActivity"
+        private const val TAG = "CompanyDetailsActivity"
     }
 }

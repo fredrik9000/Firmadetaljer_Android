@@ -1,4 +1,4 @@
-package com.github.fredrik9000.firmadetaljer_android
+package com.github.fredrik9000.firmadetaljer_android.company_details
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,8 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseExpandableListAdapter
 import android.widget.TextView
+import com.github.fredrik9000.firmadetaljer_android.R
 
-class CompanyDetailAdapter(
+class CompanyDetailsAdapter(
         private val context: Context,
         private val companyDetailGroups: List<String>,
         private val companyDetailItems: Map<String, List<CompanyDetailsDescription>>) : BaseExpandableListAdapter() {

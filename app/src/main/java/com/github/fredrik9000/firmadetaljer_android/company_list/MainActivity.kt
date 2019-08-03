@@ -1,4 +1,4 @@
-package com.github.fredrik9000.firmadetaljer_android
+package com.github.fredrik9000.firmadetaljer_android.company_list
 
 import android.app.SearchManager
 import android.content.Context
@@ -18,6 +18,13 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.fredrik9000.firmadetaljer_android.company_details.HomepageFragment
+import com.github.fredrik9000.firmadetaljer_android.interfaces.ICompanyDetails
+import com.github.fredrik9000.firmadetaljer_android.interfaces.ICompanyResponseHandler
+import com.github.fredrik9000.firmadetaljer_android.R
+import com.github.fredrik9000.firmadetaljer_android.company_details.CompanyDetailsActivity
+import com.github.fredrik9000.firmadetaljer_android.company_details.CompanyDetailsFragment
+import com.github.fredrik9000.firmadetaljer_android.company_details.CompanyDetailsViewModel
 
 import com.github.fredrik9000.firmadetaljer_android.databinding.ActivityMainBinding
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
@@ -226,7 +233,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         if (isTwoPane) {
             inflateCompanyDetailsFragment(company, false)
         } else {
-            val intent = Intent(this@MainActivity, CompanyDetailActivity::class.java)
+            val intent = Intent(this@MainActivity, CompanyDetailsActivity::class.java)
             intent.putExtra(CompanyDetailsFragment.ARG_COMPANY, company)
 
             this.startActivity(intent)

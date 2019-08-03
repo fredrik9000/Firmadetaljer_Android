@@ -1,4 +1,4 @@
-package com.github.fredrik9000.firmadetaljer_android
+package com.github.fredrik9000.firmadetaljer_android.interfaces
 
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
 

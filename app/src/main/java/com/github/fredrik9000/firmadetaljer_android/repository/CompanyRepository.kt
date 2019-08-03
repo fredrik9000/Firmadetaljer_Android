@@ -4,7 +4,7 @@ import android.app.Application
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.github.fredrik9000.firmadetaljer_android.ICompanyResponseHandler
+import com.github.fredrik9000.firmadetaljer_android.interfaces.ICompanyResponseHandler
 
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompaniesDTO
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyDTO
