@@ -40,7 +40,8 @@
                     android:button="@null"
                     android:gravity="center"
                     android:text="@string/select_firmanavn"
-                    android:textColor="@android:color/white"/>
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/search_mode_toggle_text_size"/>
 
                 <RadioButton
                     android:id="@+id/search_org_number"
@@ -56,7 +57,8 @@
                     android:button="@null"
                     android:gravity="center"
                     android:text="@string/select_org_number"
-                    android:textColor="@android:color/white"/>
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/search_mode_toggle_text_size"/>
             </RadioGroup>
 
             <androidx.appcompat.widget.SearchView
