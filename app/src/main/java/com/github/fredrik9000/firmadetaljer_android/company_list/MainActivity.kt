@@ -97,9 +97,21 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         }
 
         setupSearchView(toolbar, binding)
-
         setupSearchResultObserver(binding)
         setupSavedCompaniesObserver(binding)
+
+        // If the following is true that means both the Activity and ViewModel were destroyed,
+        // and while having an active search. Therefore we need to do the search again.
+        if (companyListViewModel.searchResultCompanyList.value?.companies == null &&
+                (isValidFirmNameQuery || isValidOrganizationNumberQuery)) {
+            progressBarList.visibility = View.VISIBLE
+
+            if (isSearchingByOrgNumber) {
+                companyListViewModel.searchForCompaniesWithOrgNumber(Integer.parseInt(searchString))
+            } else {
+                companyListViewModel.searchForCompaniesThatStartsWith(searchString)
+            }
+        }
     }
 
     private fun setupRecyclerView(binding: ActivityMainBinding) {
