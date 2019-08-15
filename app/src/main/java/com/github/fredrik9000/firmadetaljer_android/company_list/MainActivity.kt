@@ -128,7 +128,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
     private fun setupSavedCompaniesObserver(binding: ActivityMainBinding) {
         companyListViewModel.savedCompanyList.observe(this, Observer { companyList ->
             savedCompanies = companyList
-            adapterSavedList.update(companyList)
+            adapterSavedList.updateWithAnimation(companyList)
             checkForEmptyView(binding)
         })
     }
@@ -238,7 +238,6 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
     }
 
     override fun onItemClick(company: Company) {
-
         // Save company so that it will be shown in the last viewed companies list
         companyListViewModel.upsert(company)
 

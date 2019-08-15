@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 import com.github.fredrik9000.firmadetaljer_android.databinding.ListviewItemBinding
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
-
+import androidx.recyclerview.widget.DiffUtil
 
 class CompanyListAdapter(
         private val clickListener: OnItemClickListener?,
@@ -31,6 +31,13 @@ class CompanyListAdapter(
     fun update(companyList: List<Company>) {
         this.companyList = companyList
         this.notifyDataSetChanged()
+    }
+
+    fun updateWithAnimation(companyList: List<Company>) {
+        val diffCallback = CompanyDiffCallback(this.companyList!!, companyList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        this.companyList = companyList
+        diffResult.dispatchUpdatesTo(this)
     }
 
     interface OnItemClickListener {
