@@ -16,4 +16,7 @@ interface CompanyDao {
 
     @Query("DELETE FROM company_table WHERE organisasjonsnummer = :organisasjonsnummer")
     suspend fun deleteByOrganizationNumber(organisasjonsnummer: Int)
+
+    @Query("DELETE FROM company_table")
+    suspend fun deleteAll()
 }

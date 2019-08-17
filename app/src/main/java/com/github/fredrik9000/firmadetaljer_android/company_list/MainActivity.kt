@@ -6,10 +6,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.ActionMenuView
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
@@ -51,6 +54,8 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
     private var isTwoPane: Boolean = false
     private var searchString: String = ""
 
+    private lateinit var toolbarMenu : ActionMenuView
+
     private val isValidOrganizationNumberQuery: Boolean
         get() = isSearchingByOrgNumber && searchString.length >= ORGANIZATION_NUMBER_LENGTH && TextUtils.isDigitsOnly(searchString)
 
@@ -66,6 +71,9 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         progressBarDetails = binding.progressCompanyDetails
         val toolbar = binding.includedToolbar.toolbarMain
         setSupportActionBar(toolbar)
+
+        toolbarMenu = binding.includedToolbar.toolbarMenu
+        toolbarMenu.setOnMenuItemClickListener { onOptionsItemSelected(it) }
 
         companyListViewModel = ViewModelProviders.of(this).get(CompanyListViewModel::class.java)
 
@@ -283,6 +291,19 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
                 .replace(R.id.company_details_container, fragment)
                 .addToBackStack(null)
                 .commit()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, toolbarMenu.menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.delete_search_history) {
+            companyListViewModel.deleteAllCompanies()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun checkForEmptyView(binding: ActivityMainBinding) {

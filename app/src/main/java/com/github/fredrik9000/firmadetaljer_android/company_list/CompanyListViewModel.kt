@@ -37,4 +37,10 @@ class CompanyListViewModel(application: Application) : AndroidViewModel(applicat
             repository.upsert(company)
         }
     }
+
+    fun deleteAllCompanies() {
+        viewModelScope.launch {
+            repository.deleteAllCompanies()
+        }
+    }
 }

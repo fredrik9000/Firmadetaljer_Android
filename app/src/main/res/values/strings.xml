@@ -14,6 +14,7 @@
     <string name="search_results_header">Søkeresultat</string>
     <string name="no_companies_viewed">Start ved å trykke på søkeikonet for å finne firma</string>
     <string name="detail_navigation_image_view_description">Navigeringspil</string>
+    <string name="delete_search_history">Slett søkehistorikk</string>
 
     <string name="company_detail_heading_details">Firmadetaljer</string>
     <string name="company_detail_heading_institusjonell_sektor_kode">Institusjonell sektorkode</string>

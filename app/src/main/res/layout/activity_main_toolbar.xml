@@ -19,9 +19,9 @@
                 android:layout_gravity="center"
                 android:layout_height="@dimen/search_mode_toggle_height"
                 android:layout_marginTop="@dimen/search_mode_toggle_margin_top"
-                android:layout_marginRight="@dimen/search_mode_toggle_margin_right"
+                android:layout_marginEnd="@dimen/search_mode_toggle_margin_right"
                 android:layout_marginBottom="@dimen/search_mode_toggle_margin_bottom"
-                android:layout_marginLeft="@dimen/search_mode_toggle_margin_left"
+                android:layout_marginStart="@dimen/search_mode_toggle_margin_left"
                 android:background="@drawable/toggle_outline"
                 android:checkedButton="@+id/search_firm_name"
                 android:orientation="horizontal">
@@ -30,7 +30,7 @@
                     android:id="@+id/search_firm_name"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="@dimen/toggle_outline_stroke_width"
+                    android:layout_marginStart="@dimen/toggle_outline_stroke_width"
                     android:layout_marginTop="@dimen/toggle_outline_stroke_width"
                     android:layout_marginBottom="@dimen/toggle_outline_stroke_width"
                     android:paddingLeft="@dimen/search_mode_toggle_button_left_right_padding"
@@ -48,7 +48,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginTop="@dimen/toggle_outline_stroke_width"
-                    android:layout_marginRight="@dimen/toggle_outline_stroke_width"
+                    android:layout_marginEnd="@dimen/toggle_outline_stroke_width"
                     android:layout_marginBottom="@dimen/toggle_outline_stroke_width"
                     android:paddingLeft="@dimen/search_mode_toggle_button_left_right_padding"
                     android:paddingRight="@dimen/search_mode_toggle_button_left_right_padding"
@@ -61,14 +61,25 @@
                     android:textSize="@dimen/search_mode_toggle_text_size"/>
             </RadioGroup>
 
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/action_search"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:icon="@drawable/ic_search"
-                android:layoutDirection="rtl"
-                android:orderInCategory="1"
-                android:title="@string/search_item_title" />
+                android:orientation="horizontal">
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/action_search"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:icon="@drawable/ic_search"
+                    android:layoutDirection="rtl"
+                    android:orderInCategory="1"
+                    android:title="@string/search_item_title" />
+                <androidx.appcompat.widget.ActionMenuView
+                    android:id="@+id/toolbar_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/action_menu_view_margin_left" />
+            </LinearLayout>
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
 </layout>

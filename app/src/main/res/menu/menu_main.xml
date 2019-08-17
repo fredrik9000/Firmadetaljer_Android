@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.github.fredrik9000.firmadetaljer_android.company_list.MainActivity">
+    <item
+        android:id="@+id/delete_search_history"
+        android:orderInCategory="100"
+        android:title="@string/delete_search_history"
+        app:showAsAction="never" />
+</menu>

@@ -52,6 +52,10 @@ class CompanyRepository(application: Application) {
         companyDao.insert(company)
     }
 
+    suspend fun deleteAllCompanies() {
+        companyDao.deleteAll()
+    }
+
     fun getAllCompaniesThatStartsWith(companyResponseMutableLiveData: MutableLiveData<CompanyListResponse>, text: String) {
         val call = service.getCompanies("startswith(navn,'$text')")
         call.enqueue(object : Callback<CompaniesDTO> {

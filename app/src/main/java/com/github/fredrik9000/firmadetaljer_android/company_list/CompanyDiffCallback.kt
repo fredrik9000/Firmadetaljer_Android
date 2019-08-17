@@ -8,7 +8,7 @@ class CompanyDiffCallback(
         private val companyListNew: List<Company>
 ) : DiffUtil.Callback() {
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return companyListOld.get(oldItemPosition).organisasjonsnummer == companyListNew.get(newItemPosition).organisasjonsnummer
+        return companyListOld[oldItemPosition].organisasjonsnummer == companyListNew[newItemPosition].organisasjonsnummer
     }
 
     override fun getOldListSize(): Int {
@@ -20,8 +20,8 @@ class CompanyDiffCallback(
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldItem = companyListOld.get(oldItemPosition);
-        val newItem = companyListNew.get(newItemPosition)
+        val oldItem = companyListOld[oldItemPosition]
+        val newItem = companyListNew[newItemPosition]
         return oldItem.organisasjonsnummer == newItem.organisasjonsnummer
                 && oldItem.navn == newItem.navn
                 && oldItem.stiftelsesdato == newItem.stiftelsesdato
