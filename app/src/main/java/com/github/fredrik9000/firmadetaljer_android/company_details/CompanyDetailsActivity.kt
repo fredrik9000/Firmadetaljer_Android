@@ -12,12 +12,10 @@ import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
-import com.github.fredrik9000.firmadetaljer_android.interfaces.ICompanyDetails
-import com.github.fredrik9000.firmadetaljer_android.interfaces.ICompanyResponseHandler
 import com.github.fredrik9000.firmadetaljer_android.R
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
 
-class CompanyDetailsActivity : AppCompatActivity(), ICompanyDetails, ICompanyResponseHandler {
+class CompanyDetailsActivity : AppCompatActivity(), CompanyDetailsNavigation {
     private lateinit var companyDetailsViewModel: CompanyDetailsViewModel
     private lateinit var progressBarDetails: ProgressBar
 
@@ -26,8 +24,7 @@ class CompanyDetailsActivity : AppCompatActivity(), ICompanyDetails, ICompanyRes
         setContentView(R.layout.activity_company_details)
         val binding = DataBindingUtil.setContentView<ActivityCompanyDetailsBinding>(this, R.layout.activity_company_details)
         progressBarDetails = binding.progressCompanyDetails
-        val toolbar = binding.includedToolbar.toolbarCompanyDetails
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.includedToolbar.toolbarCompanyDetails)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
 
@@ -45,7 +42,7 @@ class CompanyDetailsActivity : AppCompatActivity(), ICompanyDetails, ICompanyRes
         }
     }
 
-    override fun handleResponse(response: CompanyResponse) {
+    override fun handleCompanyNavigationResponse(response: CompanyResponse) {
         progressBarDetails.visibility = View.GONE
         if (response.company != null) {
             inflateCompanyDetailsFragment(response.company!!, true)
@@ -55,7 +52,7 @@ class CompanyDetailsActivity : AppCompatActivity(), ICompanyDetails, ICompanyRes
         }
     }
 
-    override fun navigateToParentCompany(organisasjonsnummer: Int) {
+    override fun navigateToCompany(organisasjonsnummer: Int) {
         progressBarDetails.visibility = View.VISIBLE
         companyDetailsViewModel.searchForCompanyWithOrgNumber(this, organisasjonsnummer)
     }

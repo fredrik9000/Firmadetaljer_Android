@@ -1,6 +1,7 @@
 package com.github.fredrik9000.firmadetaljer_android.company_list
 
 import android.app.Application
+import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,8 +14,27 @@ import kotlinx.coroutines.launch
 
 class CompanyListViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: CompanyRepository = CompanyRepository(application)
+
+    var searchMode = SearchMode.FIRM_NAME
+    var searchString = ""
+
     val searchResultCompanyList: MutableLiveData<CompanyListResponse> = MutableLiveData()
     val savedCompanyList: LiveData<List<Company>>
+
+    val isSearchingWithValidOrganizationNumber: Boolean
+        get() = searchMode == SearchMode.ORGANIZATION_NUMBER && searchString.length >= ORGANIZATION_NUMBER_LENGTH && TextUtils.isDigitsOnly(searchString)
+
+    val isSearchingWithValidFirmName: Boolean
+        get() = searchMode == SearchMode.FIRM_NAME && searchString.length >= MINIMUM_FIRM_NAME_SEARCH_LENGTH
+
+    val isSearchingWithValidInput: Boolean
+        get() = isSearchingWithValidFirmName || isSearchingWithValidOrganizationNumber
+
+    val organizationNumberSearchHasTooManyCharacters : Boolean
+        get () = searchString.length > ORGANIZATION_NUMBER_LENGTH
+
+    val trimmedOrganizationNumber : String
+        get () = searchString.substring(0, ORGANIZATION_NUMBER_LENGTH)
 
     init {
         savedCompanyList = repository.allSavedCompanies
@@ -42,5 +62,10 @@ class CompanyListViewModel(application: Application) : AndroidViewModel(applicat
         viewModelScope.launch {
             repository.deleteAllCompanies()
         }
+    }
+
+    private companion object {
+        const val MINIMUM_FIRM_NAME_SEARCH_LENGTH = 2
+        const val ORGANIZATION_NUMBER_LENGTH = 9
     }
 }

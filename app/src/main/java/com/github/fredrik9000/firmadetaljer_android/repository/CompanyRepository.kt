@@ -4,7 +4,7 @@ import android.app.Application
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.github.fredrik9000.firmadetaljer_android.interfaces.ICompanyResponseHandler
+import com.github.fredrik9000.firmadetaljer_android.company_details.CompanyDetailsNavigation
 
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompaniesDTO
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyDTO
@@ -114,21 +114,21 @@ class CompanyRepository(application: Application) {
         })
     }
 
-    fun getCompanyWithOrgNumber(callback: ICompanyResponseHandler, orgNumber: Int) {
+    fun getCompanyWithOrgNumber(callback: CompanyDetailsNavigation, orgNumber: Int) {
         val call = service.getCompanyWithOrgNumber(orgNumber)
         call.enqueue(object : Callback<CompanyDTO> {
             override fun onResponse(call: Call<CompanyDTO>, response: Response<CompanyDTO>) {
                 if (!response.isSuccessful) {
-                    callback.handleResponse(CompanyResponse(HttpException(response)))
+                    callback.handleCompanyNavigationResponse(CompanyResponse(HttpException(response)))
                     return
                 }
                 val companyDTO = response.body()
                 val company = createCompanyFromDTO(companyDTO!!)
-                callback.handleResponse(CompanyResponse(company))
+                callback.handleCompanyNavigationResponse(CompanyResponse(company))
             }
 
             override fun onFailure(call: Call<CompanyDTO>, t: Throwable) {
-                callback.handleResponse(CompanyResponse(t))
+                callback.handleCompanyNavigationResponse(CompanyResponse(t))
             }
         })
     }

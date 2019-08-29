@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    android:id="@+id/parent_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/parent_layout"
+    android:orientation="horizontal"
     android:padding="@dimen/list_item_padding">
+
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/group_heading"
-        android:textSize="@dimen/list_item_company_details_parent_text_size"
-        android:textColor="@color/colorListItemText"
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="?android:attr/listPreferredItemHeightSmall"
-        android:textAppearance="?android:attr/textAppearance"
-        android:gravity="center_vertical|center"
+        android:layout_weight="1"
         android:ellipsize="end"
+        android:gravity="center_vertical|center"
         android:maxLines="1"
-        android:textStyle="bold"/>
+        android:textAppearance="?android:attr/textAppearance"
+        android:textColor="@color/colorListItemText"
+        android:textSize="@dimen/list_item_company_details_parent_text_size"
+        android:textStyle="bold" />
+
 </LinearLayout>

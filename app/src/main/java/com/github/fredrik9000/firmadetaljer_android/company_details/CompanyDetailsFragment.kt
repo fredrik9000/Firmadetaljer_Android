@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ExpandableListView
-import com.github.fredrik9000.firmadetaljer_android.interfaces.ICompanyDetails
 import com.github.fredrik9000.firmadetaljer_android.R
 
 import com.github.fredrik9000.firmadetaljer_android.databinding.FragmentCompanyDetailsBinding
@@ -22,7 +21,7 @@ import java.util.HashMap
 class CompanyDetailsFragment : Fragment() {
 
     private lateinit var company: Company
-    private lateinit var companyDetailsInterface: ICompanyDetails
+    private lateinit var companyDetailsNavigation: CompanyDetailsNavigation
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +32,6 @@ class CompanyDetailsFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentCompanyDetailsBinding>(
                 inflater, R.layout.fragment_company_details, container, false)
-        val view = binding.root
 
         val expandableListView = binding.companyDetailsList
 
@@ -45,17 +43,17 @@ class CompanyDetailsFragment : Fragment() {
         expandableListView.setOnChildClickListener(ExpandableListView.OnChildClickListener { _, _, groupPosition, childPosition, _ ->
             val companyDetailsDescription = companyDetailItems[companyDetailGroups[groupPosition]]!![childPosition]
             if (companyDetailsDescription.label == resources.getString(R.string.company_detail_details_overordnet_enhet)) {
-                companyDetailsInterface.navigateToParentCompany(company.overordnetEnhet!!)
+                companyDetailsNavigation.navigateToCompany(company.overordnetEnhet!!)
                 return@OnChildClickListener true
             } else if (companyDetailsDescription.label == resources.getString(R.string.company_detail_details_hjemmeside)) {
-                companyDetailsInterface.navigateToHomepage(company.hjemmeside!!)
+                companyDetailsNavigation.navigateToHomepage(company.hjemmeside!!)
                 return@OnChildClickListener true
             }
             false
         })
         expandGroups(expandableListView, adapter)
 
-        return view
+        return binding.root
     }
 
     private fun expandGroups(expandableListView: ExpandableListView, adapter: CompanyDetailsAdapter) {
@@ -328,7 +326,7 @@ class CompanyDetailsFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        companyDetailsInterface = activity as ICompanyDetails
+        companyDetailsNavigation = activity as CompanyDetailsNavigation
     }
 
     companion object {
