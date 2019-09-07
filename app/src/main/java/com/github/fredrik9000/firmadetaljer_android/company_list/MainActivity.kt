@@ -32,6 +32,8 @@ import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyRespo
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 
 import retrofit2.HttpException
+import java.util.Timer
+import kotlin.concurrent.timerTask
 
 class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener, CompanyDetailsNavigation {
     private lateinit var progressBarList: ProgressBar
@@ -48,6 +50,8 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
     private var isTwoPane: Boolean = false
 
     private lateinit var toolbarMenu : ActionMenuView
+
+    var searchDebounceTimer: Timer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -200,21 +204,31 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
                     recyclerView.adapter = adapterSavedList
                 }
 
-                if (companyListViewModel.searchMode == SearchMode.ORGANIZATION_NUMBER) {
-                    // Since organization number should be 9, it will be trimmed whenever the user tries to type more
-                    if (companyListViewModel.organizationNumberSearchHasTooManyCharacters) {
-                        searchView.setQuery(companyListViewModel.trimmedOrganizationNumber, false)
-                    } else if (companyListViewModel.isSearchingWithValidOrganizationNumber) {
-                        progressBarList.visibility = View.VISIBLE
-                        companyListViewModel.searchForCompaniesWithOrgNumber(Integer.parseInt(newText))
-                    }
-                    return true
-                } else if (companyListViewModel.isSearchingWithValidFirmName) {
-                    progressBarList.visibility = View.VISIBLE
-                    companyListViewModel.searchForCompaniesThatStartsWith(newText)
+                // Since organization number should be 9, it will be trimmed whenever the user tries to type more
+                if (companyListViewModel.searchMode == SearchMode.ORGANIZATION_NUMBER && companyListViewModel.organizationNumberSearchHasTooManyCharacters) {
+                    companyListViewModel.searchString = companyListViewModel.trimmedOrganizationNumber
+                    searchView.setQuery(companyListViewModel.searchString, false)
+                } else if (companyListViewModel.isSearchingWithValidFirmName || companyListViewModel.isSearchingWithValidOrganizationNumber) {
+                    debounceSearch()
                     return true
                 }
+
                 return false
+            }
+
+            fun debounceSearch() {
+                searchDebounceTimer?.cancel()
+                searchDebounceTimer = Timer().apply {
+                    schedule(timerTask {
+                        runOnUiThread {
+                            progressBarList.visibility = View.VISIBLE
+                            if (companyListViewModel.searchMode == SearchMode.FIRM_NAME) {
+                                companyListViewModel.searchForCompaniesThatStartsWith(companyListViewModel.searchString)
+                            } else {
+                                companyListViewModel.searchForCompaniesWithOrgNumber(Integer.parseInt(companyListViewModel.searchString))
+                            }}
+                    }, DEBOUNCE_TIME_IN_MILLISECONDS)
+                }
             }
         })
 
@@ -290,6 +304,11 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onDestroy() {
+        searchDebounceTimer?.cancel()
+        super.onDestroy()
+    }
+
     private fun checkForEmptyView(binding: ActivityMainBinding) {
         if (!companyListViewModel.isSearchingWithValidInput && companyListViewModel.savedCompanyList.value.isNullOrEmpty()) {
             binding.includedCompanyList.companyListWithHeader.visibility = View.GONE
@@ -317,5 +336,6 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         const val TAG = "MainActivity"
         const val SEARCH_KEY = "SEARCH"
         const val SEARCH_MODE_KEY = "SEARCH_MODE"
+        const val DEBOUNCE_TIME_IN_MILLISECONDS = 500L
     }
 }
