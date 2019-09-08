@@ -74,10 +74,12 @@ class CompanyDetailsAdapter(
 
         if (child.label == context.resources.getString(R.string.company_detail_details_hjemmeside) || child.label == context.resources.getString(R.string.company_detail_details_overordnet_enhet)) {
             viewMutable.findViewById<View>(R.id.arrow_forward).visibility = View.VISIBLE
-            descriptionTextView.setTextColor(ContextCompat.getColor(context, R.color.colorListItemTextNavigatableCompanyDetails))
+            descriptionTextView.setTextColor(ContextCompat.getColor(context, R.color.colorTextDetailDescriptionNavigatable))
+            descriptionTextView.alpha = 1.0F
         } else {
             viewMutable.findViewById<View>(R.id.arrow_forward).visibility = View.GONE
-            descriptionTextView.setTextColor(ContextCompat.getColor(context, R.color.colorListItemText))
+            descriptionTextView.setTextColor(getDescriptionTextColor(context))
+            descriptionTextView.alpha = 0.65F
         }
 
         return viewMutable
@@ -87,5 +89,14 @@ class CompanyDetailsAdapter(
         val child = getChild(groupPosition, childPosition) as CompanyDetailsDescription
         return child.label == context.resources.getString(R.string.company_detail_details_hjemmeside)
                 || child.label == context.resources.getString(R.string.company_detail_details_overordnet_enhet)
+    }
+
+    private fun getDescriptionTextColor(context: Context) : Int {
+        val typedArray = context.obtainStyledAttributes(null, intArrayOf(android.R.attr.textColorPrimary))
+        try {
+            return typedArray.getColor(0, ContextCompat.getColor(context, R.color.colorTextListDeescriptionPrimaryFallback))
+        } finally {
+            typedArray.recycle()
+        }
     }
 }

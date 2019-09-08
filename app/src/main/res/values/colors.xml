@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#C51162</color>
 
     <color name="colorListHeaderBackground">@color/colorPrimaryDark</color>
     <color name="colorListHeaderText">@android:color/white</color>
-    <color name="colorListItemText">#DE000000</color>
-    <color name="colorListItemTextNavigatableCompanyDetails">#0000EE</color>
-    <color name="colorCompanyDetailsBackground">#F5F5F5</color>
 
-    <color name="colorToggleOutline">#D81B60</color>
-    <color name="colorTogglePressed">#AD1457</color>
-    <color name="colorToggleSelected">#D81B60</color>
+    <color name="colorTextDetailDescriptionNavigatable">#6200EE</color>
+    <color name="colorTextListDeescriptionPrimaryFallback">@android:color/black</color>
+
+    <color name="colorToggleOutline">#C51162</color>
+    <color name="colorTogglePressed">#8E033F</color>
+    <color name="colorToggleSelected">#C51162</color>
+
 </resources>
