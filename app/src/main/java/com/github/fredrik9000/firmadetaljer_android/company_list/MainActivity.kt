@@ -211,23 +211,29 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
                     companyListViewModel.searchString = companyListViewModel.trimmedOrganizationNumber
                     searchView.setQuery(companyListViewModel.searchString, false)
                 } else if (companyListViewModel.isSearchingWithValidFirmName || companyListViewModel.isSearchingWithValidOrganizationNumber) {
-                    debounceSearch()
+                    debounceSearch(companyListViewModel.searchMode, companyListViewModel.searchString)
                     return true
                 }
 
                 return false
             }
 
-            fun debounceSearch() {
+            fun debounceSearch(searchMode: SearchMode, searchString: String) {
                 searchDebounceTimer?.cancel()
+
                 searchDebounceTimer = Timer().apply {
                     schedule(timerTask {
+                        // If the search mode or text was updated during the delay don´t perform search
+                        if (searchMode != companyListViewModel.searchMode || searchString != companyListViewModel.searchString) {
+                            return@timerTask
+                        }
+
                         runOnUiThread {
                             progressBarList.visibility = View.VISIBLE
-                            if (companyListViewModel.searchMode == SearchMode.FIRM_NAME) {
-                                companyListViewModel.searchForCompaniesThatStartsWith(companyListViewModel.searchString)
+                            if (searchMode == SearchMode.FIRM_NAME) {
+                                companyListViewModel.searchForCompaniesThatStartsWith(searchString)
                             } else {
-                                companyListViewModel.searchForCompaniesWithOrgNumber(Integer.parseInt(companyListViewModel.searchString))
+                                companyListViewModel.searchForCompaniesWithOrgNumber(Integer.parseInt(searchString))
                             }}
                     }, DEBOUNCE_TIME_IN_MILLISECONDS)
                 }
