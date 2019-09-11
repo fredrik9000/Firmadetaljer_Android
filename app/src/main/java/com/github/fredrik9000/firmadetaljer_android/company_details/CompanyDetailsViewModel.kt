@@ -6,9 +6,9 @@ import androidx.lifecycle.AndroidViewModel
 import com.github.fredrik9000.firmadetaljer_android.repository.CompanyRepository
 
 class CompanyDetailsViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: CompanyRepository = CompanyRepository(application)
+    private val repository = CompanyRepository(application)
 
     fun searchForCompanyWithOrgNumber(callback: CompanyDetailsNavigation, orgNumber: Int) {
-        repository.getCompanyWithOrgNumber(callback, orgNumber)
+        repository.searchForCompanyWithOrgNumber(callback, orgNumber)
     }
 }

@@ -56,7 +56,7 @@ class CompanyRepository(application: Application) {
         companyDao.deleteAll()
     }
 
-    fun getAllCompaniesThatStartsWith(companyResponseMutableLiveData: MutableLiveData<CompanyListResponse>, text: String) {
+    fun searchForCompaniesWithNamesBeginningWithText(companyResponseMutableLiveData: MutableLiveData<CompanyListResponse>, text: String) {
         val call = service.getCompanies("startswith(navn,'$text')")
         call.enqueue(object : Callback<CompaniesDTO> {
             override fun onResponse(call: Call<CompaniesDTO>, response: Response<CompaniesDTO>) {
@@ -90,7 +90,7 @@ class CompanyRepository(application: Application) {
         })
     }
 
-    fun getCompaniesWithOrgNumber(companyResponseMutableLiveData: MutableLiveData<CompanyListResponse>, orgNumber: Int) {
+    fun searchForCompaniesWithOrgNumber(companyResponseMutableLiveData: MutableLiveData<CompanyListResponse>, orgNumber: Int) {
         val call = service.getCompanyWithOrgNumber(orgNumber)
         call.enqueue(object : Callback<CompanyDTO> {
             override fun onResponse(call: Call<CompanyDTO>, response: Response<CompanyDTO>) {
@@ -114,7 +114,7 @@ class CompanyRepository(application: Application) {
         })
     }
 
-    fun getCompanyWithOrgNumber(callback: CompanyDetailsNavigation, orgNumber: Int) {
+    fun searchForCompanyWithOrgNumber(callback: CompanyDetailsNavigation, orgNumber: Int) {
         val call = service.getCompanyWithOrgNumber(orgNumber)
         call.enqueue(object : Callback<CompanyDTO> {
             override fun onResponse(call: Call<CompanyDTO>, response: Response<CompanyDTO>) {
@@ -140,34 +140,20 @@ class CompanyRepository(application: Application) {
                 companyDTO.registrertIMvaregisteret, companyDTO.registrertIForetaksregisteret, companyDTO.registrertIStiftelsesregisteret,
                 companyDTO.antallAnsatte, companyDTO.sisteInnsendteAarsregnskap, companyDTO.konkurs,
                 companyDTO.underAvvikling, companyDTO.underTvangsavviklingEllerTvangsopplosning, companyDTO.overordnetEnhet,
-                if (companyDTO.institusjonellSektorkode != null) companyDTO.institusjonellSektorkode.kode else null,
-                if (companyDTO.institusjonellSektorkode != null) companyDTO.institusjonellSektorkode.beskrivelse else null,
-                if (companyDTO.naeringskode1 != null) companyDTO.naeringskode1.kode else null,
-                if (companyDTO.naeringskode1 != null) companyDTO.naeringskode1.beskrivelse else null,
-                if (companyDTO.naeringskode2 != null) companyDTO.naeringskode2.kode else null,
-                if (companyDTO.naeringskode2 != null) companyDTO.naeringskode2.beskrivelse else null,
-                if (companyDTO.naeringskode3 != null) companyDTO.naeringskode3.kode else null,
-                if (companyDTO.naeringskode3 != null) companyDTO.naeringskode3.beskrivelse else null,
-                if (companyDTO.postadresse != null) companyDTO.postadresse.adresse else null,
-                if (companyDTO.postadresse != null) companyDTO.postadresse.postnummer else null,
-                if (companyDTO.postadresse != null) companyDTO.postadresse.poststed else null,
-                if (companyDTO.postadresse != null) companyDTO.postadresse.kommunenummer else null,
-                if (companyDTO.postadresse != null) companyDTO.postadresse.kommune else null,
-                if (companyDTO.postadresse != null) companyDTO.postadresse.landkode else null,
-                if (companyDTO.postadresse != null) companyDTO.postadresse.land else null,
-                if (companyDTO.forretningsadresse != null) companyDTO.forretningsadresse.adresse else null,
-                if (companyDTO.forretningsadresse != null) companyDTO.forretningsadresse.postnummer else null,
-                if (companyDTO.forretningsadresse != null) companyDTO.forretningsadresse.poststed else null,
-                if (companyDTO.forretningsadresse != null) companyDTO.forretningsadresse.kommunenummer else null,
-                if (companyDTO.forretningsadresse != null) companyDTO.forretningsadresse.kommune else null,
-                if (companyDTO.forretningsadresse != null) companyDTO.forretningsadresse.landkode else null,
-                if (companyDTO.forretningsadresse != null) companyDTO.forretningsadresse.land else null,
-                if (companyDTO.beliggenhetsadresse != null) companyDTO.beliggenhetsadresse.adresse else null,
-                if (companyDTO.beliggenhetsadresse != null) companyDTO.beliggenhetsadresse.postnummer else null,
-                if (companyDTO.beliggenhetsadresse != null) companyDTO.beliggenhetsadresse.poststed else null,
-                if (companyDTO.beliggenhetsadresse != null) companyDTO.beliggenhetsadresse.kommunenummer else null,
-                if (companyDTO.beliggenhetsadresse != null) companyDTO.beliggenhetsadresse.kommune else null,
-                if (companyDTO.beliggenhetsadresse != null) companyDTO.beliggenhetsadresse.landkode else null,
-                if (companyDTO.beliggenhetsadresse != null) companyDTO.beliggenhetsadresse.land else null)
+                companyDTO.institusjonellSektorkode?.kode, companyDTO.institusjonellSektorkode?.beskrivelse,
+                companyDTO.naeringskode1?.kode, companyDTO.naeringskode1?.beskrivelse,
+                companyDTO.naeringskode2?.kode, companyDTO.naeringskode2?.beskrivelse,
+                companyDTO.naeringskode3?.kode, companyDTO.naeringskode3?.beskrivelse,
+                companyDTO.postadresse?.adresse, companyDTO.postadresse?.postnummer,
+                companyDTO.postadresse?.poststed, companyDTO.postadresse?.kommunenummer,
+                companyDTO.postadresse?.kommune, companyDTO.postadresse?.landkode,
+                companyDTO.postadresse?.land, companyDTO.forretningsadresse?.adresse,
+                companyDTO.forretningsadresse?.postnummer, companyDTO.forretningsadresse?.poststed,
+                companyDTO.forretningsadresse?.kommunenummer, companyDTO.forretningsadresse?.kommune,
+                companyDTO.forretningsadresse?.landkode, companyDTO.forretningsadresse?.land,
+                companyDTO.beliggenhetsadresse?.adresse, companyDTO.beliggenhetsadresse?.postnummer,
+                companyDTO.beliggenhetsadresse?.poststed, companyDTO.beliggenhetsadresse?.kommunenummer,
+                companyDTO.beliggenhetsadresse?.kommune, companyDTO.beliggenhetsadresse?.landkode,
+                companyDTO.beliggenhetsadresse?.land)
     }
 }

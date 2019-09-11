@@ -13,7 +13,7 @@ import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import kotlinx.coroutines.launch
 
 class CompanyListViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: CompanyRepository = CompanyRepository(application)
+    private val repository = CompanyRepository(application)
 
     var searchMode = SearchMode.FIRM_NAME
     var searchString = ""
@@ -33,15 +33,16 @@ class CompanyListViewModel(application: Application) : AndroidViewModel(applicat
     val organizationNumberSearchHasTooManyCharacters : Boolean
         get () = searchString.length > ORGANIZATION_NUMBER_LENGTH
 
-    val trimmedOrganizationNumber : String
-        get () = searchString.substring(0, ORGANIZATION_NUMBER_LENGTH)
-
     init {
         savedCompanyList = repository.allSavedCompanies
     }
 
-    fun searchForCompaniesThatStartsWith(text: String) {
-        repository.getAllCompaniesThatStartsWith(searchResultCompanyList, text)
+    fun trimSearchStringByOrganizationNumberLength() {
+        searchString = searchString.substring(0, ORGANIZATION_NUMBER_LENGTH)
+    }
+
+    fun searchForCompaniesWithNamesBeginningWithText(text: String) {
+        repository.searchForCompaniesWithNamesBeginningWithText(searchResultCompanyList, text)
     }
 
     // Searching by org number can only return 1 company, so the implementation isn't optimal
@@ -49,7 +50,7 @@ class CompanyListViewModel(application: Application) : AndroidViewModel(applicat
     // which is why the same live data is passed in here.
     // TODO: Improve implementation
     fun searchForCompaniesWithOrgNumber(orgNumber: Int) {
-        repository.getCompaniesWithOrgNumber(searchResultCompanyList, orgNumber)
+        repository.searchForCompaniesWithOrgNumber(searchResultCompanyList, orgNumber)
     }
 
     fun upsert(company: Company) {

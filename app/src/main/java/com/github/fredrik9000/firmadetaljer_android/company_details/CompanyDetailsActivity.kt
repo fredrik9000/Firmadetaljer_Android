@@ -44,11 +44,11 @@ class CompanyDetailsActivity : AppCompatActivity(), CompanyDetailsNavigation {
 
     override fun handleCompanyNavigationResponse(response: CompanyResponse) {
         progressBarDetails.visibility = View.GONE
-        if (response.company != null) {
-            inflateCompanyDetailsFragment(response.company!!, true)
-        } else {
+        response.company?.let {
+            inflateCompanyDetailsFragment(it, true)
+        } ?: run {
             Toast.makeText(applicationContext, R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show()
-            Log.d(TAG, "handleResponse() called with companyResponse error = " + response.error!!)
+            Log.d(TAG, "handleCompanyNavigationResponse() called with response error = " + response.error!!)
         }
     }
 

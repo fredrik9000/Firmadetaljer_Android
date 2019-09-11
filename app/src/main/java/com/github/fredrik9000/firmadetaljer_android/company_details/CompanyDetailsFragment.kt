@@ -67,74 +67,74 @@ class CompanyDetailsFragment : Fragment() {
 
         val detailsList = ArrayList<CompanyDetailsDescription>()
 
-        if (company.navn != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_firmanavn), company.navn!!))
+        company.navn?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_firmanavn), it))
         }
 
         detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_organisasjonsnummer), (company.organisasjonsnummer).toString()))
 
-        if (company.stiftelsesdato != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_stiftelsesdato), company.stiftelsesdato!!))
+        company.stiftelsesdato?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_stiftelsesdato), it))
         }
 
-        if (company.registreringsdatoEnhetsregisteret != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_enhetsregisteret), company.registreringsdatoEnhetsregisteret!!))
+        company.registreringsdatoEnhetsregisteret?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_enhetsregisteret), it))
         }
 
-        if (company.oppstartsdato != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_oppstartsdato), company.oppstartsdato!!))
+        company.oppstartsdato?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_oppstartsdato), it))
         }
 
-        if (company.datoEierskifte != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_eierskife), company.datoEierskifte!!))
+        company.datoEierskifte?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_eierskife), it))
         }
 
-        if (company.organisasjonsform != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_organisasjonsform), company.organisasjonsform!!))
+        company.organisasjonsform?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_organisasjonsform), it))
         }
 
-        if (company.hjemmeside != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_hjemmeside), company.hjemmeside!!))
+        company.hjemmeside?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_hjemmeside), it))
         }
 
-        if (company.registertIFrivillighetsregisteret != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_frivillighetsregisteret), convertYesNoValue(company.registertIFrivillighetsregisteret!!)))
+        company.registertIFrivillighetsregisteret?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_frivillighetsregisteret), convertYesNoValue(it)))
         }
 
-        if (company.registrertIMvaregisteret != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_mva_registeret), convertYesNoValue(company.registrertIMvaregisteret!!)))
+        company.registrertIMvaregisteret?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_mva_registeret), convertYesNoValue(it)))
         }
 
-        if (company.registrertIForetaksregisteret != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_foretaksregisteret), convertYesNoValue(company.registrertIForetaksregisteret!!)))
+        company.registrertIForetaksregisteret?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_foretaksregisteret), convertYesNoValue(it)))
         }
 
-        if (company.registrertIStiftelsesregisteret != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_stiftelsesregisteret), convertYesNoValue(company.registrertIStiftelsesregisteret!!)))
+        company.registrertIStiftelsesregisteret?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_stiftelsesregisteret), convertYesNoValue(it)))
         }
 
-        if (company.antallAnsatte != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_antall_ansatte), (company.antallAnsatte!!).toString()))
+        company.antallAnsatte?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_antall_ansatte), it.toString()))
         }
 
-        if (company.sisteInnsendteAarsregnskap != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_sist_innsendte_årsregnskap), (company.sisteInnsendteAarsregnskap!!).toString()))
+        company.sisteInnsendteAarsregnskap?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_sist_innsendte_årsregnskap), it.toString()))
         }
 
-        if (company.konkurs != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_konkurs), convertYesNoValue(company.konkurs!!)))
+        company.konkurs?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_konkurs), convertYesNoValue(it)))
         }
 
-        if (company.underAvvikling != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_under_avvikling), convertYesNoValue(company.underAvvikling!!)))
+        company.underAvvikling?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_under_avvikling), convertYesNoValue(it)))
         }
 
-        if (company.underTvangsavviklingEllerTvangsopplosning != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_under_tvangsavvikling_eller_tvangsoppløsning), convertYesNoValue(company.underTvangsavviklingEllerTvangsopplosning!!)))
+        company.underTvangsavviklingEllerTvangsopplosning?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_under_tvangsavvikling_eller_tvangsoppløsning), convertYesNoValue(it)))
         }
 
-        if (company.overordnetEnhet != null) {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_overordnet_enhet), (company.overordnetEnhet!!).toString()))
+        company.overordnetEnhet?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_overordnet_enhet), it.toString()))
         }
 
         val detailsHeading = resources.getString(R.string.company_detail_heading_details)
@@ -143,12 +143,12 @@ class CompanyDetailsFragment : Fragment() {
 
         val institusjonellSektorKodeList = ArrayList<CompanyDetailsDescription>()
 
-        if (company.institusjonellSektorkodeKode != null) {
-            institusjonellSektorKodeList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_kode), company.institusjonellSektorkodeKode!!))
+        company.institusjonellSektorkodeKode?.let {
+            institusjonellSektorKodeList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_kode), it))
         }
 
-        if (company.institusjonellSektorkodeBeskrivelse != null) {
-            institusjonellSektorKodeList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_beskrivelse), company.institusjonellSektorkodeBeskrivelse!!))
+        company.institusjonellSektorkodeBeskrivelse?.let {
+            institusjonellSektorKodeList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_beskrivelse), it))
         }
 
         if (institusjonellSektorKodeList.size > 0) {
@@ -159,12 +159,12 @@ class CompanyDetailsFragment : Fragment() {
 
         val naeringskode1List = ArrayList<CompanyDetailsDescription>()
 
-        if (company.naeringskode1Kode != null) {
-            naeringskode1List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_kode), company.naeringskode1Kode!!))
+        company.naeringskode1Kode?.let {
+            naeringskode1List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_kode), it))
         }
 
-        if (company.naeringskode1Beskrivelse != null) {
-            naeringskode1List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_beskrivelse), company.naeringskode1Beskrivelse!!))
+        company.naeringskode1Beskrivelse?.let {
+            naeringskode1List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_beskrivelse), it))
         }
 
         if (naeringskode1List.size > 0) {
@@ -175,12 +175,12 @@ class CompanyDetailsFragment : Fragment() {
 
         val naeringskode2List = ArrayList<CompanyDetailsDescription>()
 
-        if (company.naeringskode2Kode != null) {
-            naeringskode2List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_kode), company.naeringskode2Kode!!))
+        company.naeringskode2Kode?.let {
+            naeringskode2List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_kode), it))
         }
 
-        if (company.naeringskode2Beskrivelse != null) {
-            naeringskode2List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_beskrivelse), company.naeringskode2Beskrivelse!!))
+        company.naeringskode2Beskrivelse?.let {
+            naeringskode2List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_beskrivelse), it))
         }
 
         if (naeringskode2List.size > 0) {
@@ -191,12 +191,12 @@ class CompanyDetailsFragment : Fragment() {
 
         val naeringskode3List = ArrayList<CompanyDetailsDescription>()
 
-        if (company.naeringskode3Kode != null) {
-            naeringskode3List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_kode), company.naeringskode3Kode!!))
+        company.naeringskode3Kode?.let {
+            naeringskode3List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_kode), it))
         }
 
-        if (company.naeringskode3Beskrivelse != null) {
-            naeringskode3List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_beskrivelse), company.naeringskode3Beskrivelse!!))
+        company.naeringskode3Beskrivelse?.let {
+            naeringskode3List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_beskrivelse), it))
         }
 
         if (naeringskode3List.size > 0) {
@@ -207,32 +207,32 @@ class CompanyDetailsFragment : Fragment() {
 
         val postadresseList = ArrayList<CompanyDetailsDescription>()
 
-        if (company.postadresseAdresse != null) {
-            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_adresse), company.postadresseAdresse!!))
+        company.postadresseAdresse?.let {
+            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_adresse), it))
         }
 
-        if (company.postadressePostnummer != null) {
-            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_postnummer), company.postadressePostnummer!!))
+        company.postadressePostnummer?.let {
+            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_postnummer), it))
         }
 
-        if (company.postadressePoststed != null) {
-            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_poststed), company.postadressePoststed!!))
+        company.postadressePoststed?.let {
+            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_poststed), it))
         }
 
-        if (company.postadresseKommunenummer != null) {
-            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_kommunenummer), company.postadresseKommunenummer!!))
+        company.postadresseKommunenummer?.let {
+            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_kommunenummer), it))
         }
 
-        if (company.postadresseKommune != null) {
-            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_kommune), company.postadresseKommune!!))
+        company.postadresseKommune?.let {
+            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_kommune), it))
         }
 
-        if (company.postadresseLandkode != null) {
-            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_landskode), company.postadresseLandkode!!))
+        company.postadresseLandkode?.let {
+            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_landskode), it))
         }
 
-        if (company.postadresseLand != null) {
-            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_land), company.postadresseLand!!))
+        company.postadresseLand?.let {
+            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_land), it))
         }
 
         if (postadresseList.size > 0) {
@@ -243,32 +243,32 @@ class CompanyDetailsFragment : Fragment() {
 
         val forretningsadresseList = ArrayList<CompanyDetailsDescription>()
 
-        if (company.forretningsadresseAdresse != null) {
-            forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_adresse), company.forretningsadresseAdresse!!))
+        company.forretningsadresseAdresse?.let {
+            forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_adresse), it))
         }
 
-        if (company.forretningsadressePostnummer != null) {
-            forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_postnummer), company.forretningsadressePostnummer!!))
+        company.forretningsadressePostnummer?.let {
+            forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_postnummer), it))
         }
 
-        if (company.forretningsadressePoststed != null) {
-            forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_poststed), company.forretningsadressePoststed!!))
+        company.forretningsadressePoststed?.let {
+            forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_poststed), it))
         }
 
-        if (company.forretningsadresseKommunenummer != null) {
-            forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_kommunenummer), company.forretningsadresseKommunenummer!!))
+        company.forretningsadresseKommunenummer?.let {
+            forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_kommunenummer), it))
         }
 
-        if (company.forretningsadresseKommune != null) {
-            forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_kommune), company.forretningsadresseKommune!!))
+        company.forretningsadresseKommune?.let {
+            forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_kommune), it))
         }
 
-        if (company.forretningsadresseLandkode != null) {
-            forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_landskode), company.forretningsadresseLandkode!!))
+        company.forretningsadresseLandkode?.let {
+            forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_landskode), it))
         }
 
-        if (company.forretningsadresseLand != null) {
-            forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_land), company.forretningsadresseLand!!))
+        company.forretningsadresseLand?.let {
+            forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_land), it))
         }
 
         if (forretningsadresseList.size > 0) {
@@ -279,32 +279,32 @@ class CompanyDetailsFragment : Fragment() {
 
         val beliggenhetsadresseList = ArrayList<CompanyDetailsDescription>()
 
-        if (company.beliggenhetsadresseAdresse != null) {
-            beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_adresse), company.beliggenhetsadresseAdresse!!))
+        company.beliggenhetsadresseAdresse?.let {
+            beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_adresse), it))
         }
 
-        if (company.beliggenhetsadressePostnummer != null) {
-            beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_postnummer), company.beliggenhetsadressePostnummer!!))
+        company.beliggenhetsadressePostnummer?.let {
+            beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_postnummer), it))
         }
 
-        if (company.beliggenhetsadressePoststed != null) {
-            beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_poststed), company.beliggenhetsadressePoststed!!))
+        company.beliggenhetsadressePoststed?.let {
+            beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_poststed), it))
         }
 
-        if (company.beliggenhetsadresseKommunenummer != null) {
-            beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_kommunenummer), company.beliggenhetsadresseKommunenummer!!))
+        company.beliggenhetsadresseKommunenummer?.let {
+            beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_kommunenummer), it))
         }
 
-        if (company.beliggenhetsadresseKommune != null) {
-            beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_kommune), company.beliggenhetsadresseKommune!!))
+        company.beliggenhetsadresseKommune?.let {
+            beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_kommune), it))
         }
 
-        if (company.beliggenhetsadresseLandkode != null) {
-            beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_landskode), company.beliggenhetsadresseLandkode!!))
+        company.beliggenhetsadresseLandkode?.let {
+            beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_landskode), it))
         }
 
-        if (company.beliggenhetsadresseLand != null) {
-            beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_land), company.beliggenhetsadresseLand!!))
+        company.beliggenhetsadresseLand?.let {
+            beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_land), it))
         }
 
         if (beliggenhetsadresseList.size > 0) {

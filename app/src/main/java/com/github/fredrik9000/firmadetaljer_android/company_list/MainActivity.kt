@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
     private var progressBarDetails: ProgressBar? = null // Not present on phones
     private lateinit var searchView: SearchView
     private lateinit var recyclerView: RecyclerView
+    private lateinit var toolbarMenu : ActionMenuView
 
     private lateinit var adapterSearchList: CompanyListAdapter
     private lateinit var adapterSavedList: CompanyListAdapter
@@ -50,10 +51,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
     private lateinit var companyDetailsViewModel: CompanyDetailsViewModel
 
     private var isTwoPane: Boolean = false
-
-    private lateinit var toolbarMenu : ActionMenuView
-
-    var searchDebounceTimer: Timer? = null
+    private var searchDebounceTimer: Timer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,9 +80,9 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         adapterSavedList = CompanyListAdapter(this@MainActivity, ArrayList())
         adapterSearchList = CompanyListAdapter(this@MainActivity, ArrayList())
 
-        if (savedInstanceState != null) {
-            companyListViewModel.searchString = savedInstanceState.getString(SEARCH_KEY) ?: ""
-            companyListViewModel.searchMode = savedInstanceState.getSerializable(SEARCH_MODE_KEY) as SearchMode
+        savedInstanceState?.let {
+            companyListViewModel.searchString = it.getString(SEARCH_KEY) ?: ""
+            companyListViewModel.searchMode = it.getSerializable(SEARCH_MODE_KEY) as SearchMode
         }
 
         // In case the activity gets recreated (for example by rotating the device)
@@ -109,7 +107,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
             if (companyListViewModel.searchMode == SearchMode.ORGANIZATION_NUMBER) {
                 companyListViewModel.searchForCompaniesWithOrgNumber(Integer.parseInt(companyListViewModel.searchString))
             } else {
-                companyListViewModel.searchForCompaniesThatStartsWith(companyListViewModel.searchString)
+                companyListViewModel.searchForCompaniesWithNamesBeginningWithText(companyListViewModel.searchString)
             }
         }
     }
@@ -123,7 +121,6 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
                 layoutManager.orientation))
     }
 
-    // Used for when updating saved companies (happens when viewing one)
     // Saved companies is shown whenever the user isn't searching
     private fun setupSavedCompaniesObserver(binding: ActivityMainBinding) {
         companyListViewModel.savedCompanyList.observe(this, Observer { companyList ->
@@ -180,7 +177,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
             override fun onQueryTextSubmit(query: String): Boolean {
                 if (companyListViewModel.isSearchingWithValidFirmName) {
                     progressBarList.visibility = View.VISIBLE
-                    companyListViewModel.searchForCompaniesThatStartsWith(query)
+                    companyListViewModel.searchForCompaniesWithNamesBeginningWithText(query)
                     // clearFocus() closes the full screen search view for phones in landscape mode.
                     searchView.clearFocus()
                     return true
@@ -208,9 +205,9 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
 
                 // Since organization number should be 9, it will be trimmed whenever the user tries to type more
                 if (companyListViewModel.searchMode == SearchMode.ORGANIZATION_NUMBER && companyListViewModel.organizationNumberSearchHasTooManyCharacters) {
-                    companyListViewModel.searchString = companyListViewModel.trimmedOrganizationNumber
+                    companyListViewModel.trimSearchStringByOrganizationNumberLength()
                     searchView.setQuery(companyListViewModel.searchString, false)
-                } else if (companyListViewModel.isSearchingWithValidFirmName || companyListViewModel.isSearchingWithValidOrganizationNumber) {
+                } else if (companyListViewModel.isSearchingWithValidInput) {
                     debounceSearch(companyListViewModel.searchMode, companyListViewModel.searchString)
                     return true
                 }
@@ -231,7 +228,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
                         runOnUiThread {
                             progressBarList.visibility = View.VISIBLE
                             if (searchMode == SearchMode.FIRM_NAME) {
-                                companyListViewModel.searchForCompaniesThatStartsWith(searchString)
+                                companyListViewModel.searchForCompaniesWithNamesBeginningWithText(searchString)
                             } else {
                                 companyListViewModel.searchForCompaniesWithOrgNumber(Integer.parseInt(searchString))
                             }}
@@ -240,8 +237,8 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
             }
         })
 
-        binding.includedToolbar.searchModeToggle.setOnCheckedChangeListener { _, i ->
-            if (i == binding.includedToolbar.searchFirmName.id) {
+        binding.includedToolbar.searchModeToggle.setOnCheckedChangeListener { _, checkedId ->
+            if (checkedId == binding.includedToolbar.searchFirmName.id) {
                 companyListViewModel.searchMode = SearchMode.FIRM_NAME
                 searchView.queryHint = getString(R.string.company_search_name_hint)
             } else {
@@ -274,15 +271,14 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
 
     override fun handleCompanyNavigationResponse(response: CompanyResponse) {
         progressBarDetails!!.visibility = View.GONE
-        if (response.company != null) {
-            inflateCompanyDetailsFragment(response.company!!, true)
-        } else {
+        response.company?.let {
+            inflateCompanyDetailsFragment(it, true)
+        } ?: run {
             Toast.makeText(applicationContext, R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show()
-            Log.d(TAG, "handleResponse() called with companyResponse error = " + response.error!!)
+            Log.d(TAG, "handleCompanyNavigationResponse() called with response error = " + response.error!!)
         }
     }
 
-    // This is only called when in two pane mode
     override fun navigateToCompany(organisasjonsnummer: Int) {
         progressBarDetails!!.visibility = View.VISIBLE
         companyDetailsViewModel.searchForCompanyWithOrgNumber(this, organisasjonsnummer)
@@ -309,8 +305,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
             companyListViewModel.deleteAllCompanies()
             return true
         } else if (item.itemId == R.id.toggle_night_mode) {
-            val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-            when (nightModeFlags) {
+            when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
                 Configuration.UI_MODE_NIGHT_YES -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 Configuration.UI_MODE_NIGHT_NO -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                 else -> // Assumes light theme
