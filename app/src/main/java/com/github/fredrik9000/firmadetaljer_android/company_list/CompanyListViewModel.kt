@@ -34,7 +34,7 @@ class CompanyListViewModel(application: Application) : AndroidViewModel(applicat
         get () = searchString.length > ORGANIZATION_NUMBER_LENGTH
 
     init {
-        savedCompanyList = repository.allSavedCompanies
+        savedCompanyList = repository.savedCompanies
     }
 
     fun trimSearchStringByOrganizationNumberLength() {

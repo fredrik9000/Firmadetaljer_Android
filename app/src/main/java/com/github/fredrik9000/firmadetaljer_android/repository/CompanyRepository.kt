@@ -27,7 +27,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class CompanyRepository(application: Application) {
     private val companyDao: CompanyDao
     private val service: CompanyService
-    val allSavedCompanies: LiveData<List<Company>>
+    val savedCompanies: LiveData<List<Company>>
 
     init {
         val database = CompanyDatabase.getInstance(application)
@@ -40,15 +40,13 @@ class CompanyRepository(application: Application) {
 
         service = retrofit.create(CompanyService::class.java)
 
-        allSavedCompanies = companyDao.allCompaniesOrderedByLastInserted
+        savedCompanies = companyDao.companiesOrderedByName
     }
 
-    // When a company is updated it should appear on the top of last viewed companies list.
-    // In order to achieve this the company (if exists) is deleted before being inserted.
-    // It would be better with a modification date but this does the job in a simple way.
+    // When a company is updated it should appear in the viewed companies list.
+    // In order to achieve this the company (if exists) is deleted before being inserted again.
     suspend fun upsert(company: Company) {
         companyDao.deleteByOrganizationNumber(company.organisasjonsnummer)
-        company.id = 0
         companyDao.insert(company)
     }
 

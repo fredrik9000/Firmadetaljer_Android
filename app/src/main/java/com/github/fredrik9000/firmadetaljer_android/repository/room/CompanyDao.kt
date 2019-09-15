@@ -8,8 +8,8 @@ import androidx.room.Query
 @Dao
 interface CompanyDao {
 
-    @get:Query("SELECT * FROM company_table ORDER BY id DESC")
-    val allCompaniesOrderedByLastInserted: LiveData<List<Company>>
+    @get:Query("SELECT * FROM company_table ORDER BY navn ASC")
+    val companiesOrderedByName: LiveData<List<Company>>
 
     @Insert
     suspend fun insert(company: Company)

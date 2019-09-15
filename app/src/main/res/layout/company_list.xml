@@ -30,7 +30,7 @@
                 android:background="@color/colorListHeaderBackground"
                 android:elevation="@dimen/toolbar_elevation"
                 android:padding="@dimen/list_header_padding"
-                android:text="@string/last_viewed_companies_header"
+                android:text="@string/viewed_companies_header"
                 android:textColor="@color/colorListHeaderText" />
 
             <androidx.recyclerview.widget.RecyclerView

@@ -15,4 +15,6 @@
     <color name="colorTogglePressed">#8E033F</color>
     <color name="colorToggleSelected">#C51162</color>
 
+    <color name="colorSelectedCompany">#BDBDBD</color>
+
 </resources>

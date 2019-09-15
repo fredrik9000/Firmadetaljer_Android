@@ -77,8 +77,8 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
 
         setupRecyclerView(binding)
 
-        adapterSavedList = CompanyListAdapter(this@MainActivity, ArrayList())
-        adapterSearchList = CompanyListAdapter(this@MainActivity, ArrayList())
+        adapterSavedList = CompanyListAdapter(this, this, ArrayList(), isTwoPane, true)
+        adapterSearchList = CompanyListAdapter(this, this, ArrayList(), isTwoPane, false)
 
         savedInstanceState?.let {
             companyListViewModel.searchString = it.getString(SEARCH_KEY) ?: ""
@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
             binding.includedCompanyList.companyListHeader.setText(R.string.search_results_header)
             recyclerView.adapter = adapterSearchList
         } else {
-            binding.includedCompanyList.companyListHeader.setText(R.string.last_viewed_companies_header)
+            binding.includedCompanyList.companyListHeader.setText(R.string.viewed_companies_header)
             recyclerView.adapter = adapterSavedList
         }
 
@@ -124,7 +124,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
     // Saved companies is shown whenever the user isn't searching
     private fun setupSavedCompaniesObserver(binding: ActivityMainBinding) {
         companyListViewModel.savedCompanyList.observe(this, Observer { companyList ->
-            adapterSavedList.updateWithAnimation(companyList)
+            adapterSavedList.update(companyList)
             checkForEmptyView(binding)
         })
     }
@@ -199,7 +199,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
                     binding.includedCompanyList.companyListHeader.setText(R.string.search_results_header)
                     recyclerView.adapter = adapterSearchList
                 } else if (!companyListViewModel.isSearchingWithValidInput && recyclerView.adapter === adapterSearchList) {
-                    binding.includedCompanyList.companyListHeader.setText(R.string.last_viewed_companies_header)
+                    binding.includedCompanyList.companyListHeader.setText(R.string.viewed_companies_header)
                     recyclerView.adapter = adapterSavedList
                 }
 
@@ -249,9 +249,11 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         }
     }
 
-    override fun onItemClick(company: Company) {
-        // Save company so that it will be shown in the last viewed companies list
-        companyListViewModel.upsert(company)
+    override fun onItemClick(company: Company, isViewedCompaniesList: Boolean) {
+        // Save company so that it will be shown in the viewed companies list
+        if (!isViewedCompaniesList) {
+            companyListViewModel.upsert(company)
+        }
 
         if (isTwoPane) {
             inflateCompanyDetailsFragment(company, false)

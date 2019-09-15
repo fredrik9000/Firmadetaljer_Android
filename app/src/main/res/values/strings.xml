@@ -11,7 +11,7 @@
     <string name="company_not_found">Fant ikke firma</string>
     <string name="select_firmanavn">Firmanavn</string>
     <string name="select_org_number">Org. nummer</string>
-    <string name="last_viewed_companies_header">Sist viste firmadetaljer</string>
+    <string name="viewed_companies_header">Viste firmadetaljer</string>
     <string name="search_results_header">Søkeresultat</string>
     <string name="no_companies_viewed">Start ved å trykke på søkeikonet for å finne firma</string>
     <string name="detail_navigation_image_view_description">Navigeringspil</string>
