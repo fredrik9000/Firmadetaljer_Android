@@ -27,6 +27,6 @@ The app is in Norwegian only.
 
 ## Screenshots
 
-![selected_search_item_light](https://user-images.githubusercontent.com/13121494/64923215-0ba85600-d7d8-11e9-9632-b6e3973daeba.png)
+![Screenshot_1568562492](https://user-images.githubusercontent.com/13121494/64924115-3519af80-d7e1-11e9-808c-8e9a9bcc7351.png)
 
-![selected_search_item_dark](https://user-images.githubusercontent.com/13121494/64923216-0e0ab000-d7d8-11e9-8326-633ca8565aa6.png)
+![Screenshot_1568562503](https://user-images.githubusercontent.com/13121494/64924116-38ad3680-d7e1-11e9-8234-47a28f03c325.png)
