@@ -2,16 +2,16 @@
 
 This is an Android application where you can search for information about Norwegian companies. The search is done against the Brønnøysundsregistrene API: https://confluence.brreg.no/display/DBNPUB/API 
 
-The app is written in Kotlin and has an MVVM architecture using the repository pattern and with Android architecture components, such as:
+The app is written in Kotlin and has an MVVM architecture using the repository pattern and Android architecture components, such as:
 
 - ViewModel
 - Room
 - LiveData
 - Data Binding
 
-This app does not use a single activity architecture or the navigation component, like my todo list app: [Android Todo List](https://github.com/fredrik9000/TodoList_Android) 
+This app does not use a single activity architecture or the navigation component, but my todo list app does: [Android Todo List](https://github.com/fredrik9000/TodoList_Android) 
 
-The app is in Norwegian only.
+The app is in Norwegian only (unlike the iOS version which also supports English). The reason for this is that the API returns Norwegian data, and it's a Norway tailored app anyway. I might still translate the app to English in the future, as there is a benefit to that. You can find the iOS version here: [iOS Firmadetaljer](https://github.com/fredrik9000/Firmadetaljer_iOS)
 
 **The app has the following features:**
 
