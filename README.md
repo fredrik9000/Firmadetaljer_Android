@@ -27,6 +27,10 @@ The app is in Norwegian only (unlike the iOS version which also supports English
 
 ## Screenshots
 
-![Screenshot_1568562492](https://user-images.githubusercontent.com/13121494/64924115-3519af80-d7e1-11e9-808c-8e9a9bcc7351.png)
+![Screenshot_1568831706](https://user-images.githubusercontent.com/13121494/65176250-b167f900-da54-11e9-8973-5e085ac354cc.png)
 
-![Screenshot_1568562503](https://user-images.githubusercontent.com/13121494/64924116-38ad3680-d7e1-11e9-8234-47a28f03c325.png)
+![Screenshot_1568831723](https://user-images.githubusercontent.com/13121494/65176255-b4fb8000-da54-11e9-9ba2-c8a32c777a1b.png)
+
+![saved_companies_phone_dark](https://user-images.githubusercontent.com/13121494/65176135-75cd2f00-da54-11e9-9cb8-6ae2a401947c.png)
+
+![company_details_phone_dark](https://user-images.githubusercontent.com/13121494/65176140-78c81f80-da54-11e9-8814-f5347049031d.png)
