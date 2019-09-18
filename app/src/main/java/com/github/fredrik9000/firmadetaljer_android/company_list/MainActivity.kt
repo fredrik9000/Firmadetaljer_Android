@@ -102,7 +102,9 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
 
         // If the following is true that means both the Activity and ViewModel were destroyed,
         // and while having an active search. Therefore we need to do the search again.
-        if (companyListViewModel.searchResultCompanyList.value?.companies == null && companyListViewModel.isSearchingWithValidInput) {
+        if (companyListViewModel.searchResultCompanyList.value?.companies == null &&
+                companyListViewModel.searchResultCompanyList.value?.peekError() == null &&
+                companyListViewModel.isSearchingWithValidInput) {
             progressBarList.visibility = View.VISIBLE
 
             if (companyListViewModel.searchMode == SearchMode.ORGANIZATION_NUMBER) {
@@ -140,17 +142,18 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
                 // If there was an error searching (or organization number not found), update with empty results.
                 adapterSearchList.update(ArrayList())
 
-                // When an organization number is not found, the service can return either 400 or 404.
-                val toastMessage =
-                        if (companyListViewModel.searchMode == SearchMode.ORGANIZATION_NUMBER && companyListResponse.error is HttpException
-                                && (((companyListResponse.error as HttpException).code() == 400)
-                                        || ((companyListResponse.error as HttpException).code() == 404))) {
-                    resources.getString(R.string.company_not_found)
-                } else {
-                    resources.getString(R.string.search_request_error_message)
+                // Only show a toast message the first time the error is handled (otherwise a rotation would show it again).
+                companyListResponse.getErrorIfNotHandled()?.let { error ->
+                    // When an organization number is not found, the service can return either 400 or 404.
+                    val toastMessage =
+                            if (companyListViewModel.searchMode == SearchMode.ORGANIZATION_NUMBER && error is HttpException && ((error.code() == 400) || (error.code() == 404))) {
+                                resources.getString(R.string.company_not_found)
+                            } else {
+                                resources.getString(R.string.search_request_error_message)
+                            }
+                    Toast.makeText(applicationContext, toastMessage, Toast.LENGTH_SHORT).show()
+                    Log.d(TAG, "onChanged() called with companyListResponse error = $error")
                 }
-                Toast.makeText(applicationContext, toastMessage, Toast.LENGTH_SHORT).show()
-                Log.d(TAG, "onChanged() called with companyListResponse error = " + companyListResponse.error!!)
             }
             binding.includedCompanyList.emptyView.visibility = View.GONE
             binding.includedCompanyList.companyListWithHeader.visibility = View.VISIBLE
@@ -241,7 +244,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         binding.includedToolbar.searchModeToggle.setOnCheckedChangeListener { radioGroup, checkedId ->
             if (!radioGroup.findViewById<AppCompatRadioButton>(checkedId).isPressed) {
                 // onCheckedChanged was triggered by the system, for example when rotating.
-                return@setOnCheckedChangeListener;
+                return@setOnCheckedChangeListener
             }
 
             if (checkedId == binding.includedToolbar.searchFirmName.id) {
