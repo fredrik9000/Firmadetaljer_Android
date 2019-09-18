@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.ActionMenuView
+import androidx.appcompat.widget.AppCompatRadioButton
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
@@ -237,7 +238,12 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
             }
         })
 
-        binding.includedToolbar.searchModeToggle.setOnCheckedChangeListener { _, checkedId ->
+        binding.includedToolbar.searchModeToggle.setOnCheckedChangeListener { radioGroup, checkedId ->
+            if (!radioGroup.findViewById<AppCompatRadioButton>(checkedId).isPressed) {
+                // onCheckedChanged was triggered by the system, for example when rotating.
+                return@setOnCheckedChangeListener;
+            }
+
             if (checkedId == binding.includedToolbar.searchFirmName.id) {
                 companyListViewModel.searchMode = SearchMode.FIRM_NAME
                 searchView.queryHint = getString(R.string.company_search_name_hint)
@@ -245,6 +251,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
                 companyListViewModel.searchMode = SearchMode.ORGANIZATION_NUMBER
                 searchView.queryHint = getString(R.string.company_search_org_number_hint)
             }
+
             searchView.setQuery("", false)
         }
     }
