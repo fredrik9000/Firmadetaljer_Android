@@ -3,8 +3,8 @@
     <dimen name="content_margin">16dp</dimen>
     <dimen name="list_header_padding">8dp</dimen>
     <dimen name="toolbar_elevation">4dp</dimen>
-    <dimen name="empty_view_text_size">24sp</dimen>
-    <dimen name="empty_view_line_spacing_extra">8sp</dimen>
+    <dimen name="onboarding_view_text_size">24sp</dimen>
+    <dimen name="onboarding_view_line_spacing_extra">8sp</dimen>
 
     <dimen name="search_mode_toggle_height">48dp</dimen>
     <dimen name="search_mode_toggle_margin_top">24dp</dimen>

@@ -128,7 +128,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
     private fun setupSavedCompaniesObserver(binding: ActivityMainBinding) {
         companyListViewModel.savedCompanyList.observe(this, Observer { companyList ->
             adapterSavedList.update(companyList)
-            checkForEmptyView(binding)
+            showOrHideOnboardingView(binding)
         })
     }
 
@@ -155,7 +155,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
                     Log.d(TAG, "onChanged() called with companyListResponse error = $error")
                 }
             }
-            binding.includedCompanyList.emptyView.visibility = View.GONE
+            binding.includedCompanyList.onboardingView.visibility = View.GONE
             binding.includedCompanyList.companyListWithHeader.visibility = View.VISIBLE
         })
     }
@@ -196,7 +196,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
 
             override fun onQueryTextChange(newText: String): Boolean {
                 companyListViewModel.searchString = newText
-                checkForEmptyView(binding)
+                showOrHideOnboardingView(binding)
 
                 // Check the current state and set the correct adapter
                 if (companyListViewModel.isSearchingWithValidInput && recyclerView.adapter === adapterSavedList) {
@@ -317,11 +317,11 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
             companyListViewModel.deleteAllCompanies()
             return true
         } else if (item.itemId == R.id.toggle_night_mode) {
-            when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-                Configuration.UI_MODE_NIGHT_YES -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                Configuration.UI_MODE_NIGHT_NO -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                else -> // Assumes light theme
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+            if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            } else { // Assume light theme
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             }
             return true
         }
@@ -333,12 +333,12 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         super.onDestroy()
     }
 
-    private fun checkForEmptyView(binding: ActivityMainBinding) {
+    private fun showOrHideOnboardingView(binding: ActivityMainBinding) {
         if (!companyListViewModel.isSearchingWithValidInput && companyListViewModel.savedCompanyList.value.isNullOrEmpty()) {
             binding.includedCompanyList.companyListWithHeader.visibility = View.GONE
-            binding.includedCompanyList.emptyView.visibility = View.VISIBLE
+            binding.includedCompanyList.onboardingView.visibility = View.VISIBLE
         } else {
-            binding.includedCompanyList.emptyView.visibility = View.GONE
+            binding.includedCompanyList.onboardingView.visibility = View.GONE
             binding.includedCompanyList.companyListWithHeader.visibility = View.VISIBLE
         }
     }

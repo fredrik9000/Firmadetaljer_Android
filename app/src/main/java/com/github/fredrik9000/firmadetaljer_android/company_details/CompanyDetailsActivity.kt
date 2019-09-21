@@ -83,7 +83,7 @@ class CompanyDetailsActivity : AppCompatActivity(), CompanyDetailsNavigation {
 
     // When there's nesting of company detail fragments, navigate back to the previous company instead of the search results
     // This will only happen when one has navigated to a parent company
-        override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
             val fm = supportFragmentManager
             if (fm.backStackEntryCount > 0) {

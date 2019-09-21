@@ -6,14 +6,14 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/empty_view"
+            android:id="@+id/onboarding_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/content_margin"
             android:gravity="center"
-            android:lineSpacingExtra="@dimen/empty_view_line_spacing_extra"
-            android:text="@string/no_companies_viewed"
-            android:textSize="@dimen/empty_view_text_size"
+            android:lineSpacingExtra="@dimen/onboarding_view_line_spacing_extra"
+            android:text="@string/onboarding_explanatory_text"
+            android:textSize="@dimen/onboarding_view_text_size"
             android:visibility="gone" />
 
         <LinearLayout xmlns:tools="http://schemas.android.com/tools"

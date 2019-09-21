@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseExpandableListAdapter
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.github.fredrik9000.firmadetaljer_android.R
@@ -73,11 +74,11 @@ class CompanyDetailsAdapter(
         descriptionTextView.text = child.description
 
         if (child.label == context.resources.getString(R.string.company_detail_details_hjemmeside) || child.label == context.resources.getString(R.string.company_detail_details_overordnet_enhet)) {
-            viewMutable.findViewById<View>(R.id.arrow_forward).visibility = View.VISIBLE
+            viewMutable.findViewById<ImageView>(R.id.arrow_forward).visibility = View.VISIBLE
             descriptionTextView.setTextColor(ContextCompat.getColor(context, R.color.colorTextDetailDescriptionNavigatable))
             descriptionTextView.alpha = 1.0F
         } else {
-            viewMutable.findViewById<View>(R.id.arrow_forward).visibility = View.GONE
+            viewMutable.findViewById<ImageView>(R.id.arrow_forward).visibility = View.GONE
             descriptionTextView.setTextColor(getDescriptionTextColor(context))
             descriptionTextView.alpha = 0.65F
         }
@@ -94,7 +95,7 @@ class CompanyDetailsAdapter(
     private fun getDescriptionTextColor(context: Context) : Int {
         val typedArray = context.obtainStyledAttributes(null, intArrayOf(android.R.attr.textColorPrimary))
         try {
-            return typedArray.getColor(0, ContextCompat.getColor(context, R.color.colorTextListDeescriptionPrimaryFallback))
+            return typedArray.getColor(0, ContextCompat.getColor(context, R.color.colorTextListDescriptionPrimaryFallback))
         } finally {
             typedArray.recycle()
         }

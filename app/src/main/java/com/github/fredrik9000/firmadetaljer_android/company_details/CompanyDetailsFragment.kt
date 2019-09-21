@@ -40,17 +40,17 @@ class CompanyDetailsFragment : Fragment() {
         val adapter = CompanyDetailsAdapter(this.context!!, companyDetailGroups, companyDetailItems)
         expandableListView.setAdapter(adapter)
 
-        expandableListView.setOnChildClickListener(ExpandableListView.OnChildClickListener { _, _, groupPosition, childPosition, _ ->
+        expandableListView.setOnChildClickListener { _, _, groupPosition, childPosition, _ ->
             val companyDetailsDescription = companyDetailItems[companyDetailGroups[groupPosition]]!![childPosition]
             if (companyDetailsDescription.label == resources.getString(R.string.company_detail_details_overordnet_enhet)) {
                 companyDetailsNavigation.navigateToCompany(company.overordnetEnhet!!)
-                return@OnChildClickListener true
+                return@setOnChildClickListener true
             } else if (companyDetailsDescription.label == resources.getString(R.string.company_detail_details_hjemmeside)) {
                 companyDetailsNavigation.navigateToHomepage(company.hjemmeside!!)
-                return@OnChildClickListener true
+                return@setOnChildClickListener true
             }
             false
-        })
+        }
         expandGroups(expandableListView, adapter)
 
         return binding.root

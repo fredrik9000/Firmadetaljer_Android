@@ -9,7 +9,7 @@
     <color name="colorListHeaderText">@android:color/white</color>
 
     <color name="colorTextDetailDescriptionNavigatable">#6200EE</color>
-    <color name="colorTextListDeescriptionPrimaryFallback">@android:color/black</color>
+    <color name="colorTextListDescriptionPrimaryFallback">@android:color/black</color>
 
     <color name="colorToggleOutline">#C51162</color>
     <color name="colorTogglePressed">#8E033F</color>
