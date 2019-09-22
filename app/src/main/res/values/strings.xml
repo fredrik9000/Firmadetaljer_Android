@@ -42,7 +42,7 @@
     <string name="company_detail_details_sist_innsendte_årsregnskap">Sist innsendte årsregnskap</string>
     <string name="company_detail_details_konkurs">Konkurs</string>
     <string name="company_detail_details_under_avvikling">Under avvikling</string>
-    <string name="company_detail_details_under_tvangsavvikling_eller_tvangsoppløsning">Under tvangsavvikling eller tvangsoppløsning</string>
+    <string name="company_detail_details_under_tvangsavvikling_eller_tvangsoppløsning">Under tvangsavvikling/tvangsoppløsning</string>
     <string name="company_detail_details_overordnet_enhet">Overordnet enhet</string>
 
     <string name="company_detail_kode_kode">Kode</string>
