@@ -208,7 +208,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
                 }
 
                 // Since organization number should be 9, it will be trimmed whenever the user tries to type more
-                if (companyListViewModel.searchMode == SearchMode.ORGANIZATION_NUMBER && companyListViewModel.organizationNumberSearchHasTooManyCharacters) {
+                if (companyListViewModel.searchMode == SearchMode.ORGANIZATION_NUMBER && companyListViewModel.searchStringExceedsOrganizationNumberLength) {
                     companyListViewModel.trimSearchStringByOrganizationNumberLength()
                     searchView.setQuery(companyListViewModel.searchString, false)
                 } else if (companyListViewModel.isSearchingWithValidInput) {

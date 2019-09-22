@@ -30,7 +30,7 @@ class CompanyListViewModel(application: Application) : AndroidViewModel(applicat
     val isSearchingWithValidInput: Boolean
         get() = isSearchingWithValidFirmName || isSearchingWithValidOrganizationNumber
 
-    val organizationNumberSearchHasTooManyCharacters : Boolean
+    val searchStringExceedsOrganizationNumberLength : Boolean
         get () = searchString.length > ORGANIZATION_NUMBER_LENGTH
 
     init {
