@@ -2,24 +2,37 @@ package com.github.fredrik9000.firmadetaljer_android.company_list
 
 import android.app.Application
 import android.text.TextUtils
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 
 import com.github.fredrik9000.firmadetaljer_android.repository.CompanyRepository
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyListResponse
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import kotlinx.coroutines.launch
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.LiveData
 
 class CompanyListViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = CompanyRepository(application)
 
+    private val _searchResultLiveData = MediatorLiveData<CompanyListResponse>()
+    val searchResultLiveData: LiveData<CompanyListResponse>
+        get() = _searchResultLiveData
+
+    private val companyNameLiveData = MutableLiveData<String>()
+    private val organizationNumberLiveData = MutableLiveData<Int>()
+
+    private val searchByNameResultLiveData: LiveData<CompanyListResponse> = Transformations.switchMap(companyNameLiveData) {
+        text -> repository.searchForCompaniesByName(text)
+    }
+
+    private val searchByOrganizationNumberResultLiveData: LiveData<CompanyListResponse> = Transformations.switchMap(organizationNumberLiveData) {
+        orgNumber -> repository.searchForCompaniesByOrgNumber(orgNumber)
+    }
+
+    val savedCompaniesLiveData: LiveData<List<Company>>
+
     var searchMode = SearchMode.FIRM_NAME
     var searchString = ""
-
-    val searchResultCompanyList: MutableLiveData<CompanyListResponse> = MutableLiveData()
-    val savedCompanyList: LiveData<List<Company>>
 
     val isSearchingWithValidOrganizationNumber: Boolean
         get() = searchMode == SearchMode.ORGANIZATION_NUMBER && searchString.length >= ORGANIZATION_NUMBER_LENGTH && TextUtils.isDigitsOnly(searchString)
@@ -34,23 +47,35 @@ class CompanyListViewModel(application: Application) : AndroidViewModel(applicat
         get () = searchString.length > ORGANIZATION_NUMBER_LENGTH
 
     init {
-        savedCompanyList = repository.savedCompanies
+        savedCompaniesLiveData = repository.savedCompanies
+
+        _searchResultLiveData.addSource(searchByNameResultLiveData) {
+            _searchResultLiveData.value = it
+        }
+
+        _searchResultLiveData.addSource(searchByOrganizationNumberResultLiveData) {
+            _searchResultLiveData.value = it
+        }
     }
 
     fun trimSearchStringByOrganizationNumberLength() {
         searchString = searchString.substring(0, ORGANIZATION_NUMBER_LENGTH)
     }
 
-    fun searchForCompaniesWithNamesBeginningWithText(text: String) {
-        repository.searchForCompaniesWithNamesBeginningWithText(searchResultCompanyList, text)
+    fun searchForCompaniesByName(text: String) {
+        companyNameLiveData.value = text
     }
 
-    // Searching by org number can only return 1 company, so the implementation isn't optimal
-    // The result will be displayed in the same way as for when searching text,
-    // which is why the same live data is passed in here.
-    // TODO: Improve implementation
-    fun searchForCompaniesWithOrgNumber(orgNumber: Int) {
-        repository.searchForCompaniesWithOrgNumber(searchResultCompanyList, orgNumber)
+    fun searchForCompaniesByOrgNumber(orgNumber: Int) {
+        organizationNumberLiveData.value = orgNumber
+    }
+
+    fun searchOnSelectedSearchMode(query: String) {
+        if (searchMode == SearchMode.FIRM_NAME) {
+            searchForCompaniesByName(query)
+        } else {
+            searchForCompaniesByOrgNumber(Integer.parseInt(query))
+        }
     }
 
     fun upsert(company: Company) {

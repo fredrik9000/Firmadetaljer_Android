@@ -60,8 +60,7 @@ class CompanyDetailsActivity : AppCompatActivity(), CompanyDetailsNavigation {
     override fun navigateToHomepage(url: String) {
         val arguments = Bundle()
         arguments.putString(HomepageFragment.ARG_URL, url)
-        val fragment = HomepageFragment()
-        fragment.arguments = arguments
+        val fragment = HomepageFragment().apply { this.arguments = arguments }
         this.supportFragmentManager.beginTransaction()
                 .replace(R.id.company_details_container, fragment)
                 .addToBackStack(null)
@@ -71,8 +70,7 @@ class CompanyDetailsActivity : AppCompatActivity(), CompanyDetailsNavigation {
     private fun inflateCompanyDetailsFragment(company: Company, addToBackStack: Boolean) {
         val arguments = Bundle()
         arguments.putParcelable(CompanyDetailsFragment.ARG_COMPANY, company)
-        val fragment = CompanyDetailsFragment()
-        fragment.arguments = arguments
+        val fragment = CompanyDetailsFragment().apply { this.arguments = arguments }
         val transaction = this.supportFragmentManager.beginTransaction()
                 .replace(R.id.company_details_container, fragment)
         if (addToBackStack) {

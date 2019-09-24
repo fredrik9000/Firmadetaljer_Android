@@ -35,7 +35,8 @@ import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyRespo
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 
 import retrofit2.HttpException
-import java.util.Timer
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.concurrent.timerTask
 
 class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener, CompanyDetailsNavigation {
@@ -102,16 +103,11 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
 
         // If the following is true that means both the Activity and ViewModel were destroyed,
         // and while having an active search. Therefore we need to do the search again.
-        if (companyListViewModel.searchResultCompanyList.value?.companies == null &&
-                companyListViewModel.searchResultCompanyList.value?.peekError() == null &&
+        if (companyListViewModel.searchResultLiveData.value?.companies == null &&
+                companyListViewModel.searchResultLiveData.value?.peekError() == null &&
                 companyListViewModel.isSearchingWithValidInput) {
             progressBarList.visibility = View.VISIBLE
-
-            if (companyListViewModel.searchMode == SearchMode.ORGANIZATION_NUMBER) {
-                companyListViewModel.searchForCompaniesWithOrgNumber(Integer.parseInt(companyListViewModel.searchString))
-            } else {
-                companyListViewModel.searchForCompaniesWithNamesBeginningWithText(companyListViewModel.searchString)
-            }
+            companyListViewModel.searchOnSelectedSearchMode(companyListViewModel.searchString)
         }
     }
 
@@ -126,7 +122,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
 
     // Saved companies is shown whenever the user isn't searching
     private fun setupSavedCompaniesObserver(binding: ActivityMainBinding) {
-        companyListViewModel.savedCompanyList.observe(this, Observer { companyList ->
+        companyListViewModel.savedCompaniesLiveData.observe(this, Observer { companyList ->
             adapterSavedList.update(companyList)
             showOrHideOnboardingView(binding)
         })
@@ -134,7 +130,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
 
     // Handles search results and updates the list
     private fun setupSearchResultObserver(binding: ActivityMainBinding) {
-        companyListViewModel.searchResultCompanyList.observe(this, Observer { companyListResponse ->
+        companyListViewModel.searchResultLiveData.observe(this, Observer { companyListResponse ->
             progressBarList.visibility = View.GONE
             if (companyListResponse.companies != null) {
                 adapterSearchList.update(companyListResponse.companies!!)
@@ -179,16 +175,10 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                if (companyListViewModel.isSearchingWithValidFirmName) {
+                if(companyListViewModel.isSearchingWithValidInput) {
                     progressBarList.visibility = View.VISIBLE
-                    companyListViewModel.searchForCompaniesWithNamesBeginningWithText(query)
-                    // clearFocus() closes the full screen search view for phones in landscape mode.
-                    searchView.clearFocus()
-                    return true
-                } else if (companyListViewModel.isSearchingWithValidOrganizationNumber) {
-                    progressBarList.visibility = View.VISIBLE
-                    companyListViewModel.searchForCompaniesWithOrgNumber(Integer.parseInt(query))
-                    searchView.clearFocus()
+                    companyListViewModel.searchOnSelectedSearchMode(query)
+                    searchView.clearFocus() // clearFocus() closes the full screen search view for phones in landscape mode.
                     return true
                 }
                 return false
@@ -212,30 +202,29 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
                     companyListViewModel.trimSearchStringByOrganizationNumberLength()
                     searchView.setQuery(companyListViewModel.searchString, false)
                 } else if (companyListViewModel.isSearchingWithValidInput) {
-                    debounceSearch(companyListViewModel.searchMode, companyListViewModel.searchString)
+                    debounceSearch()
                     return true
                 }
 
                 return false
             }
 
-            fun debounceSearch(searchMode: SearchMode, searchString: String) {
+            fun debounceSearch() {
                 searchDebounceTimer?.cancel()
+                val tempSearchMode = companyListViewModel.searchMode
+                val tempSearchString = companyListViewModel.searchString
 
                 searchDebounceTimer = Timer().apply {
                     schedule(timerTask {
                         // If the search mode or text was updated during the delay don´t perform search
-                        if (searchMode != companyListViewModel.searchMode || searchString != companyListViewModel.searchString) {
+                        if (tempSearchMode != companyListViewModel.searchMode || tempSearchString != companyListViewModel.searchString) {
                             return@timerTask
                         }
 
                         runOnUiThread {
                             progressBarList.visibility = View.VISIBLE
-                            if (searchMode == SearchMode.FIRM_NAME) {
-                                companyListViewModel.searchForCompaniesWithNamesBeginningWithText(searchString)
-                            } else {
-                                companyListViewModel.searchForCompaniesWithOrgNumber(Integer.parseInt(searchString))
-                            }}
+                            companyListViewModel.searchOnSelectedSearchMode(companyListViewModel.searchString)
+                        }
                     }, DEBOUNCE_TIME_IN_MILLISECONDS)
                 }
             }
@@ -260,9 +249,8 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
     }
 
     override fun onItemClick(company: Company, isViewedCompaniesList: Boolean) {
-        // Save company so that it will be shown in the viewed companies list
         if (!isViewedCompaniesList) {
-            companyListViewModel.upsert(company)
+            companyListViewModel.upsert(company) // Save company so that it will be shown in the viewed companies list
         }
 
         if (isTwoPane) {
@@ -270,7 +258,6 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         } else {
             val intent = Intent(this@MainActivity, CompanyDetailsActivity::class.java)
             intent.putExtra(CompanyDetailsFragment.ARG_COMPANY, company)
-
             this.startActivity(intent)
         }
     }
@@ -299,8 +286,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
     override fun navigateToHomepage(url: String) {
         val arguments = Bundle()
         arguments.putString(HomepageFragment.ARG_URL, url)
-        val fragment = HomepageFragment()
-        fragment.arguments = arguments
+        val fragment = HomepageFragment().apply { this.arguments = arguments }
         this.supportFragmentManager.beginTransaction()
                 .replace(R.id.company_details_container, fragment)
                 .addToBackStack(null)
@@ -334,7 +320,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
     }
 
     private fun showOrHideOnboardingView(binding: ActivityMainBinding) {
-        if (!companyListViewModel.isSearchingWithValidInput && companyListViewModel.savedCompanyList.value.isNullOrEmpty()) {
+        if (!companyListViewModel.isSearchingWithValidInput && companyListViewModel.savedCompaniesLiveData.value.isNullOrEmpty()) {
             binding.includedCompanyList.companyListWithHeader.visibility = View.GONE
             binding.includedCompanyList.onboardingView.visibility = View.VISIBLE
         } else {
@@ -346,8 +332,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
     private fun inflateCompanyDetailsFragment(company: Company, addToBackStack: Boolean) {
         val arguments = Bundle()
         arguments.putParcelable(CompanyDetailsFragment.ARG_COMPANY, company)
-        val fragment = CompanyDetailsFragment()
-        fragment.arguments = arguments
+        val fragment = CompanyDetailsFragment().apply { this.arguments = arguments }
         val transaction = this.supportFragmentManager.beginTransaction()
                 .replace(R.id.company_details_container, fragment)
         if (addToBackStack) {

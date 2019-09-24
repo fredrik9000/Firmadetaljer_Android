@@ -54,12 +54,13 @@ class CompanyRepository(application: Application) {
         companyDao.deleteAll()
     }
 
-    fun searchForCompaniesWithNamesBeginningWithText(companyResponseMutableLiveData: MutableLiveData<CompanyListResponse>, text: String) {
+    fun searchForCompaniesByName(text: String) : MutableLiveData<CompanyListResponse> {
+        val companyListResponseLiveData = MutableLiveData<CompanyListResponse>()
         val call = service.getCompanies("startswith(navn,'$text')")
         call.enqueue(object : Callback<CompaniesDTO> {
             override fun onResponse(call: Call<CompaniesDTO>, response: Response<CompaniesDTO>) {
                 if (!response.isSuccessful) {
-                    companyResponseMutableLiveData.value = CompanyListResponse(HttpException(response))
+                    companyListResponseLiveData.value = CompanyListResponse(HttpException(response))
                     return
                 }
                 val companiesDTO = response.body()
@@ -68,7 +69,7 @@ class CompanyRepository(application: Application) {
 
                 // If data is null this means no companies were found, so return an empty list
                 if (companyDTOList == null) {
-                    companyResponseMutableLiveData.value = CompanyListResponse(companies)
+                    companyListResponseLiveData.value = CompanyListResponse(companies)
                     return
                 }
 
@@ -79,16 +80,18 @@ class CompanyRepository(application: Application) {
                     }
                 }
 
-                companyResponseMutableLiveData.value = CompanyListResponse(companies)
+                companyListResponseLiveData.value = CompanyListResponse(companies)
             }
 
             override fun onFailure(call: Call<CompaniesDTO>, t: Throwable) {
-                companyResponseMutableLiveData.value = CompanyListResponse(t)
+                companyListResponseLiveData.value = CompanyListResponse(t)
             }
         })
+        return companyListResponseLiveData;
     }
 
-    fun searchForCompaniesWithOrgNumber(companyResponseMutableLiveData: MutableLiveData<CompanyListResponse>, orgNumber: Int) {
+    fun searchForCompaniesByOrgNumber(orgNumber: Int) : MutableLiveData<CompanyListResponse> {
+        val companyListResponseLiveData = MutableLiveData<CompanyListResponse>()
         val call = service.getCompanyWithOrgNumber(orgNumber)
         call.enqueue(object : Callback<CompanyDTO> {
             override fun onResponse(call: Call<CompanyDTO>, response: Response<CompanyDTO>) {
@@ -96,20 +99,21 @@ class CompanyRepository(application: Application) {
                     // When a company doesn't exist a 400 status will return here.
                     // This is different from when searching for companies by name,
                     // because then the response will be successful with an empty list.
-                    companyResponseMutableLiveData.value = CompanyListResponse(HttpException(response))
+                    companyListResponseLiveData.value = CompanyListResponse(HttpException(response))
                     return
                 }
                 val companyDTO = response.body()
                 val company = createCompanyFromDTO(companyDTO!!)
                 val companyList = ArrayList<Company>()
                 companyList.add(company)
-                companyResponseMutableLiveData.value = CompanyListResponse(companyList)
+                companyListResponseLiveData.value = CompanyListResponse(companyList)
             }
 
             override fun onFailure(call: Call<CompanyDTO>, t: Throwable) {
-                companyResponseMutableLiveData.value = CompanyListResponse(t)
+                companyListResponseLiveData.value = CompanyListResponse(t)
             }
         })
+        return companyListResponseLiveData
     }
 
     fun searchForCompanyWithOrgNumber(callback: CompanyDetailsNavigation, orgNumber: Int) {
