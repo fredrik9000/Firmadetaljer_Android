@@ -1,7 +1,5 @@
 package com.github.fredrik9000.firmadetaljer_android.repository
 
-import android.app.Application
-
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.github.fredrik9000.firmadetaljer_android.company_details.CompanyDetailsNavigation
@@ -13,7 +11,6 @@ import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyRespo
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyService
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import com.github.fredrik9000.firmadetaljer_android.repository.room.CompanyDao
-import com.github.fredrik9000.firmadetaljer_android.repository.room.CompanyDatabase
 
 import java.util.ArrayList
 
@@ -21,27 +18,14 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.HttpException
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class CompanyRepository(application: Application) {
-    private val companyDao: CompanyDao
-    private val service: CompanyService
-    val savedCompanies: LiveData<List<Company>>
 
-    init {
-        val database = CompanyDatabase.getInstance(application)
-        companyDao = database.companyDao
-
-        val retrofit = Retrofit.Builder()
-                .baseUrl("https://data.brreg.no/enhetsregisteret/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-
-        service = retrofit.create(CompanyService::class.java)
-
-        savedCompanies = companyDao.companiesOrderedByName
-    }
+@Singleton
+open class CompanyRepository @Inject constructor(private val companyDao: CompanyDao,
+                        private val service: CompanyService) {
+    val savedCompanies: LiveData<List<Company>> = companyDao.companiesOrderedByName
 
     // When a company is updated it should appear in the viewed companies list.
     // In order to achieve this the company (if exists) is deleted before being inserted again.
@@ -87,7 +71,7 @@ class CompanyRepository(application: Application) {
                 companyListResponseLiveData.value = CompanyListResponse(t)
             }
         })
-        return companyListResponseLiveData;
+        return companyListResponseLiveData
     }
 
     fun searchForCompaniesByOrgNumber(orgNumber: Int) : MutableLiveData<CompanyListResponse> {

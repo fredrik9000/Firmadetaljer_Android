@@ -1,6 +1,5 @@
 package com.github.fredrik9000.firmadetaljer_android.company_list
 
-import android.app.Application
 import android.text.TextUtils
 import androidx.lifecycle.*
 
@@ -10,9 +9,9 @@ import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import kotlinx.coroutines.launch
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.LiveData
+import javax.inject.Inject
 
-class CompanyListViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository = CompanyRepository(application)
+class CompanyListViewModel @Inject constructor(private val repository: CompanyRepository) : ViewModel() {
 
     private val _searchResultLiveData = MediatorLiveData<CompanyListResponse>()
     val searchResultLiveData: LiveData<CompanyListResponse>
@@ -29,7 +28,7 @@ class CompanyListViewModel(application: Application) : AndroidViewModel(applicat
         orgNumber -> repository.searchForCompaniesByOrgNumber(orgNumber)
     }
 
-    val savedCompaniesLiveData: LiveData<List<Company>>
+    val savedCompaniesLiveData = repository.savedCompanies
 
     var searchMode = SearchMode.FIRM_NAME
     var searchString = ""
@@ -47,8 +46,6 @@ class CompanyListViewModel(application: Application) : AndroidViewModel(applicat
         get () = searchString.length > ORGANIZATION_NUMBER_LENGTH
 
     init {
-        savedCompaniesLiveData = repository.savedCompanies
-
         _searchResultLiveData.addSource(searchByNameResultLiveData) {
             _searchResultLiveData.value = it
         }
@@ -62,20 +59,20 @@ class CompanyListViewModel(application: Application) : AndroidViewModel(applicat
         searchString = searchString.substring(0, ORGANIZATION_NUMBER_LENGTH)
     }
 
-    fun searchForCompaniesByName(text: String) {
-        companyNameLiveData.value = text
-    }
-
-    fun searchForCompaniesByOrgNumber(orgNumber: Int) {
-        organizationNumberLiveData.value = orgNumber
-    }
-
     fun searchOnSelectedSearchMode(query: String) {
         if (searchMode == SearchMode.FIRM_NAME) {
             searchForCompaniesByName(query)
         } else {
             searchForCompaniesByOrgNumber(Integer.parseInt(query))
         }
+    }
+
+    private fun searchForCompaniesByName(text: String) {
+        companyNameLiveData.value = text
+    }
+
+    private fun searchForCompaniesByOrgNumber(orgNumber: Int) {
+        organizationNumberLiveData.value = orgNumber
     }
 
     fun upsert(company: Company) {

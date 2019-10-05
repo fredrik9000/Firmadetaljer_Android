@@ -13,9 +13,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import com.github.fredrik9000.firmadetaljer_android.R
+import com.github.fredrik9000.firmadetaljer_android.di.ViewModelFactory
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
+import dagger.android.AndroidInjection
+import javax.inject.Inject
 
 class CompanyDetailsActivity : AppCompatActivity(), CompanyDetailsNavigation {
+    @Inject
+    internal lateinit var viewModelFactory: ViewModelFactory
+
     private lateinit var companyDetailsViewModel: CompanyDetailsViewModel
     private lateinit var progressBarDetails: ProgressBar
 
@@ -28,7 +34,8 @@ class CompanyDetailsActivity : AppCompatActivity(), CompanyDetailsNavigation {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
 
-        companyDetailsViewModel = ViewModelProviders.of(this).get(CompanyDetailsViewModel::class.java)
+        AndroidInjection.inject(this) // This is needed, though I don't think it should be. Could be a Kotlin issue.
+        companyDetailsViewModel = ViewModelProviders.of(this, viewModelFactory).get(CompanyDetailsViewModel::class.java)
 
         // savedInstanceState is non-null when there is fragment state saved from previous configurations of this activity
         // (e.g. when rotating the screen from portrait to landscape). In this case, the fragment will automatically be re-added

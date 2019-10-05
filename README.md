@@ -2,7 +2,7 @@
 
 This is an Android application where you can search for information about Norwegian companies. The search is done against the Brønnøysundsregistrene API: https://confluence.brreg.no/display/DBNPUB/API 
 
-The app is written in Kotlin and has an MVVM architecture using the repository pattern and Android architecture components, such as:
+The app is written in Kotlin, uses Dagger 2, and has an MVVM architecture using the repository pattern and Android architecture components, such as:
 
 - ViewModel
 - Room

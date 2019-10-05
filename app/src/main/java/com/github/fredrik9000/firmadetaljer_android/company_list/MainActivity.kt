@@ -31,15 +31,25 @@ import com.github.fredrik9000.firmadetaljer_android.company_details.CompanyDetai
 import com.github.fredrik9000.firmadetaljer_android.company_details.CompanyDetailsViewModel
 
 import com.github.fredrik9000.firmadetaljer_android.databinding.ActivityMainBinding
+import com.github.fredrik9000.firmadetaljer_android.di.ViewModelFactory
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
+import dagger.android.AndroidInjection
 
 import retrofit2.HttpException
 import java.util.*
+import javax.inject.Inject
 import kotlin.collections.ArrayList
 import kotlin.concurrent.timerTask
 
 class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener, CompanyDetailsNavigation {
+
+    @Inject
+    internal lateinit var viewModelFactory: ViewModelFactory
+
+    private lateinit var companyListViewModel: CompanyListViewModel
+    private lateinit var companyDetailsViewModel: CompanyDetailsViewModel
+
     private lateinit var progressBarList: ProgressBar
     private var progressBarDetails: ProgressBar? = null // Not present on phones
     private lateinit var searchView: SearchView
@@ -48,9 +58,6 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
 
     private lateinit var adapterSearchList: CompanyListAdapter
     private lateinit var adapterSavedList: CompanyListAdapter
-
-    private lateinit var companyListViewModel: CompanyListViewModel
-    private lateinit var companyDetailsViewModel: CompanyDetailsViewModel
 
     private var isTwoPane: Boolean = false
     private var searchDebounceTimer: Timer? = null
@@ -68,13 +75,14 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         toolbarMenu = binding.includedToolbar.toolbarMenu
         toolbarMenu.setOnMenuItemClickListener { onOptionsItemSelected(it) }
 
-        companyListViewModel = ViewModelProviders.of(this).get(CompanyListViewModel::class.java)
+        AndroidInjection.inject(this) // This is needed, though I don't think it should be. Could be a Kotlin issue.
+        companyListViewModel = ViewModelProviders.of(this, viewModelFactory).get(CompanyListViewModel::class.java)
 
         if (findViewById<View>(R.id.company_details_container) != null) {
             // The detail container view will be present only in the large-screen layouts (res/values-w900dp).
             // If this view is present, then the activity should be in two-pane mode.
             isTwoPane = true
-            companyDetailsViewModel = ViewModelProviders.of(this).get(CompanyDetailsViewModel::class.java)
+            companyDetailsViewModel = ViewModelProviders.of(this, viewModelFactory).get(CompanyDetailsViewModel::class.java)
         }
 
         setupRecyclerView(binding)

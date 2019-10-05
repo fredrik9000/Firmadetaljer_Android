@@ -1,12 +1,13 @@
 package com.github.fredrik9000.firmadetaljer_android.company_list
 
-import android.app.Application
 import android.os.Build
-import androidx.test.core.app.ApplicationProvider
+import com.github.fredrik9000.firmadetaljer_android.repository.CompanyRepository
 import com.google.common.truth.Truth
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -15,12 +16,14 @@ import org.robolectric.annotation.Config
 class CompanyListViewModelTest {
 
     private lateinit var viewModel : CompanyListViewModel
-    private lateinit var applicationContext: Application
+
+    @Mock
+    private lateinit var repository : CompanyRepository
 
     @Before
     fun init() {
-        applicationContext = ApplicationProvider.getApplicationContext()
-        viewModel = CompanyListViewModel(applicationContext)
+        MockitoAnnotations.initMocks(this)
+        viewModel = CompanyListViewModel(repository)
     }
 
     @Test
