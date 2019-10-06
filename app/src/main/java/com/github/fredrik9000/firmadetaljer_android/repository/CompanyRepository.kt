@@ -80,7 +80,7 @@ open class CompanyRepository @Inject constructor(private val companyDao: Company
         call.enqueue(object : Callback<CompanyDTO> {
             override fun onResponse(call: Call<CompanyDTO>, response: Response<CompanyDTO>) {
                 if (!response.isSuccessful) {
-                    // When a company doesn't exist a 400 status will return here.
+                    // When a company doesn't exist a 400 or 404 status will return here.
                     // This is different from when searching for companies by name,
                     // because then the response will be successful with an empty list.
                     companyListResponseLiveData.value = CompanyListResponse(HttpException(response))
