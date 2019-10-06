@@ -13,7 +13,7 @@ This app does not use a single activity architecture or the navigation component
 
 The app is in Norwegian only (unlike the iOS version which also supports English). The reason for this is that the API returns Norwegian data, and it's a Norway tailored app anyway. I might still translate the app to English in the future, as there is a benefit to that. You can find the iOS version here: [iOS Firmadetaljer](https://github.com/fredrik9000/Firmadetaljer_iOS)
 
-**The app has the following features:**
+#### The app has the following features:
 
 - Search for companies by name
 - Search for companies by organization number
@@ -24,6 +24,12 @@ The app is in Norwegian only (unlike the iOS version which also supports English
 - Option for clearing search history (meaning the persisted companies will be deleted)
 - Dark mode, which can also be toggled from within the app
 
+#### Potential improvements:
+
+- Show location for a given firm on a map.
+- Add a menu item for filtering search by zip code or company size. Active filters could be added above the search result.
+- The maximum number of companies returned by the API is 100. Add pagination behaviour so that more data is retrieved as the user scrolls.
+- (Adaptive) launcher icons.
 
 ## Screenshots
 
