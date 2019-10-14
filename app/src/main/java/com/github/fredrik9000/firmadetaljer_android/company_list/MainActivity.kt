@@ -4,6 +4,7 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -320,6 +321,19 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        // Fix for memory leak in the Android framework that happens on Android 10:
+        // https://issuetracker.google.com/issues/139738913
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+                && isTaskRoot
+                && supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.backStackEntryCount == 0
+                && supportFragmentManager.backStackEntryCount == 0) {
+            finishAfterTransition()
+        } else {
+            super.onBackPressed()
+        }
     }
 
     override fun onDestroy() {
