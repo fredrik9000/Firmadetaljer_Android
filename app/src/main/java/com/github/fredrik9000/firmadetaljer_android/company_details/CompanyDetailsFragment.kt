@@ -1,6 +1,7 @@
 package com.github.fredrik9000.firmadetaljer_android.company_details
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 
 import androidx.databinding.DataBindingUtil
@@ -42,18 +43,40 @@ class CompanyDetailsFragment : Fragment() {
 
         expandableListView.setOnChildClickListener { _, _, groupPosition, childPosition, _ ->
             val companyDetailsDescription = companyDetailItems[companyDetailGroups[groupPosition]]!![childPosition]
-            if (companyDetailsDescription.label == resources.getString(R.string.company_detail_details_overordnet_enhet)) {
-                companyDetailsNavigation.navigateToCompany(company.overordnetEnhet!!)
-                return@setOnChildClickListener true
-            } else if (companyDetailsDescription.label == resources.getString(R.string.company_detail_details_hjemmeside)) {
-                companyDetailsNavigation.navigateToHomepage(company.hjemmeside!!)
-                return@setOnChildClickListener true
+            // TODO: It's not good to use the labels as identifiers here. Should instead use something that is sure to be unique if the text changes.
+            when {
+                companyDetailsDescription.label == resources.getString(R.string.company_detail_details_overordnet_enhet) -> {
+                    companyDetailsNavigation.navigateToCompany(company.overordnetEnhet!!)
+                    return@setOnChildClickListener true
+                }
+                companyDetailsDescription.label == resources.getString(R.string.company_detail_details_hjemmeside) -> {
+                    companyDetailsNavigation.navigateToHomepage(company.hjemmeside!!)
+                    return@setOnChildClickListener true
+                }
+                companyDetailsDescription.label == resources.getString(R.string.company_detail_adresse_postadresse) -> {
+                    navigateToMap(company.postadresseAdresse)
+                    return@setOnChildClickListener true
+                }
+                companyDetailsDescription.label == resources.getString(R.string.company_detail_adresse_forretningsadresse) -> {
+                    navigateToMap(company.forretningsadresseAdresse)
+                    return@setOnChildClickListener true
+                }
+                companyDetailsDescription.label == resources.getString(R.string.company_detail_adresse_beliggenhetsadresse) -> {
+                    navigateToMap(company.beliggenhetsadresseAdresse)
+                    return@setOnChildClickListener true
+                }
+                else -> false
             }
-            false
         }
         expandGroups(expandableListView, adapter)
 
         return binding.root
+    }
+
+    private fun navigateToMap(address: String?) {
+        val intent = Intent(activity, CompanyLocationMapActivity::class.java)
+        intent.putExtra(CompanyLocationMapActivity.ADDRESS, address)
+        startActivity(intent)
     }
 
     private fun expandGroups(expandableListView: ExpandableListView, adapter: CompanyDetailsAdapter) {
@@ -208,7 +231,7 @@ class CompanyDetailsFragment : Fragment() {
         val postadresseList = ArrayList<CompanyDetailsDescription>()
 
         company.postadresseAdresse?.let {
-            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_adresse), it))
+            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_postadresse), it))
         }
 
         company.postadressePostnummer?.let {
@@ -244,7 +267,7 @@ class CompanyDetailsFragment : Fragment() {
         val forretningsadresseList = ArrayList<CompanyDetailsDescription>()
 
         company.forretningsadresseAdresse?.let {
-            forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_adresse), it))
+            forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_forretningsadresse), it))
         }
 
         company.forretningsadressePostnummer?.let {
@@ -280,7 +303,7 @@ class CompanyDetailsFragment : Fragment() {
         val beliggenhetsadresseList = ArrayList<CompanyDetailsDescription>()
 
         company.beliggenhetsadresseAdresse?.let {
-            beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_adresse), it))
+            beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_beliggenhetsadresse), it))
         }
 
         company.beliggenhetsadressePostnummer?.let {

@@ -73,7 +73,11 @@ class CompanyDetailsAdapter(
         val descriptionTextView = viewMutable.findViewById<TextView>(R.id.description)
         descriptionTextView.text = child.description
 
-        if (child.label == context.resources.getString(R.string.company_detail_details_hjemmeside) || child.label == context.resources.getString(R.string.company_detail_details_overordnet_enhet)) {
+        if (child.label == context.resources.getString(R.string.company_detail_details_hjemmeside)
+                || child.label == context.resources.getString(R.string.company_detail_details_overordnet_enhet)
+                || child.label == context.resources.getString(R.string.company_detail_adresse_postadresse)
+                || child.label == context.resources.getString(R.string.company_detail_adresse_forretningsadresse)
+                || child.label == context.resources.getString(R.string.company_detail_adresse_beliggenhetsadresse)) {
             viewMutable.findViewById<ImageView>(R.id.arrow_forward).visibility = View.VISIBLE
             descriptionTextView.setTextColor(ContextCompat.getColor(context, R.color.colorTextDetailDescriptionNavigatable))
             descriptionTextView.alpha = 1.0F
@@ -90,6 +94,9 @@ class CompanyDetailsAdapter(
         val child = getChild(groupPosition, childPosition) as CompanyDetailsDescription
         return child.label == context.resources.getString(R.string.company_detail_details_hjemmeside)
                 || child.label == context.resources.getString(R.string.company_detail_details_overordnet_enhet)
+                || child.label == context.resources.getString(R.string.company_detail_adresse_postadresse)
+                || child.label == context.resources.getString(R.string.company_detail_adresse_forretningsadresse)
+                || child.label == context.resources.getString(R.string.company_detail_adresse_beliggenhetsadresse)
     }
 
     private fun getDescriptionTextColor(context: Context) : Int {

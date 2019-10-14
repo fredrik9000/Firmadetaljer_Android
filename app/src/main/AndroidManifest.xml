@@ -4,6 +4,10 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -13,6 +17,30 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/.
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <meta-data
+            android:name="com.google.android.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
+        <activity
+            android:name=".company_details.CompanyLocationMapActivity"
+            android:label="@string/title_activity_company_location_map"></activity>
         <activity
             android:name=".company_details.CompanyDetailsActivity"
             android:label="@string/title_activity_company_detail">
@@ -20,7 +48,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".company_list.MainActivity" />
         </activity>
-        <activity android:name=".company_list.MainActivity"
+        <activity
+            android:name=".company_list.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

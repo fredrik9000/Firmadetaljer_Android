@@ -18,6 +18,7 @@ The app is in Norwegian only (unlike the iOS version which also supports English
 - Search for companies by name
 - Search for companies by organization number
 - View company details
+- View the company's location in Google Maps (you will get an authorization failure, since the API key is kept privately. You need to create your own API key.)
 - Navigate to parent company details (for those that have parent companies)
 - Navigate to the company homepage
 - Viewed companies are persisted and shown in its own list when not searching
@@ -26,9 +27,9 @@ The app is in Norwegian only (unlike the iOS version which also supports English
 
 #### Potential improvements:
 
-- Show location for a given firm on a map.
 - Add a menu item for filtering search by zip code or company size. Active filters could be added above the search result.
 - The maximum number of companies returned by the API is 100. Add pagination behaviour so that more data is retrieved as the user scrolls.
+- Organize company details in a better way. The more useful information and navigatable items should be at the top.
 - (Adaptive) launcher icons.
 
 ## Screenshots

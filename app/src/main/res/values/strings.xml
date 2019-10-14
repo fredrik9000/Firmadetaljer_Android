@@ -48,7 +48,9 @@
     <string name="company_detail_kode_kode">Kode</string>
     <string name="company_detail_kode_beskrivelse">Beskrivelse</string>
 
-    <string name="company_detail_adresse_adresse">Adresse</string>
+    <string name="company_detail_adresse_postadresse">Postadresse</string>
+    <string name="company_detail_adresse_forretningsadresse">Forretningsadresse</string>
+    <string name="company_detail_adresse_beliggenhetsadresse">Beliggenhetsadresse</string>
     <string name="company_detail_adresse_postnummer">Postnummer</string>
     <string name="company_detail_adresse_poststed">Poststed</string>
     <string name="company_detail_adresse_kommunenummer">Kommunenummer</string>
@@ -60,5 +62,6 @@
     <string name="no">Nei</string>
 
     <string name="toggle_night_mode">Mørkt tema</string>
+    <string name="title_activity_company_location_map">Kart</string>
 
 </resources>
