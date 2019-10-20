@@ -65,7 +65,6 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
         setTitle(R.string.main_activity_title)
         progressBarList = binding.progressCompanyList

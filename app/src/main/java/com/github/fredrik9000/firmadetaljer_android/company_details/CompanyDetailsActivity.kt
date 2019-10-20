@@ -27,7 +27,6 @@ class CompanyDetailsActivity : AppCompatActivity(), CompanyDetailsNavigation {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_company_details)
         val binding = DataBindingUtil.setContentView<ActivityCompanyDetailsBinding>(this, R.layout.activity_company_details)
         progressBarDetails = binding.progressCompanyDetails
         setSupportActionBar(binding.includedToolbar.toolbarCompanyDetails)
