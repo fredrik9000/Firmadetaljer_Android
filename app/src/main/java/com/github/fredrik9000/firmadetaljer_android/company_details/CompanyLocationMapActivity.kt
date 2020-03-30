@@ -18,7 +18,7 @@ import java.io.IOException
 
 class CompanyLocationMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
-    private lateinit var mMap: GoogleMap
+    private lateinit var map: GoogleMap
     private lateinit var companyAddress: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,12 +42,12 @@ class CompanyLocationMapActivity : AppCompatActivity(), OnMapReadyCallback {
      * installed Google Play services and returned to the app.
      */
     override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
+        map = googleMap
 
         val latlng = getLocationFromAddress(companyAddress)
         latlng?.let {
-            mMap.addMarker(MarkerOptions().position(it).title("Marker in Sydney"))
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(it))
+            map.addMarker(MarkerOptions().position(it).title("Marker in Sydney"))
+            map.moveCamera(CameraUpdateFactory.newLatLng(it))
         }  ?: run {
             Toast.makeText(applicationContext, "Could not find location", Toast.LENGTH_LONG).show()
         }

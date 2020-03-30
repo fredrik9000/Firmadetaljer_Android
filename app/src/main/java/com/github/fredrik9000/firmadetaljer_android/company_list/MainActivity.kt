@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -24,6 +23,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.fredrik9000.firmadetaljer_android.LogUtils
 import com.github.fredrik9000.firmadetaljer_android.company_details.HomepageFragment
 import com.github.fredrik9000.firmadetaljer_android.company_details.CompanyDetailsNavigation
 import com.github.fredrik9000.firmadetaljer_android.R
@@ -156,7 +156,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
                                 resources.getString(R.string.search_request_error_message)
                             }
                     Toast.makeText(applicationContext, toastMessage, Toast.LENGTH_SHORT).show()
-                    Log.d(TAG, "onChanged() called with companyListResponse error = $error")
+                    LogUtils.debug(TAG, "onChanged() called with companyListResponse error = $error")
                 }
             }
             binding.includedCompanyList.onboardingView.visibility = View.GONE
@@ -169,6 +169,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         searchView = toolbar.findViewById(R.id.action_search)
         searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
 
+        // Set default values for search view
         if (companyListViewModel.searchMode == SearchMode.ORGANIZATION_NUMBER) {
             searchView.queryHint = getString(R.string.company_search_org_number_hint)
         } else {
@@ -181,6 +182,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
             searchView.clearFocus()
         }
 
+        // Search view listerners
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 if(companyListViewModel.isSearchingWithValidInput) {
@@ -238,6 +240,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
             }
         })
 
+        // Search mode buttons listener
         binding.includedToolbar.searchModeToggle.setOnCheckedChangeListener { radioGroup, checkedId ->
             if (!radioGroup.findViewById<AppCompatRadioButton>(checkedId).isPressed) {
                 // onCheckedChanged was triggered by the system, for example when rotating.
@@ -282,7 +285,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
             inflateCompanyDetailsFragment(it, true)
         } ?: run {
             Toast.makeText(applicationContext, R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show()
-            Log.d(TAG, "handleCompanyNavigationResponse() called with response error = " + response.error!!)
+            LogUtils.debug(TAG, "handleCompanyNavigationResponse() called with response error = " + response.error!!)
         }
     }
 

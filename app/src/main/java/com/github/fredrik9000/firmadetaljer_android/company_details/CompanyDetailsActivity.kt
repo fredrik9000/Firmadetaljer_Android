@@ -1,7 +1,6 @@
 package com.github.fredrik9000.firmadetaljer_android.company_details
 
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
@@ -12,6 +11,8 @@ import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
+import com.github.fredrik9000.firmadetaljer_android.BuildConfig
+import com.github.fredrik9000.firmadetaljer_android.LogUtils
 import com.github.fredrik9000.firmadetaljer_android.R
 import com.github.fredrik9000.firmadetaljer_android.di.ViewModelFactory
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
@@ -54,7 +55,9 @@ class CompanyDetailsActivity : AppCompatActivity(), CompanyDetailsNavigation {
             inflateCompanyDetailsFragment(it, true)
         } ?: run {
             Toast.makeText(applicationContext, R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show()
-            Log.d(TAG, "handleCompanyNavigationResponse() called with response error = " + response.error!!)
+            if (BuildConfig.DEBUG) {
+                LogUtils.debug(TAG, "handleCompanyNavigationResponse() called with response error = " + response.error!!)
+            }
         }
     }
 
