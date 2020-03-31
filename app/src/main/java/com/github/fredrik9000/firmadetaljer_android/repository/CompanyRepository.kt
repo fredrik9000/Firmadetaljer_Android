@@ -3,21 +3,14 @@ package com.github.fredrik9000.firmadetaljer_android.repository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.github.fredrik9000.firmadetaljer_android.company_details.CompanyDetailsNavigation
-
-import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompaniesDTO
-import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyDTO
-import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyListResponse
-import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
-import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyService
+import com.github.fredrik9000.firmadetaljer_android.repository.rest.*
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import com.github.fredrik9000.firmadetaljer_android.repository.room.CompanyDao
-
-import java.util.ArrayList
-
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.HttpException
 import retrofit2.Response
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,7 +20,7 @@ open class CompanyRepository @Inject constructor(private val companyDao: Company
                         private val service: CompanyService) {
     val savedCompanies: LiveData<List<Company>> = companyDao.companiesOrderedByName
 
-    // When a company is updated it should appear in the viewed companies list.
+    // When a company is updated it should appear at the top of the viewed companies list.
     // In order to achieve this the company (if exists) is deleted before being inserted again.
     suspend fun upsert(company: Company) {
         companyDao.deleteByOrganizationNumber(company.organisasjonsnummer)
@@ -38,24 +31,26 @@ open class CompanyRepository @Inject constructor(private val companyDao: Company
         companyDao.deleteAll()
     }
 
-    fun searchForCompaniesByName(text: String) : MutableLiveData<CompanyListResponse> {
+    fun searchForCompaniesByName(name: String) : MutableLiveData<CompanyListResponse> {
         val companyListResponseLiveData = MutableLiveData<CompanyListResponse>()
-        val call = service.getCompanies("startswith(navn,'$text')")
-        call.enqueue(object : Callback<CompaniesDTO> {
-            override fun onResponse(call: Call<CompaniesDTO>, response: Response<CompaniesDTO>) {
+        val call = service.getCompanies(name)
+        call.enqueue(object : Callback<CompanyWrapperEmbeddedDTO> {
+            override fun onResponse(call: Call<CompanyWrapperEmbeddedDTO>, response: Response<CompanyWrapperEmbeddedDTO>) {
                 if (!response.isSuccessful) {
                     companyListResponseLiveData.value = CompanyListResponse(HttpException(response))
                     return
                 }
                 val companiesDTO = response.body()
-                val companyDTOList = companiesDTO!!.data
+                val embeddedCompaniesDTO = companiesDTO!!._embedded
                 val companies = ArrayList<Company>()
 
                 // If data is null this means no companies were found, so return an empty list
-                if (companyDTOList == null) {
+                if (embeddedCompaniesDTO == null) {
                     companyListResponseLiveData.value = CompanyListResponse(companies)
                     return
                 }
+
+                val companyDTOList = embeddedCompaniesDTO.enheter!!
 
                 for (companyDTO in companyDTOList) {
                     if (companyDTO.organisasjonsnummer != null) { //Should never be null
@@ -67,7 +62,7 @@ open class CompanyRepository @Inject constructor(private val companyDao: Company
                 companyListResponseLiveData.value = CompanyListResponse(companies)
             }
 
-            override fun onFailure(call: Call<CompaniesDTO>, t: Throwable) {
+            override fun onFailure(call: Call<CompanyWrapperEmbeddedDTO>, t: Throwable) {
                 companyListResponseLiveData.value = CompanyListResponse(t)
             }
         })
@@ -120,9 +115,9 @@ open class CompanyRepository @Inject constructor(private val companyDao: Company
     }
 
     private fun createCompanyFromDTO(companyDTO: CompanyDTO): Company {
-        return Company(0, companyDTO.organisasjonsnummer!!, companyDTO.navn, companyDTO.stiftelsesdato,
+        return Company(0, companyDTO.organisasjonsnummer!!.toInt(), companyDTO.navn, companyDTO.stiftelsesdato,
                 companyDTO.registreringsdatoEnhetsregisteret, companyDTO.oppstartsdato, companyDTO.datoEierskifte,
-                companyDTO.organisasjonsform, companyDTO.hjemmeside, companyDTO.registertIFrivillighetsregisteret,
+                companyDTO.organisasjonsform?.beskrivelse, companyDTO.hjemmeside, companyDTO.registertIFrivillighetsregisteret,
                 companyDTO.registrertIMvaregisteret, companyDTO.registrertIForetaksregisteret, companyDTO.registrertIStiftelsesregisteret,
                 companyDTO.antallAnsatte, companyDTO.sisteInnsendteAarsregnskap, companyDTO.konkurs,
                 companyDTO.underAvvikling, companyDTO.underTvangsavviklingEllerTvangsopplosning, companyDTO.overordnetEnhet,
@@ -130,14 +125,14 @@ open class CompanyRepository @Inject constructor(private val companyDao: Company
                 companyDTO.naeringskode1?.kode, companyDTO.naeringskode1?.beskrivelse,
                 companyDTO.naeringskode2?.kode, companyDTO.naeringskode2?.beskrivelse,
                 companyDTO.naeringskode3?.kode, companyDTO.naeringskode3?.beskrivelse,
-                companyDTO.postadresse?.adresse, companyDTO.postadresse?.postnummer,
+                companyDTO.postadresse?.adresse?.get(0), companyDTO.postadresse?.postnummer,
                 companyDTO.postadresse?.poststed, companyDTO.postadresse?.kommunenummer,
                 companyDTO.postadresse?.kommune, companyDTO.postadresse?.landkode,
-                companyDTO.postadresse?.land, companyDTO.forretningsadresse?.adresse,
+                companyDTO.postadresse?.land, companyDTO.forretningsadresse?.adresse?.get(0),
                 companyDTO.forretningsadresse?.postnummer, companyDTO.forretningsadresse?.poststed,
                 companyDTO.forretningsadresse?.kommunenummer, companyDTO.forretningsadresse?.kommune,
                 companyDTO.forretningsadresse?.landkode, companyDTO.forretningsadresse?.land,
-                companyDTO.beliggenhetsadresse?.adresse, companyDTO.beliggenhetsadresse?.postnummer,
+                companyDTO.beliggenhetsadresse?.adresse?.get(0), companyDTO.beliggenhetsadresse?.postnummer,
                 companyDTO.beliggenhetsadresse?.poststed, companyDTO.beliggenhetsadresse?.kommunenummer,
                 companyDTO.beliggenhetsadresse?.kommune, companyDTO.beliggenhetsadresse?.landkode,
                 companyDTO.beliggenhetsadresse?.land)

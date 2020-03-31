@@ -5,17 +5,16 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
-
-import com.github.fredrik9000.firmadetaljer_android.databinding.ActivityCompanyDetailsBinding
-import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import com.github.fredrik9000.firmadetaljer_android.BuildConfig
 import com.github.fredrik9000.firmadetaljer_android.LogUtils
 import com.github.fredrik9000.firmadetaljer_android.R
+import com.github.fredrik9000.firmadetaljer_android.databinding.ActivityCompanyDetailsBinding
 import com.github.fredrik9000.firmadetaljer_android.di.ViewModelFactory
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
+import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import dagger.android.AndroidInjection
 import javax.inject.Inject
 

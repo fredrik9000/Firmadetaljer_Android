@@ -6,10 +6,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-
+import com.github.fredrik9000.firmadetaljer_android.R
 import com.github.fredrik9000.firmadetaljer_android.databinding.ListviewItemBinding
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
-import com.github.fredrik9000.firmadetaljer_android.R
 
 // This class isn't very decoupled due to having the isViewedCompaniesList variable.
 // TODO: Improve upon implementation

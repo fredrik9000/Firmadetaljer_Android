@@ -3,14 +3,14 @@ package com.github.fredrik9000.firmadetaljer_android.repository.rest
 // Property names are in Norwegian as this is the language of the rest API
 class CompanyDTO {
 
-    val organisasjonsnummer: Int? = null
+    val organisasjonsnummer: String? = null
 
     val navn: String? = null
     val stiftelsesdato: String? = null
     val registreringsdatoEnhetsregisteret: String? = null
     val oppstartsdato: String? = null
     val datoEierskifte: String? = null
-    val organisasjonsform: String? = null
+    val organisasjonsform: OrganisasjonsformDTO? = null
     val hjemmeside: String? = null
     val registertIFrivillighetsregisteret: String? = null
     val registrertIMvaregisteret: String? = null

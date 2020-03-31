@@ -6,9 +6,9 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface CompanyService {
-    @GET("enhet.json")
-    fun getCompanies(@Query("\$filter") filter: String): Call<CompaniesDTO>
+    @GET("enheter")
+    fun getCompanies(@Query("navn") navn: String): Call<CompanyWrapperEmbeddedDTO>
 
-    @GET("enhet/{orgNumber}.json")
+    @GET("enheter/{orgNumber}")
     fun getCompanyWithOrgNumber(@Path("orgNumber") orgNumber: Int): Call<CompanyDTO>
 }

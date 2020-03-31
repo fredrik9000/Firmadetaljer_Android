@@ -1,20 +1,20 @@
 package com.github.fredrik9000.firmadetaljer_android
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.github.fredrik9000.firmadetaljer_android.company_list.CompanyListViewModel
+import com.github.fredrik9000.firmadetaljer_android.company_list.SearchMode
 import com.github.fredrik9000.firmadetaljer_android.repository.CompanyRepository
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyService
 import com.github.fredrik9000.firmadetaljer_android.repository.room.CompanyDao
 import com.google.common.truth.Truth
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.github.fredrik9000.firmadetaljer_android.company_list.SearchMode
-import org.junit.Rule
-import retrofit2.HttpException
 
 class CompanyRepositoryTest {
 

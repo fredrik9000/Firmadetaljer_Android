@@ -3,7 +3,6 @@ package com.github.fredrik9000.firmadetaljer_android.company_list
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyListResponse
 import com.google.common.truth.Truth
 import org.junit.Test
-import java.lang.Exception
 
 class CompanyListResponseTest {
 

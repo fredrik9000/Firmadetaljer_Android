@@ -24,19 +24,13 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.fredrik9000.firmadetaljer_android.LogUtils
-import com.github.fredrik9000.firmadetaljer_android.company_details.HomepageFragment
-import com.github.fredrik9000.firmadetaljer_android.company_details.CompanyDetailsNavigation
 import com.github.fredrik9000.firmadetaljer_android.R
-import com.github.fredrik9000.firmadetaljer_android.company_details.CompanyDetailsActivity
-import com.github.fredrik9000.firmadetaljer_android.company_details.CompanyDetailsFragment
-import com.github.fredrik9000.firmadetaljer_android.company_details.CompanyDetailsViewModel
-
+import com.github.fredrik9000.firmadetaljer_android.company_details.*
 import com.github.fredrik9000.firmadetaljer_android.databinding.ActivityMainBinding
 import com.github.fredrik9000.firmadetaljer_android.di.ViewModelFactory
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import dagger.android.AndroidInjection
-
 import retrofit2.HttpException
 import java.util.*
 import javax.inject.Inject

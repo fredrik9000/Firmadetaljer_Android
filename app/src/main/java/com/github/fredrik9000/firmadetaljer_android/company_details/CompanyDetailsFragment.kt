@@ -3,21 +3,16 @@ package com.github.fredrik9000.firmadetaljer_android.company_details
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ExpandableListView
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import com.github.fredrik9000.firmadetaljer_android.R
-
 import com.github.fredrik9000.firmadetaljer_android.databinding.FragmentCompanyDetailsBinding
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
-
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 
 class CompanyDetailsFragment : Fragment() {
 

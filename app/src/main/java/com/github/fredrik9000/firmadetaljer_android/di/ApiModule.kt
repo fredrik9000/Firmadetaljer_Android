@@ -14,7 +14,7 @@ object ApiModule {
     @Provides
     fun provideRetrofitInstance() : Retrofit {
         return Retrofit.Builder()
-                .baseUrl("https://data.brreg.no/enhetsregisteret/")
+                .baseUrl("https://data.brreg.no/enhetsregisteret/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
     }
