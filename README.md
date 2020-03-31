@@ -29,7 +29,6 @@ The app is in Norwegian only (unlike the iOS version which also supports English
 
 - Add a menu item for filtering search by zip code or company size. Active filters could be added above the search result.
 - The maximum number of companies returned by the API is 100. Add pagination behaviour so that more data is retrieved as the user scrolls.
-- Organize company details in a better way. The more useful information and navigatable items should be at the top.
 - (Adaptive) launcher icons.
 
 ## Screenshots

@@ -26,7 +26,6 @@
     <string name="company_detail_heading_forettningsadresse">Forretningsadresse</string>
     <string name="company_detail_heading_beliggenhetsadresse">Beliggenhetsadresse</string>
 
-    <string name="company_detail_details_firmanavn">Firmanavn</string>
     <string name="company_detail_details_organisasjonsnummer">Organisasjonsnummer</string>
     <string name="company_detail_details_stiftelsesdato">Stiftelsesdato</string>
     <string name="company_detail_details_registrert_i_enhetsregisteret">Registrert i enhetsregisteret</string>

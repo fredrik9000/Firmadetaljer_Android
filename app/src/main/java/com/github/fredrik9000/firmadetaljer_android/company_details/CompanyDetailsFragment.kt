@@ -85,14 +85,26 @@ class CompanyDetailsFragment : Fragment() {
 
         val detailsList = ArrayList<CompanyDetailsDescription>()
 
-        company.navn?.let {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_firmanavn), it))
+        detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_organisasjonsnummer), (company.organisasjonsnummer).toString()))
+
+        company.hjemmeside?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_hjemmeside), it))
         }
 
-        detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_organisasjonsnummer), (company.organisasjonsnummer).toString()))
+        company.overordnetEnhet?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_overordnet_enhet), it.toString()))
+        }
 
         company.stiftelsesdato?.let {
             detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_stiftelsesdato), it))
+        }
+
+        company.organisasjonsform?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_organisasjonsform), it))
+        }
+
+        company.antallAnsatte?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_antall_ansatte), it.toString()))
         }
 
         company.registreringsdatoEnhetsregisteret?.let {
@@ -105,14 +117,6 @@ class CompanyDetailsFragment : Fragment() {
 
         company.datoEierskifte?.let {
             detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_eierskife), it))
-        }
-
-        company.organisasjonsform?.let {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_organisasjonsform), it))
-        }
-
-        company.hjemmeside?.let {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_hjemmeside), it))
         }
 
         company.registertIFrivillighetsregisteret?.let {
@@ -131,10 +135,6 @@ class CompanyDetailsFragment : Fragment() {
             detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_stiftelsesregisteret), convertYesNoValue(it)))
         }
 
-        company.antallAnsatte?.let {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_antall_ansatte), it.toString()))
-        }
-
         company.sisteInnsendteAarsregnskap?.let {
             detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_sist_innsendte_årsregnskap), it.toString()))
         }
@@ -151,77 +151,10 @@ class CompanyDetailsFragment : Fragment() {
             detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_under_tvangsavvikling_eller_tvangsoppløsning), convertYesNoValue(it)))
         }
 
-        company.overordnetEnhet?.let {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_overordnet_enhet), it.toString()))
-        }
+        val detailsHeading = company.navn ?: resources.getString(R.string.company_detail_heading_details)
 
-        val detailsHeading = resources.getString(R.string.company_detail_heading_details)
         companyDetailItems[detailsHeading] = detailsList
         companyDetailGroups.add(detailsHeading)
-
-        val institusjonellSektorKodeList = ArrayList<CompanyDetailsDescription>()
-
-        company.institusjonellSektorkodeKode?.let {
-            institusjonellSektorKodeList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_kode), it))
-        }
-
-        company.institusjonellSektorkodeBeskrivelse?.let {
-            institusjonellSektorKodeList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_beskrivelse), it))
-        }
-
-        if (institusjonellSektorKodeList.size > 0) {
-            val institusjonellSektorKodeHeading = resources.getString(R.string.company_detail_heading_institusjonell_sektor_kode)
-            companyDetailItems[institusjonellSektorKodeHeading] = institusjonellSektorKodeList
-            companyDetailGroups.add(institusjonellSektorKodeHeading)
-        }
-
-        val naeringskode1List = ArrayList<CompanyDetailsDescription>()
-
-        company.naeringskode1Kode?.let {
-            naeringskode1List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_kode), it))
-        }
-
-        company.naeringskode1Beskrivelse?.let {
-            naeringskode1List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_beskrivelse), it))
-        }
-
-        if (naeringskode1List.size > 0) {
-            val naeringsKode1Heading = resources.getString(R.string.company_detail_heading_naeringskode1)
-            companyDetailItems[naeringsKode1Heading] = naeringskode1List
-            companyDetailGroups.add(naeringsKode1Heading)
-        }
-
-        val naeringskode2List = ArrayList<CompanyDetailsDescription>()
-
-        company.naeringskode2Kode?.let {
-            naeringskode2List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_kode), it))
-        }
-
-        company.naeringskode2Beskrivelse?.let {
-            naeringskode2List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_beskrivelse), it))
-        }
-
-        if (naeringskode2List.size > 0) {
-            val naeringsKode2Heading = resources.getString(R.string.company_detail_heading_naeringskode2)
-            companyDetailItems[naeringsKode2Heading] = naeringskode2List
-            companyDetailGroups.add(naeringsKode2Heading)
-        }
-
-        val naeringskode3List = ArrayList<CompanyDetailsDescription>()
-
-        company.naeringskode3Kode?.let {
-            naeringskode3List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_kode), it))
-        }
-
-        company.naeringskode3Beskrivelse?.let {
-            naeringskode3List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_beskrivelse), it))
-        }
-
-        if (naeringskode3List.size > 0) {
-            val naeringsKode3Heading = resources.getString(R.string.company_detail_heading_naeringskode3)
-            companyDetailItems[naeringsKode3Heading] = naeringskode3List
-            companyDetailGroups.add(naeringsKode3Heading)
-        }
 
         val postadresseList = ArrayList<CompanyDetailsDescription>()
 
@@ -331,13 +264,77 @@ class CompanyDetailsFragment : Fragment() {
             companyDetailGroups.add(beliggenhetsadresseHeading)
         }
 
+        val institusjonellSektorKodeList = ArrayList<CompanyDetailsDescription>()
+
+        company.institusjonellSektorkodeKode?.let {
+            institusjonellSektorKodeList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_kode), it))
+        }
+
+        company.institusjonellSektorkodeBeskrivelse?.let {
+            institusjonellSektorKodeList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_beskrivelse), it))
+        }
+
+        if (institusjonellSektorKodeList.size > 0) {
+            val institusjonellSektorKodeHeading = resources.getString(R.string.company_detail_heading_institusjonell_sektor_kode)
+            companyDetailItems[institusjonellSektorKodeHeading] = institusjonellSektorKodeList
+            companyDetailGroups.add(institusjonellSektorKodeHeading)
+        }
+
+        val naeringskode1List = ArrayList<CompanyDetailsDescription>()
+
+        company.naeringskode1Kode?.let {
+            naeringskode1List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_kode), it))
+        }
+
+        company.naeringskode1Beskrivelse?.let {
+            naeringskode1List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_beskrivelse), it))
+        }
+
+        if (naeringskode1List.size > 0) {
+            val naeringsKode1Heading = resources.getString(R.string.company_detail_heading_naeringskode1)
+            companyDetailItems[naeringsKode1Heading] = naeringskode1List
+            companyDetailGroups.add(naeringsKode1Heading)
+        }
+
+        val naeringskode2List = ArrayList<CompanyDetailsDescription>()
+
+        company.naeringskode2Kode?.let {
+            naeringskode2List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_kode), it))
+        }
+
+        company.naeringskode2Beskrivelse?.let {
+            naeringskode2List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_beskrivelse), it))
+        }
+
+        if (naeringskode2List.size > 0) {
+            val naeringsKode2Heading = resources.getString(R.string.company_detail_heading_naeringskode2)
+            companyDetailItems[naeringsKode2Heading] = naeringskode2List
+            companyDetailGroups.add(naeringsKode2Heading)
+        }
+
+        val naeringskode3List = ArrayList<CompanyDetailsDescription>()
+
+        company.naeringskode3Kode?.let {
+            naeringskode3List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_kode), it))
+        }
+
+        company.naeringskode3Beskrivelse?.let {
+            naeringskode3List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_beskrivelse), it))
+        }
+
+        if (naeringskode3List.size > 0) {
+            val naeringsKode3Heading = resources.getString(R.string.company_detail_heading_naeringskode3)
+            companyDetailItems[naeringsKode3Heading] = naeringskode3List
+            companyDetailGroups.add(naeringsKode3Heading)
+        }
+
         return Pair(companyDetailGroups, companyDetailItems)
     }
 
     private fun convertYesNoValue(description: String) : String {
         return when(description) {
-            "J" -> resources.getString(R.string.yes)
-            "N" -> resources.getString(R.string.no)
+            "true" -> resources.getString(R.string.yes)
+            "false" -> resources.getString(R.string.no)
             else -> description
         }
     }
