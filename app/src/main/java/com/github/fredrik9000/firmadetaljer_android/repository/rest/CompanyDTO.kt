@@ -21,7 +21,7 @@ class CompanyDTO {
     val konkurs: String? = null
     val underAvvikling: String? = null
     val underTvangsavviklingEllerTvangsopplosning: String? = null
-    val overordnetEnhet: Int? = null
+    val overordnetEnhet: String? = null
 
     val institusjonellSektorkode: KodeDTO? = null
     val naeringskode1: KodeDTO? = null

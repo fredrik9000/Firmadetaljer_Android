@@ -120,21 +120,29 @@ open class CompanyRepository @Inject constructor(private val companyDao: Company
                 companyDTO.organisasjonsform?.beskrivelse, companyDTO.hjemmeside, companyDTO.registertIFrivillighetsregisteret,
                 companyDTO.registrertIMvaregisteret, companyDTO.registrertIForetaksregisteret, companyDTO.registrertIStiftelsesregisteret,
                 companyDTO.antallAnsatte, companyDTO.sisteInnsendteAarsregnskap, companyDTO.konkurs,
-                companyDTO.underAvvikling, companyDTO.underTvangsavviklingEllerTvangsopplosning, companyDTO.overordnetEnhet,
+                companyDTO.underAvvikling, companyDTO.underTvangsavviklingEllerTvangsopplosning, companyDTO.overordnetEnhet?.toInt(),
                 companyDTO.institusjonellSektorkode?.kode, companyDTO.institusjonellSektorkode?.beskrivelse,
                 companyDTO.naeringskode1?.kode, companyDTO.naeringskode1?.beskrivelse,
                 companyDTO.naeringskode2?.kode, companyDTO.naeringskode2?.beskrivelse,
                 companyDTO.naeringskode3?.kode, companyDTO.naeringskode3?.beskrivelse,
-                companyDTO.postadresse?.adresse?.get(0), companyDTO.postadresse?.postnummer,
+                buildAddressString(companyDTO.postadresse?.adresse), companyDTO.postadresse?.postnummer,
                 companyDTO.postadresse?.poststed, companyDTO.postadresse?.kommunenummer,
                 companyDTO.postadresse?.kommune, companyDTO.postadresse?.landkode,
-                companyDTO.postadresse?.land, companyDTO.forretningsadresse?.adresse?.get(0),
+                companyDTO.postadresse?.land, buildAddressString(companyDTO.forretningsadresse?.adresse),
                 companyDTO.forretningsadresse?.postnummer, companyDTO.forretningsadresse?.poststed,
                 companyDTO.forretningsadresse?.kommunenummer, companyDTO.forretningsadresse?.kommune,
                 companyDTO.forretningsadresse?.landkode, companyDTO.forretningsadresse?.land,
-                companyDTO.beliggenhetsadresse?.adresse?.get(0), companyDTO.beliggenhetsadresse?.postnummer,
+                buildAddressString(companyDTO.beliggenhetsadresse?.adresse), companyDTO.beliggenhetsadresse?.postnummer,
                 companyDTO.beliggenhetsadresse?.poststed, companyDTO.beliggenhetsadresse?.kommunenummer,
                 companyDTO.beliggenhetsadresse?.kommune, companyDTO.beliggenhetsadresse?.landkode,
                 companyDTO.beliggenhetsadresse?.land)
+    }
+
+    private fun buildAddressString(addressList: List<String>?): String? {
+        return if (addressList == null || addressList.isEmpty()) {
+            null
+        } else {
+            addressList.joinToString()
+        }
     }
 }
