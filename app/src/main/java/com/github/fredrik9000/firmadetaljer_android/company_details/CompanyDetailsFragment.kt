@@ -156,42 +156,6 @@ class CompanyDetailsFragment : Fragment() {
         companyDetailItems[detailsHeading] = detailsList
         companyDetailGroups.add(detailsHeading)
 
-        val postadresseList = ArrayList<CompanyDetailsDescription>()
-
-        company.postadresseAdresse?.let {
-            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_postadresse), it))
-        }
-
-        company.postadressePostnummer?.let {
-            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_postnummer), it))
-        }
-
-        company.postadressePoststed?.let {
-            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_poststed), it))
-        }
-
-        company.postadresseKommunenummer?.let {
-            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_kommunenummer), it))
-        }
-
-        company.postadresseKommune?.let {
-            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_kommune), it))
-        }
-
-        company.postadresseLandkode?.let {
-            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_landskode), it))
-        }
-
-        company.postadresseLand?.let {
-            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_land), it))
-        }
-
-        if (postadresseList.size > 0) {
-            val postadresseHeading = resources.getString(R.string.company_detail_heading_postadresse)
-            companyDetailItems[postadresseHeading] = postadresseList
-            companyDetailGroups.add(postadresseHeading)
-        }
-
         val forretningsadresseList = ArrayList<CompanyDetailsDescription>()
 
         company.forretningsadresseAdresse?.let {
@@ -262,6 +226,42 @@ class CompanyDetailsFragment : Fragment() {
             val beliggenhetsadresseHeading = resources.getString(R.string.company_detail_heading_beliggenhetsadresse)
             companyDetailItems[beliggenhetsadresseHeading] = beliggenhetsadresseList
             companyDetailGroups.add(beliggenhetsadresseHeading)
+        }
+
+        val postadresseList = ArrayList<CompanyDetailsDescription>()
+
+        company.postadresseAdresse?.let {
+            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_postadresse), it))
+        }
+
+        company.postadressePostnummer?.let {
+            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_postnummer), it))
+        }
+
+        company.postadressePoststed?.let {
+            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_poststed), it))
+        }
+
+        company.postadresseKommunenummer?.let {
+            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_kommunenummer), it))
+        }
+
+        company.postadresseKommune?.let {
+            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_kommune), it))
+        }
+
+        company.postadresseLandkode?.let {
+            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_landskode), it))
+        }
+
+        company.postadresseLand?.let {
+            postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_land), it))
+        }
+
+        if (postadresseList.size > 0) {
+            val postadresseHeading = resources.getString(R.string.company_detail_heading_postadresse)
+            companyDetailItems[postadresseHeading] = postadresseList
+            companyDetailGroups.add(postadresseHeading)
         }
 
         val institusjonellSektorKodeList = ArrayList<CompanyDetailsDescription>()

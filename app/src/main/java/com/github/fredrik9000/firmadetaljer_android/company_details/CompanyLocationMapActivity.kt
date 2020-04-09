@@ -48,7 +48,7 @@ class CompanyLocationMapActivity : AppCompatActivity(), OnMapReadyCallback {
             map.addMarker(MarkerOptions().position(it).title("Marker in Sydney"))
             map.moveCamera(CameraUpdateFactory.newLatLng(it))
         }  ?: run {
-            Toast.makeText(applicationContext, "Could not find location", Toast.LENGTH_LONG).show()
+            Toast.makeText(applicationContext, R.string.location_not_found, Toast.LENGTH_LONG).show()
         }
     }
 

@@ -60,6 +60,8 @@
     <string name="yes">Ja</string>
     <string name="no">Nei</string>
 
+    <string name="location_not_found">Fant ikke lokasjon</string>
+
     <string name="toggle_night_mode">Mørkt tema</string>
     <string name="title_activity_company_location_map">Kart</string>
 
