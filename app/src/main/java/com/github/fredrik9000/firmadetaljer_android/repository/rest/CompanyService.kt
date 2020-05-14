@@ -7,7 +7,7 @@ import retrofit2.http.Query
 
 interface CompanyService {
     @GET("enheter")
-    fun getCompanies(@Query("navn") navn: String): Call<CompanyWrapperEmbeddedDTO>
+    fun getCompanies(@Query("navn") navn: String, @Query("fraAntallAnsatte") fraAntallAnsatte: Int?, @Query("tilAntallAnsatte") tilAntallAnsatte: Int?): Call<CompanyWrapperEmbeddedDTO>
 
     @GET("enheter/{orgNumber}")
     fun getCompanyWithOrgNumber(@Path("orgNumber") orgNumber: Int): Call<CompanyDTO>

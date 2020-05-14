@@ -3,6 +3,7 @@ package com.github.fredrik9000.firmadetaljer_android.repository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.github.fredrik9000.firmadetaljer_android.company_details.CompanyDetailsNavigation
+import com.github.fredrik9000.firmadetaljer_android.company_list.NumberOfEmployeesFilter
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.*
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import com.github.fredrik9000.firmadetaljer_android.repository.room.CompanyDao
@@ -31,9 +32,14 @@ open class CompanyRepository @Inject constructor(private val companyDao: Company
         companyDao.deleteAll()
     }
 
-    fun searchForCompaniesByName(name: String) : MutableLiveData<CompanyListResponse> {
+    fun searchForCompaniesByName(name: String, selectedNumberOfEmployeesFilter: NumberOfEmployeesFilter) : MutableLiveData<CompanyListResponse> {
         val companyListResponseLiveData = MutableLiveData<CompanyListResponse>()
-        val call = service.getCompanies(name)
+        val call = when(selectedNumberOfEmployeesFilter) {
+            NumberOfEmployeesFilter.ALL_EMPLOYEES -> service.getCompanies(name, null, null)
+            NumberOfEmployeesFilter.LESS_THAN_6 -> service.getCompanies(name, null, 5)
+            NumberOfEmployeesFilter.BETWEEN_5_AND_201 -> service.getCompanies(name, 6, 200)
+            NumberOfEmployeesFilter.MORE_THAN_200 -> service.getCompanies(name, 201, null)
+        }
         call.enqueue(object : Callback<CompanyWrapperEmbeddedDTO> {
             override fun onResponse(call: Call<CompanyWrapperEmbeddedDTO>, response: Response<CompanyWrapperEmbeddedDTO>) {
                 if (!response.isSuccessful) {

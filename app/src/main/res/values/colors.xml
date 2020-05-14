@@ -5,9 +5,6 @@
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#C51162</color>
 
-    <color name="colorListHeaderBackground">@color/colorPrimaryDark</color>
-    <color name="colorListHeaderText">@android:color/white</color>
-
     <color name="colorTextDetailDescriptionNavigatable">#6200EE</color>
     <color name="colorTextListDescriptionPrimaryFallback">@android:color/black</color>
 
@@ -16,5 +13,14 @@
     <color name="colorToggleSelected">#C51162</color>
 
     <color name="colorSelectedCompany">#BDBDBD</color>
+
+    <color name="colorListHeaderBackground">@color/colorPrimaryDark</color>
+    <color name="colorListHeaderText">@android:color/white</color>
+
+    <color name="colorSearchFilterDialogHeaderBackground">@color/colorPrimary</color>
+    <color name="colorSearchFilterDialogHeaderText">@android:color/white</color>
+
+    <color name="colorSearchFilterDialogButtonBackground">@color/colorPrimary</color>
+    <color name="colorSearchFilterDialogButtonText">@android:color/white</color>
 
 </resources>

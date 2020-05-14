@@ -6,7 +6,7 @@ object LogUtils {
     @JvmStatic
     fun debug(tag:String, message:String) {
         if (BuildConfig.DEBUG) {
-            Log.d(tag, message);
+            Log.d(tag, message)
         }
     }
 }

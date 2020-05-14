@@ -16,6 +16,7 @@
     <string name="onboarding_explanatory_text">Start ved å trykke på søkeikonet for å finne firma</string>
     <string name="detail_navigation_image_view_description">Navigeringspil</string>
     <string name="delete_search_history">Slett søkehistorikk</string>
+    <string name="add_filters">Filtrer søk på antall ansatte</string>
 
     <string name="company_detail_heading_details">Nøkkeldetaljer</string>
     <string name="company_detail_heading_institusjonell_sektor_kode">Institusjonell sektorkode</string>
@@ -64,5 +65,12 @@
 
     <string name="toggle_night_mode">Mørkt tema</string>
     <string name="title_activity_company_location_map">Kart</string>
+
+    <string name="filter_employees_title">Filtrer søk på antall ansatte</string>
+    <string name="filter_all_employees">Ingen filter</string>
+    <string name="filter_employees_less_than_or_equal_to_5">5 eller færre ansatte</string>
+    <string name="filter_employees_between_5_and_201">Fra 6 til 200 ansatte</string>
+    <string name="filter_employees_more_than_200">Mer enn 200 ansatte</string>
+    <string name="ok">OK</string>
 
 </resources>

@@ -4,13 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.github.fredrik9000.firmadetaljer_android.company_list.MainActivity">
     <item
-        android:id="@+id/delete_search_history"
+        android:id="@+id/modify_search_filters"
         android:orderInCategory="100"
+        android:title="@string/add_filters"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/delete_search_history"
+        android:orderInCategory="101"
         android:title="@string/delete_search_history"
         app:showAsAction="never" />
     <item
         android:id="@+id/toggle_night_mode"
-        android:orderInCategory="101"
+        android:orderInCategory="102"
         android:title="@string/toggle_night_mode"
         app:showAsAction="never" />
 </menu>

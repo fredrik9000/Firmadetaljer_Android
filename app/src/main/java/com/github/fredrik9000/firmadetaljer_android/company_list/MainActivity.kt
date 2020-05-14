@@ -19,7 +19,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -37,10 +37,12 @@ import javax.inject.Inject
 import kotlin.collections.ArrayList
 import kotlin.concurrent.timerTask
 
-class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener, CompanyDetailsNavigation {
+class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener, CompanyDetailsNavigation, SearchFilterDialogFragment.OnSearchFilterDialogFragmentInteractionListener {
 
     @Inject
     internal lateinit var viewModelFactory: ViewModelFactory
+
+    private lateinit var binding: ActivityMainBinding
 
     private lateinit var companyListViewModel: CompanyListViewModel
     private lateinit var companyDetailsViewModel: CompanyDetailsViewModel
@@ -49,7 +51,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
     private var progressBarDetails: ProgressBar? = null // Not present on phones
     private lateinit var searchView: SearchView
     private lateinit var recyclerView: RecyclerView
-    private lateinit var toolbarMenu : ActionMenuView
+    private lateinit var toolbarMenu: ActionMenuView
 
     private lateinit var adapterSearchList: CompanyListAdapter
     private lateinit var adapterSavedList: CompanyListAdapter
@@ -59,7 +61,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         setTitle(R.string.main_activity_title)
         progressBarList = binding.progressCompanyList
         progressBarDetails = binding.progressCompanyDetails
@@ -70,13 +72,13 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         toolbarMenu.setOnMenuItemClickListener { onOptionsItemSelected(it) }
 
         AndroidInjection.inject(this) // This is needed, though I don't think it should be. Could be a Kotlin issue.
-        companyListViewModel = ViewModelProviders.of(this, viewModelFactory).get(CompanyListViewModel::class.java)
+        companyListViewModel = ViewModelProvider(this, viewModelFactory).get(CompanyListViewModel::class.java)
 
         if (findViewById<View>(R.id.company_details_container) != null) {
             // The detail container view will be present only in the large-screen layouts (res/values-w900dp).
             // If this view is present, then the activity should be in two-pane mode.
             isTwoPane = true
-            companyDetailsViewModel = ViewModelProviders.of(this, viewModelFactory).get(CompanyDetailsViewModel::class.java)
+            companyDetailsViewModel = ViewModelProvider(this, viewModelFactory).get(CompanyDetailsViewModel::class.java)
         }
 
         setupRecyclerView(binding)
@@ -87,12 +89,13 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         savedInstanceState?.let {
             companyListViewModel.searchString = it.getString(SEARCH_KEY) ?: ""
             companyListViewModel.searchMode = it.getSerializable(SEARCH_MODE_KEY) as SearchMode
+            companyListViewModel.selectedNumberOfEmployeesFilter = it.getSerializable(EMPLOYEES_FILTER_KEY) as NumberOfEmployeesFilter
         }
 
         // In case the activity gets recreated (for example by rotating the device)
         // the correct adapter should be set.
         if (companyListViewModel.isSearchingWithValidInput) {
-            binding.includedCompanyList.companyListHeader.setText(R.string.search_results_header)
+            binding.includedCompanyList.companyListHeader.setText(buildSearchResultHeaderText())
             recyclerView.adapter = adapterSearchList
         } else {
             binding.includedCompanyList.companyListHeader.setText(R.string.viewed_companies_header)
@@ -179,7 +182,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         // Search view listerners
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                if(companyListViewModel.isSearchingWithValidInput) {
+                if (companyListViewModel.isSearchingWithValidInput) {
                     progressBarList.visibility = View.VISIBLE
                     companyListViewModel.searchOnSelectedSearchMode(query)
                     searchView.clearFocus() // clearFocus() closes the full screen search view for phones in landscape mode.
@@ -194,7 +197,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
 
                 // Check the current state and set the correct adapter
                 if (companyListViewModel.isSearchingWithValidInput && recyclerView.adapter === adapterSavedList) {
-                    binding.includedCompanyList.companyListHeader.setText(R.string.search_results_header)
+                    binding.includedCompanyList.companyListHeader.setText(buildSearchResultHeaderText())
                     recyclerView.adapter = adapterSearchList
                 } else if (!companyListViewModel.isSearchingWithValidInput && recyclerView.adapter === adapterSearchList) {
                     binding.includedCompanyList.companyListHeader.setText(R.string.viewed_companies_header)
@@ -253,6 +256,15 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         }
     }
 
+    private fun buildSearchResultHeaderText(): String {
+        return when (companyListViewModel.selectedNumberOfEmployeesFilter) {
+            NumberOfEmployeesFilter.ALL_EMPLOYEES -> resources.getString(R.string.search_results_header)
+            NumberOfEmployeesFilter.LESS_THAN_6 -> resources.getString(R.string.search_results_header) + " (" + resources.getString(R.string.filter_employees_less_than_or_equal_to_5) + ")"
+            NumberOfEmployeesFilter.BETWEEN_5_AND_201 -> resources.getString(R.string.search_results_header) + " (" + resources.getString(R.string.filter_employees_between_5_and_201) + ")"
+            NumberOfEmployeesFilter.MORE_THAN_200 -> resources.getString(R.string.search_results_header) + " (" + resources.getString(R.string.filter_employees_more_than_200) + ")"
+        }
+    }
+
     override fun onItemClick(company: Company, isViewedCompaniesList: Boolean) {
         if (!isViewedCompaniesList) {
             companyListViewModel.upsert(company) // Save company so that it will be shown in the viewed companies list
@@ -271,6 +283,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         super.onSaveInstanceState(outState)
         outState.putString(SEARCH_KEY, companyListViewModel.searchString)
         outState.putSerializable(SEARCH_MODE_KEY, companyListViewModel.searchMode)
+        outState.putSerializable(EMPLOYEES_FILTER_KEY, companyListViewModel.selectedNumberOfEmployeesFilter)
     }
 
     override fun handleCompanyNavigationResponse(response: CompanyResponse) {
@@ -307,6 +320,13 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         if (item.itemId == R.id.delete_search_history) {
             companyListViewModel.deleteAllCompanies()
             return true
+        } else if (item.itemId == R.id.modify_search_filters) {
+            val searchFilterDialogFragmentBundle = Bundle()
+            searchFilterDialogFragmentBundle.putSerializable(SearchFilterDialogFragment.ARGUMENT_FILTER_SELECTED, companyListViewModel.selectedNumberOfEmployeesFilter)
+            val searchFilterDialogFragment = SearchFilterDialogFragment()
+            searchFilterDialogFragment.setArguments(searchFilterDialogFragmentBundle)
+            searchFilterDialogFragment.show(supportFragmentManager, "SearchFilterDialogFragment")
+            return true
         } else if (item.itemId == R.id.toggle_night_mode) {
             val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
             if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
@@ -337,6 +357,19 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         super.onDestroy()
     }
 
+    override fun onSearchFilterDialogFragmentInteraction(filter: NumberOfEmployeesFilter) {
+        if (filter != companyListViewModel.selectedNumberOfEmployeesFilter) {
+            companyListViewModel.selectedNumberOfEmployeesFilter = filter
+
+            // Redo search when changing filter
+            if (companyListViewModel.isSearchingWithValidInput) {
+                binding.includedCompanyList.companyListHeader.setText(buildSearchResultHeaderText())
+                progressBarList.visibility = View.VISIBLE
+                companyListViewModel.searchOnSelectedSearchMode(companyListViewModel.searchString)
+            }
+        }
+    }
+
     private fun showOrHideOnboardingView(binding: ActivityMainBinding) {
         if (!companyListViewModel.isSearchingWithValidInput && companyListViewModel.savedCompaniesLiveData.value.isNullOrEmpty()) {
             binding.includedCompanyList.companyListWithHeader.visibility = View.GONE
@@ -363,6 +396,8 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         const val TAG = "MainActivity"
         const val SEARCH_KEY = "SEARCH"
         const val SEARCH_MODE_KEY = "SEARCH_MODE"
+        const val EMPLOYEES_FILTER_KEY = "EMPLOYEES_FILTER"
         const val DEBOUNCE_TIME_IN_MILLISECONDS = 500L
     }
+
 }

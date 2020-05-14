@@ -22,4 +22,12 @@
     <dimen name="list_item_company_details_parent_text_size">16sp</dimen>
     <dimen name="list_item_company_details_child_text_size">16sp</dimen>
     <dimen name="list_item_company_details_child_horizontal_margin">16dp</dimen>
+
+    <dimen name="search_filter_dialog_width">328dp</dimen>
+    <dimen name="search_filter_dialog_outer_padding">16dp</dimen>
+    <dimen name="search_filter_dialog_radio_button_to_text_padding">8dp</dimen>
+    <dimen name="search_filter_dialog_radio_button_height">48dp</dimen>
+    <dimen name="search_filter_dialog_title_text_size">24sp</dimen>
+    <dimen name="search_filter_dialog_button_text_size">20sp</dimen>
+
 </resources>

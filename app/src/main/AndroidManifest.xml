@@ -40,7 +40,8 @@
 
         <activity
             android:name=".company_details.CompanyLocationMapActivity"
-            android:label="@string/title_activity_company_location_map"></activity>
+            android:label="@string/title_activity_company_location_map" />
+
         <activity
             android:name=".company_details.CompanyDetailsActivity"
             android:label="@string/title_activity_company_detail">
@@ -48,6 +49,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".company_list.MainActivity" />
         </activity>
+
         <activity
             android:name=".company_list.MainActivity"
             android:launchMode="singleTop">
@@ -57,6 +59,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

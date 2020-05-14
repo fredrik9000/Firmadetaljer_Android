@@ -18,7 +18,7 @@ class CompanyListViewModel @Inject constructor(private val repository: CompanyRe
     private val organizationNumberLiveData = MutableLiveData<Int>()
 
     private val searchByNameResultLiveData: LiveData<CompanyListResponse> = Transformations.switchMap(companyNameLiveData) {
-        text -> repository.searchForCompaniesByName(text)
+        text -> repository.searchForCompaniesByName(text, selectedNumberOfEmployeesFilter)
     }
 
     private val searchByOrganizationNumberResultLiveData: LiveData<CompanyListResponse> = Transformations.switchMap(organizationNumberLiveData) {
@@ -29,6 +29,7 @@ class CompanyListViewModel @Inject constructor(private val repository: CompanyRe
 
     var searchMode = SearchMode.FIRM_NAME
     var searchString = ""
+    var selectedNumberOfEmployeesFilter = NumberOfEmployeesFilter.ALL_EMPLOYEES
 
     val isSearchingWithValidOrganizationNumber: Boolean
         get() = searchMode == SearchMode.ORGANIZATION_NUMBER && searchString.length >= ORGANIZATION_NUMBER_LENGTH && TextUtils.isDigitsOnly(searchString)

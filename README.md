@@ -1,6 +1,6 @@
 # Firmadetaljer
 
-This is an Android application where you can search for information about Norwegian companies. The search is done against the Brønnøysundsregistrene API: https://confluence.brreg.no/display/DBNPUB/API 
+This is an Android application where you can search for information about Norwegian companies. The search is done against the Brønnøysundsregistrene API: https://wiki.brreg.no/display/DBNPUB/API
 
 The app is written in Kotlin, uses Dagger 2, and has an MVVM architecture using the repository pattern and Android architecture components, such as:
 
@@ -15,7 +15,7 @@ The app is in Norwegian only (unlike the iOS version which also supports English
 
 #### The app has the following features:
 
-- Search for companies by name
+- Search for companies by name, which can be filtered by number of employees
 - Search for companies by organization number
 - View company details
 - View the company's location in Google Maps (you will get an authorization failure, since the API key is kept privately. You need to create your own API key.)
@@ -27,7 +27,7 @@ The app is in Norwegian only (unlike the iOS version which also supports English
 
 #### Potential improvements:
 
-- Add a menu item for filtering search by zip code or company size. Active filters could be added above the search result.
+- Add a way to update saved companies.
 - The maximum number of companies returned by the API is 100. Add pagination behaviour so that more data is retrieved as the user scrolls.
 - (Adaptive) launcher icons.
 
