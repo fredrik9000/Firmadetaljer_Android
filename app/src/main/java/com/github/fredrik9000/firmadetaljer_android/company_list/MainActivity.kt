@@ -342,10 +342,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
     override fun onBackPressed() {
         // Fix for memory leak in the Android framework that happens on Android 10:
         // https://issuetracker.google.com/issues/139738913
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-                && isTaskRoot
-                && supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.backStackEntryCount == 0
-                && supportFragmentManager.backStackEntryCount == 0) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && isTaskRoot) {
             finishAfterTransition()
         } else {
             super.onBackPressed()
