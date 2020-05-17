@@ -45,7 +45,7 @@ class CompanyLocationMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val latlng = getLocationFromAddress(companyAddress)
         latlng?.let {
-            map.addMarker(MarkerOptions().position(it).title("Marker in Sydney"))
+            map.addMarker(MarkerOptions().position(it))
             map.moveCamera(CameraUpdateFactory.newLatLng(it))
         }  ?: run {
             Toast.makeText(applicationContext, R.string.location_not_found, Toast.LENGTH_LONG).show()
