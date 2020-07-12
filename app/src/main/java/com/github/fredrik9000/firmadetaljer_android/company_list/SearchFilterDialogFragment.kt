@@ -13,12 +13,13 @@ import androidx.fragment.app.DialogFragment
 import com.github.fredrik9000.firmadetaljer_android.R
 
 class SearchFilterDialogFragment : DialogFragment() {
+
     private var listener: OnSearchFilterDialogFragmentInteractionListener? = null
     private lateinit var selectedFilter: NumberOfEmployeesFilter
 
     @Nullable
     override fun onCreateView(@NonNull inflater: LayoutInflater, @Nullable container: ViewGroup?, @Nullable savedInstanceState: Bundle?): View {
-        selectedFilter = getArguments()!!.getSerializable(ARGUMENT_FILTER_SELECTED) as NumberOfEmployeesFilter
+        selectedFilter = arguments!!.getSerializable(ARGUMENT_FILTER_SELECTED) as NumberOfEmployeesFilter
 
         val selectedFilterId = when (selectedFilter) {
             NumberOfEmployeesFilter.LESS_THAN_6 -> R.id.employees_less_than_6

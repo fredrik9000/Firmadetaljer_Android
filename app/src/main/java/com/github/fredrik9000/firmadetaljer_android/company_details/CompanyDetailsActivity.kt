@@ -19,6 +19,7 @@ import dagger.android.AndroidInjection
 import javax.inject.Inject
 
 class CompanyDetailsActivity : AppCompatActivity(), CompanyDetailsNavigation {
+
     @Inject
     internal lateinit var viewModelFactory: ViewModelFactory
 
@@ -44,7 +45,7 @@ class CompanyDetailsActivity : AppCompatActivity(), CompanyDetailsNavigation {
         //
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity using a fragment transaction.
-            inflateCompanyDetailsFragment(intent.getParcelableExtra(CompanyDetailsFragment.ARG_COMPANY) as Company, false)
+            inflateCompanyDetailsFragment(intent.getParcelableExtra<Company>(CompanyDetailsFragment.ARG_COMPANY) as Company, false)
         }
     }
 

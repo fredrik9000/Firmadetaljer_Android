@@ -19,6 +19,7 @@ import javax.inject.Singleton
 @Singleton
 open class CompanyRepository @Inject constructor(private val companyDao: CompanyDao,
                         private val service: CompanyService) {
+
     val savedCompanies: LiveData<List<Company>> = companyDao.companiesOrderedByName
 
     // When a company is updated it should appear at the top of the viewed companies list.

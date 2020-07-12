@@ -9,6 +9,7 @@ import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
 
 class HomepageFragment : Fragment() {
+
     private var url: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,7 +18,7 @@ class HomepageFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val webView = WebView(context)
+        val webView = WebView(requireContext())
         webView.webViewClient = WebViewClient()
         webView.loadUrl(addHTTPIfNotPresent(url!!))
         return webView

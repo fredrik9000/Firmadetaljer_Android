@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         // In case the activity gets recreated (for example by rotating the device)
         // the correct adapter should be set.
         if (companyListViewModel.isSearchingWithValidInput) {
-            binding.includedCompanyList.companyListHeader.setText(buildSearchResultHeaderText())
+            binding.includedCompanyList.companyListHeader.text = buildSearchResultHeaderText()
             recyclerView.adapter = adapterSearchList
         } else {
             binding.includedCompanyList.companyListHeader.setText(R.string.viewed_companies_header)
@@ -197,7 +197,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
 
                 // Check the current state and set the correct adapter
                 if (companyListViewModel.isSearchingWithValidInput && recyclerView.adapter === adapterSavedList) {
-                    binding.includedCompanyList.companyListHeader.setText(buildSearchResultHeaderText())
+                    binding.includedCompanyList.companyListHeader.text = buildSearchResultHeaderText()
                     recyclerView.adapter = adapterSearchList
                 } else if (!companyListViewModel.isSearchingWithValidInput && recyclerView.adapter === adapterSearchList) {
                     binding.includedCompanyList.companyListHeader.setText(R.string.viewed_companies_header)
@@ -317,26 +317,30 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.delete_search_history) {
-            companyListViewModel.deleteAllCompanies()
-            return true
-        } else if (item.itemId == R.id.modify_search_filters) {
-            val searchFilterDialogFragmentBundle = Bundle()
-            searchFilterDialogFragmentBundle.putSerializable(SearchFilterDialogFragment.ARGUMENT_FILTER_SELECTED, companyListViewModel.selectedNumberOfEmployeesFilter)
-            val searchFilterDialogFragment = SearchFilterDialogFragment()
-            searchFilterDialogFragment.setArguments(searchFilterDialogFragmentBundle)
-            searchFilterDialogFragment.show(supportFragmentManager, "SearchFilterDialogFragment")
-            return true
-        } else if (item.itemId == R.id.toggle_night_mode) {
-            val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-            if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            } else { // Assume light theme
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        when (item.itemId) {
+            R.id.delete_search_history -> {
+                companyListViewModel.deleteAllCompanies()
+                return true
             }
-            return true
+            R.id.modify_search_filters -> {
+                val searchFilterDialogFragmentBundle = Bundle()
+                searchFilterDialogFragmentBundle.putSerializable(SearchFilterDialogFragment.ARGUMENT_FILTER_SELECTED, companyListViewModel.selectedNumberOfEmployeesFilter)
+                val searchFilterDialogFragment = SearchFilterDialogFragment()
+                searchFilterDialogFragment.arguments = searchFilterDialogFragmentBundle
+                searchFilterDialogFragment.show(supportFragmentManager, "SearchFilterDialogFragment")
+                return true
+            }
+            R.id.toggle_night_mode -> {
+                val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+                if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                } else { // Assume light theme
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                }
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onBackPressed() {
@@ -360,7 +364,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
 
             // Redo search when changing filter
             if (companyListViewModel.isSearchingWithValidInput) {
-                binding.includedCompanyList.companyListHeader.setText(buildSearchResultHeaderText())
+                binding.includedCompanyList.companyListHeader.text = buildSearchResultHeaderText()
                 progressBarList.visibility = View.VISIBLE
                 companyListViewModel.searchOnSelectedSearchMode(companyListViewModel.searchString)
             }

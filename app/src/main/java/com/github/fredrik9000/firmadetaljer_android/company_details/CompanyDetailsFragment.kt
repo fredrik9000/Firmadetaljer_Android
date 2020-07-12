@@ -39,24 +39,24 @@ class CompanyDetailsFragment : Fragment() {
         expandableListView.setOnChildClickListener { _, _, groupPosition, childPosition, _ ->
             val companyDetailsDescription = companyDetailItems[companyDetailGroups[groupPosition]]!![childPosition]
             // TODO: It's not good to use the labels as identifiers here. Should instead use something that is sure to be unique if the text changes.
-            when {
-                companyDetailsDescription.label == resources.getString(R.string.company_detail_details_overordnet_enhet) -> {
+            when (companyDetailsDescription.label) {
+                resources.getString(R.string.company_detail_details_overordnet_enhet) -> {
                     companyDetailsNavigation.navigateToCompany(company.overordnetEnhet!!)
                     return@setOnChildClickListener true
                 }
-                companyDetailsDescription.label == resources.getString(R.string.company_detail_details_hjemmeside) -> {
+                resources.getString(R.string.company_detail_details_hjemmeside) -> {
                     companyDetailsNavigation.navigateToHomepage(company.hjemmeside!!)
                     return@setOnChildClickListener true
                 }
-                companyDetailsDescription.label == resources.getString(R.string.company_detail_adresse_postadresse) -> {
+                resources.getString(R.string.company_detail_adresse_postadresse) -> {
                     navigateToMap(company.postadresseAdresse)
                     return@setOnChildClickListener true
                 }
-                companyDetailsDescription.label == resources.getString(R.string.company_detail_adresse_forretningsadresse) -> {
+                resources.getString(R.string.company_detail_adresse_forretningsadresse) -> {
                     navigateToMap(company.forretningsadresseAdresse)
                     return@setOnChildClickListener true
                 }
-                companyDetailsDescription.label == resources.getString(R.string.company_detail_adresse_beliggenhetsadresse) -> {
+                resources.getString(R.string.company_detail_adresse_beliggenhetsadresse) -> {
                     navigateToMap(company.beliggenhetsadresseAdresse)
                     return@setOnChildClickListener true
                 }
