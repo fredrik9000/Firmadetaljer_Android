@@ -20,7 +20,7 @@ class CompanyListAdapter(
         private val isViewedCompaniesList: Boolean)
     : RecyclerView.Adapter<CompanyListAdapter.ViewHolder>() {
 
-    var selectedPosition = -1
+    var selectedPosition = UNSELECTED_ITEM_POSITION
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
         val inflater = LayoutInflater.from(viewGroup.context)
@@ -41,6 +41,7 @@ class CompanyListAdapter(
     }
 
     fun update(companyList: List<Company>) {
+        selectedPosition = UNSELECTED_ITEM_POSITION // When the list updates remove the selected item highlight
         this.companyList = companyList
         this.notifyDataSetChanged()
     }
@@ -72,5 +73,9 @@ class CompanyListAdapter(
             binding.company = company
             binding.executePendingBindings()
         }
+    }
+
+    private companion object {
+        const val UNSELECTED_ITEM_POSITION = -1
     }
 }
