@@ -1,91 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/toolbar_main"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorPrimary"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar_main"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RadioGroup
+            android:id="@+id/search_mode_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/search_mode_toggle_height"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/search_mode_toggle_margin_left"
+            android:layout_marginTop="@dimen/search_mode_toggle_margin_top"
+            android:layout_marginEnd="@dimen/search_mode_toggle_margin_right"
+            android:layout_marginBottom="@dimen/search_mode_toggle_margin_bottom"
+            android:background="@drawable/toggle_outline"
+            android:checkedButton="@+id/search_firm_name"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/search_firm_name"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/toggle_outline_stroke_width"
+                android:layout_marginTop="@dimen/toggle_outline_stroke_width"
+                android:layout_marginBottom="@dimen/toggle_outline_stroke_width"
+                android:layout_weight="1"
+                android:background="@drawable/toggle_widget_background"
+                android:button="@null"
+                android:gravity="center"
+                android:paddingLeft="@dimen/search_mode_toggle_button_left_right_padding"
+                android:paddingRight="@dimen/search_mode_toggle_button_left_right_padding"
+                android:text="@string/select_firmanavn"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/search_mode_toggle_text_size" />
+
+            <RadioButton
+                android:id="@+id/search_org_number"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/toggle_outline_stroke_width"
+                android:layout_marginEnd="@dimen/toggle_outline_stroke_width"
+                android:layout_marginBottom="@dimen/toggle_outline_stroke_width"
+                android:layout_weight="1"
+                android:background="@drawable/toggle_widget_background"
+                android:button="@null"
+                android:gravity="center"
+                android:paddingLeft="@dimen/search_mode_toggle_button_left_right_padding"
+                android:paddingRight="@dimen/search_mode_toggle_button_left_right_padding"
+                android:text="@string/select_org_number"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/search_mode_toggle_text_size" />
+        </RadioGroup>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-            <RadioGroup
-                android:id="@+id/search_mode_toggle"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/search_mode_toggle_height"
-                android:layout_gravity="center"
-                android:layout_marginStart="@dimen/search_mode_toggle_margin_left"
-                android:layout_marginTop="@dimen/search_mode_toggle_margin_top"
-                android:layout_marginEnd="@dimen/search_mode_toggle_margin_right"
-                android:layout_marginBottom="@dimen/search_mode_toggle_margin_bottom"
-                android:background="@drawable/toggle_outline"
-                android:checkedButton="@+id/search_firm_name"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/search_firm_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="@dimen/toggle_outline_stroke_width"
-                    android:layout_marginTop="@dimen/toggle_outline_stroke_width"
-                    android:layout_marginBottom="@dimen/toggle_outline_stroke_width"
-                    android:layout_weight="1"
-                    android:background="@drawable/toggle_widget_background"
-                    android:button="@null"
-                    android:gravity="center"
-                    android:paddingLeft="@dimen/search_mode_toggle_button_left_right_padding"
-                    android:paddingRight="@dimen/search_mode_toggle_button_left_right_padding"
-                    android:text="@string/select_firmanavn"
-                    android:textColor="@android:color/white"
-                    android:textSize="@dimen/search_mode_toggle_text_size" />
-
-                <RadioButton
-                    android:id="@+id/search_org_number"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="@dimen/toggle_outline_stroke_width"
-                    android:layout_marginEnd="@dimen/toggle_outline_stroke_width"
-                    android:layout_marginBottom="@dimen/toggle_outline_stroke_width"
-                    android:layout_weight="1"
-                    android:background="@drawable/toggle_widget_background"
-                    android:button="@null"
-                    android:gravity="center"
-                    android:paddingLeft="@dimen/search_mode_toggle_button_left_right_padding"
-                    android:paddingRight="@dimen/search_mode_toggle_button_left_right_padding"
-                    android:text="@string/select_org_number"
-                    android:textColor="@android:color/white"
-                    android:textSize="@dimen/search_mode_toggle_text_size" />
-            </RadioGroup>
-
-            <LinearLayout
-                android:layout_width="match_parent"
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/action_search"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_weight="1"
+                android:icon="@drawable/ic_search_24dp"
+                android:layoutDirection="rtl"
+                android:orderInCategory="1"
+                android:title="@string/search_item_title" />
 
-                <androidx.appcompat.widget.SearchView
-                    android:id="@+id/action_search"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:icon="@drawable/ic_search_24dp"
-                    android:layoutDirection="rtl"
-                    android:orderInCategory="1"
-                    android:title="@string/search_item_title" />
-
-                <androidx.appcompat.widget.ActionMenuView
-                    android:id="@+id/toolbar_menu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/action_menu_view_margin_left" />
-
-            </LinearLayout>
+            <androidx.appcompat.widget.ActionMenuView
+                android:id="@+id/toolbar_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/action_menu_view_margin_left" />
 
         </LinearLayout>
 
-    </androidx.appcompat.widget.Toolbar>
+    </LinearLayout>
 
-</layout>
+</androidx.appcompat.widget.Toolbar>

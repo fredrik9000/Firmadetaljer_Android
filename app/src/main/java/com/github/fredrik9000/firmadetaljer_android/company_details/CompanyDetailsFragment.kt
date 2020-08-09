@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ExpandableListView
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.github.fredrik9000.firmadetaljer_android.R
 import com.github.fredrik9000.firmadetaljer_android.databinding.FragmentCompanyDetailsBinding
@@ -26,8 +25,7 @@ class CompanyDetailsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val binding = DataBindingUtil.inflate<FragmentCompanyDetailsBinding>(
-                inflater, R.layout.fragment_company_details, container, false)
+        val binding = FragmentCompanyDetailsBinding.inflate(inflater, container, false)
 
         val expandableListView = binding.companyDetailsList
 

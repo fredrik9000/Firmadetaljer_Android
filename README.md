@@ -7,7 +7,7 @@ The app is written in Kotlin, and has a modern MVVM architecture. The app uses t
 - ViewModel
 - Room
 - LiveData
-- Data Binding
+- Data Binding and View Binding
 - Dagger-Hilt for dependency injection
 
 This app does not use a single activity architecture or the navigation component, but my todo list app does: [Android Todo List](https://github.com/fredrik9000/TodoList_Android) 

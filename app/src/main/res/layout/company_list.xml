@@ -1,45 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <RelativeLayout
+    <TextView
+        android:id="@+id/onboarding_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/content_margin"
+        android:gravity="center"
+        android:lineSpacingExtra="@dimen/onboarding_view_line_spacing_extra"
+        android:text="@string/onboarding_explanatory_text"
+        android:textSize="@dimen/onboarding_view_text_size"
+        android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/onboarding_view"
+    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/company_list_with_header"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:showIn="@layout/activity_main">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/company_list_header"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="@dimen/content_margin"
-            android:gravity="center"
-            android:lineSpacingExtra="@dimen/onboarding_view_line_spacing_extra"
-            android:text="@string/onboarding_explanatory_text"
-            android:textSize="@dimen/onboarding_view_text_size"
-            android:visibility="gone" />
+            android:layout_height="wrap_content"
+            android:background="@color/colorListHeaderBackground"
+            android:elevation="@dimen/toolbar_elevation"
+            android:padding="@dimen/list_header_padding"
+            android:text="@string/viewed_companies_header"
+            android:textColor="@color/colorListHeaderText" />
 
-        <LinearLayout xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/company_list_with_header"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/company_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            tools:showIn="@layout/activity_main">
+            android:layout_height="match_parent" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/company_list_header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorListHeaderBackground"
-                android:elevation="@dimen/toolbar_elevation"
-                android:padding="@dimen/list_header_padding"
-                android:text="@string/viewed_companies_header"
-                android:textColor="@color/colorListHeaderText" />
+    </LinearLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/company_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </LinearLayout>
-
-    </RelativeLayout>
-
-</layout>
+</RelativeLayout>

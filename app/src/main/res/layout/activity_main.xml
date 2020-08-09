@@ -1,33 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".company_list.MainActivity">
 
-    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+    <include
+        android:id="@+id/included_toolbar"
+        layout="@layout/activity_main_toolbar" />
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".company_list.MainActivity">
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/progress_company_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone" />
 
         <include
-            android:id="@+id/included_toolbar"
-            layout="@layout/activity_main_toolbar" />
+            android:id="@+id/included_company_list"
+            layout="@layout/company_list" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    </RelativeLayout>
 
-            <ProgressBar
-                android:id="@+id/progress_company_list"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:visibility="gone" />
-
-            <include
-                android:id="@+id/included_company_list"
-                layout="@layout/company_list" />
-
-        </RelativeLayout>
-
-    </LinearLayout>
-
-</layout>
+</LinearLayout>

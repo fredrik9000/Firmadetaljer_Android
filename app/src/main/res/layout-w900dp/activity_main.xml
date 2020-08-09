@@ -1,62 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".company_list.MainActivity">
 
-    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+    <include
+        android:id="@+id/included_toolbar"
+        layout="@layout/activity_main_toolbar" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".company_list.MainActivity">
+        android:baselineAligned="false"
+        android:divider="?android:attr/dividerHorizontal"
+        android:orientation="horizontal"
+        android:showDividers="middle">
 
-        <include
-            android:id="@+id/included_toolbar"
-            layout="@layout/activity_main_toolbar" />
+        <RelativeLayout
+            android:layout_width="@dimen/company_list_width"
+            android:layout_height="match_parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+            <ProgressBar
+                android:id="@+id/progress_company_list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:visibility="gone" />
+
+            <include
+                android:id="@+id/included_company_list"
+                layout="@layout/company_list" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:baselineAligned="false"
-            android:divider="?android:attr/dividerHorizontal"
-            android:orientation="horizontal"
-            android:showDividers="middle">
+            android:layout_weight="3">
 
-            <RelativeLayout
-                android:layout_width="@dimen/company_list_width"
-                android:layout_height="match_parent">
+            <ProgressBar
+                android:id="@+id/progress_company_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:visibility="gone" />
 
-                <ProgressBar
-                    android:id="@+id/progress_company_list"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:visibility="gone" />
+            <FrameLayout
+                android:id="@+id/company_details_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
-                <include
-                    android:id="@+id/included_company_list"
-                    layout="@layout/company_list" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="3">
-
-                <ProgressBar
-                    android:id="@+id/progress_company_details"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:visibility="gone" />
-
-                <FrameLayout
-                    android:id="@+id/company_details_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-            </RelativeLayout>
-
-        </LinearLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 
-</layout>
+</LinearLayout>

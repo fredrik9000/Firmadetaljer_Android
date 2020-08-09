@@ -7,7 +7,6 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
 import com.github.fredrik9000.firmadetaljer_android.BuildConfig
 import com.github.fredrik9000.firmadetaljer_android.LogUtils
 import com.github.fredrik9000.firmadetaljer_android.R
@@ -24,7 +23,8 @@ class CompanyDetailsActivity : AppCompatActivity(), CompanyDetailsNavigation {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = DataBindingUtil.setContentView<ActivityCompanyDetailsBinding>(this, R.layout.activity_company_details)
+        val binding = ActivityCompanyDetailsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         progressBarDetails = binding.progressCompanyDetails
         setSupportActionBar(binding.includedToolbar.toolbarCompanyDetails)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)

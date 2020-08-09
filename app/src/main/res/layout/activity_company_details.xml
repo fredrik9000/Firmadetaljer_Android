@@ -1,34 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".company_details.CompanyDetailsActivity">
 
-    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+    <include
+        android:id="@+id/included_toolbar"
+        layout="@layout/activity_company_details_toolbar" />
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".company_details.CompanyDetailsActivity">
+        android:layout_height="match_parent">
 
-        <include
-            android:id="@+id/included_toolbar"
-            layout="@layout/activity_company_details_toolbar" />
+        <ProgressBar
+            android:id="@+id/progress_company_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone" />
 
-        <RelativeLayout
+        <FrameLayout
+            android:id="@+id/company_details_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent" />
 
-            <ProgressBar
-                android:id="@+id/progress_company_details"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:visibility="gone" />
+    </RelativeLayout>
 
-            <FrameLayout
-                android:id="@+id/company_details_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </RelativeLayout>
-
-    </LinearLayout>
-
-</layout>
+</LinearLayout>
