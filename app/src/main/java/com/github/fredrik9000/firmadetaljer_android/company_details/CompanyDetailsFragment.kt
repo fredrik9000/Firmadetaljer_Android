@@ -21,7 +21,7 @@ class CompanyDetailsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        company = arguments!!.getParcelable(ARG_COMPANY)!!
+        company = requireArguments().getParcelable(ARG_COMPANY)!!
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -33,7 +33,7 @@ class CompanyDetailsFragment : Fragment() {
 
         val (companyDetailGroups, companyDetailItems) = fillData()
 
-        val adapter = CompanyDetailsAdapter(this.context!!, companyDetailGroups, companyDetailItems)
+        val adapter = CompanyDetailsAdapter(this.requireContext(), companyDetailGroups, companyDetailItems)
         expandableListView.setAdapter(adapter)
 
         expandableListView.setOnChildClickListener { _, _, groupPosition, childPosition, _ ->

@@ -1,25 +1,27 @@
 package com.github.fredrik9000.firmadetaljer_android.di
 
-import android.app.Application
+import android.content.Context
 import androidx.room.Room
 import com.github.fredrik9000.firmadetaljer_android.repository.room.CompanyDao
 import com.github.fredrik9000.firmadetaljer_android.repository.room.CompanyDatabase
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Singleton
 
 @Module
+@InstallIn(ApplicationComponent::class)
 object DBModule {
-    @JvmStatic
     @Provides
     @Singleton
-    internal fun provideDatabase(application: Application) : CompanyDatabase {
+    internal fun provideDatabase(@ApplicationContext application: Context) : CompanyDatabase {
         return Room.databaseBuilder(application, CompanyDatabase::class.java, "company_database")
                 .fallbackToDestructiveMigration()
                 .build()
     }
 
-    @JvmStatic
     @Provides
     @Singleton
     internal fun provideCompanyDao(companyDatabase: CompanyDatabase): CompanyDao {

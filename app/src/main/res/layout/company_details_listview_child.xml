@@ -49,11 +49,11 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/detail_navigation_image_view_description"
         android:src="@drawable/ic_arrow_forward_24dp"
-        android:tint="@color/colorTextDetailDescriptionNavigatable"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/colorTextDetailDescriptionNavigatable"
         tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,25 +5,21 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProviders
 import com.github.fredrik9000.firmadetaljer_android.BuildConfig
 import com.github.fredrik9000.firmadetaljer_android.LogUtils
 import com.github.fredrik9000.firmadetaljer_android.R
 import com.github.fredrik9000.firmadetaljer_android.databinding.ActivityCompanyDetailsBinding
-import com.github.fredrik9000.firmadetaljer_android.di.ViewModelFactory
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
-import dagger.android.AndroidInjection
-import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class CompanyDetailsActivity : AppCompatActivity(), CompanyDetailsNavigation {
 
-    @Inject
-    internal lateinit var viewModelFactory: ViewModelFactory
-
-    private lateinit var companyDetailsViewModel: CompanyDetailsViewModel
+    private val companyDetailsViewModel: CompanyDetailsViewModel by viewModels()
     private lateinit var progressBarDetails: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,9 +29,6 @@ class CompanyDetailsActivity : AppCompatActivity(), CompanyDetailsNavigation {
         setSupportActionBar(binding.includedToolbar.toolbarCompanyDetails)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
-
-        AndroidInjection.inject(this) // This is needed, though I don't think it should be. Could be a Kotlin issue.
-        companyDetailsViewModel = ViewModelProviders.of(this, viewModelFactory).get(CompanyDetailsViewModel::class.java)
 
         // savedInstanceState is non-null when there is fragment state saved from previous configurations of this activity
         // (e.g. when rotating the screen from portrait to landscape). In this case, the fragment will automatically be re-added

@@ -19,7 +19,7 @@ class SearchFilterDialogFragment : DialogFragment() {
 
     @Nullable
     override fun onCreateView(@NonNull inflater: LayoutInflater, @Nullable container: ViewGroup?, @Nullable savedInstanceState: Bundle?): View {
-        selectedFilter = arguments!!.getSerializable(ARGUMENT_FILTER_SELECTED) as NumberOfEmployeesFilter
+        selectedFilter = requireArguments().getSerializable(ARGUMENT_FILTER_SELECTED) as NumberOfEmployeesFilter
 
         val selectedFilterId = when (selectedFilter) {
             NumberOfEmployeesFilter.LESS_THAN_6 -> R.id.employees_less_than_6
@@ -32,7 +32,7 @@ class SearchFilterDialogFragment : DialogFragment() {
 
         val radioGroup: RadioGroup = view.findViewById(R.id.filter_employees_radio_group)
         radioGroup.check(selectedFilterId)
-        radioGroup.setOnCheckedChangeListener { group, checkedId ->
+        radioGroup.setOnCheckedChangeListener { _, checkedId ->
             this@SearchFilterDialogFragment.selectedFilter = when (checkedId) {
                 R.id.employees_less_than_6 -> NumberOfEmployeesFilter.LESS_THAN_6
                 R.id.employees_between_5_and_201 -> NumberOfEmployeesFilter.BETWEEN_5_AND_201

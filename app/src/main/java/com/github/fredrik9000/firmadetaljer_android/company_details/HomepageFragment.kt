@@ -14,7 +14,7 @@ class HomepageFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        url = arguments!!.getString(ARG_URL)
+        url = requireArguments().getString(ARG_URL)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

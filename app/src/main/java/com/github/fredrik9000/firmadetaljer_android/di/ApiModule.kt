@@ -3,13 +3,15 @@ package com.github.fredrik9000.firmadetaljer_android.di
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyService
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
+@InstallIn(ApplicationComponent::class)
 object ApiModule {
-    @JvmStatic
     @Singleton
     @Provides
     fun provideRetrofitInstance() : Retrofit {
@@ -19,7 +21,6 @@ object ApiModule {
                 .build()
     }
 
-    @JvmStatic
     @Singleton
     @Provides
     fun provideCompanyService(retrofit: Retrofit) : CompanyService {

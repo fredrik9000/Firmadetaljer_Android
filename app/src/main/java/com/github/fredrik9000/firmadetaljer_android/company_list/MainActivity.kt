@@ -11,6 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.ActionMenuView
@@ -19,7 +20,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,25 +27,21 @@ import com.github.fredrik9000.firmadetaljer_android.LogUtils
 import com.github.fredrik9000.firmadetaljer_android.R
 import com.github.fredrik9000.firmadetaljer_android.company_details.*
 import com.github.fredrik9000.firmadetaljer_android.databinding.ActivityMainBinding
-import com.github.fredrik9000.firmadetaljer_android.di.ViewModelFactory
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 import retrofit2.HttpException
 import java.util.*
-import javax.inject.Inject
 import kotlin.collections.ArrayList
 import kotlin.concurrent.timerTask
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener, CompanyDetailsNavigation, SearchFilterDialogFragment.OnSearchFilterDialogFragmentInteractionListener {
-
-    @Inject
-    internal lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var companyListViewModel: CompanyListViewModel
-    private lateinit var companyDetailsViewModel: CompanyDetailsViewModel
+    private val companyListViewModel: CompanyListViewModel by viewModels()
+    private val companyDetailsViewModel: CompanyDetailsViewModel by viewModels()
 
     private lateinit var progressBarList: ProgressBar
     private var progressBarDetails: ProgressBar? = null // Not present on phones
@@ -71,14 +67,10 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         toolbarMenu = binding.includedToolbar.toolbarMenu
         toolbarMenu.setOnMenuItemClickListener { onOptionsItemSelected(it) }
 
-        AndroidInjection.inject(this) // This is needed, though I don't think it should be. Could be a Kotlin issue.
-        companyListViewModel = ViewModelProvider(this, viewModelFactory).get(CompanyListViewModel::class.java)
-
         if (findViewById<View>(R.id.company_details_container) != null) {
             // The detail container view will be present only in the large-screen layouts (res/values-w900dp).
             // If this view is present, then the activity should be in two-pane mode.
             isTwoPane = true
-            companyDetailsViewModel = ViewModelProvider(this, viewModelFactory).get(CompanyDetailsViewModel::class.java)
         }
 
         setupRecyclerView(binding)

@@ -1,14 +1,14 @@
 package com.github.fredrik9000.firmadetaljer_android.company_list
 
 import android.text.TextUtils
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.github.fredrik9000.firmadetaljer_android.repository.CompanyRepository
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyListResponse
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-class CompanyListViewModel @Inject constructor(private val repository: CompanyRepository) : ViewModel() {
+class CompanyListViewModel @ViewModelInject constructor(private val repository: CompanyRepository) : ViewModel() {
 
     private val _searchResultLiveData = MediatorLiveData<CompanyListResponse>()
     val searchResultLiveData: LiveData<CompanyListResponse>

@@ -2,41 +2,44 @@
 
 This is an Android application where you can search for information about Norwegian companies. The search is done against the Brønnøysundsregistrene API: https://wiki.brreg.no/display/DBNPUB/API
 
-The app is written in Kotlin, uses Dagger 2, and has an MVVM architecture using the repository pattern and Android architecture components, such as:
+The app is written in Kotlin, and has a modern MVVM architecture. The app uses the repository pattern and Android architecture components, such as:
 
 - ViewModel
 - Room
 - LiveData
 - Data Binding
+- Dagger-Hilt for dependency injection
 
 This app does not use a single activity architecture or the navigation component, but my todo list app does: [Android Todo List](https://github.com/fredrik9000/TodoList_Android) 
-
-The app is in Norwegian only (unlike the iOS version which also supports English). The reason for this is that the API returns Norwegian data, and it's a Norway tailored app anyway. I might still translate the app to English in the future, as there is a benefit to that. You can find the iOS version here: [iOS Firmadetaljer](https://github.com/fredrik9000/Firmadetaljer_iOS)
 
 #### The app has the following features:
 
 - Search for companies by name, which can be filtered by number of employees
 - Search for companies by organization number
 - View company details
-- View the company's location in Google Maps (you will get an authorization failure, since the API key is kept privately. You need to create your own API key.)
+- View the company's location in Google Maps
 - Navigate to parent company details (for those that have parent companies)
 - Navigate to the company homepage
 - Viewed companies are persisted and shown in its own list when not searching
 - Option for clearing search history (meaning the persisted companies will be deleted)
 - Dark mode, which can also be toggled from within the app
 
-#### Potential improvements:
+In order to view the company's location on a map you'll need to create your own Google Maps API key.
 
-- Add a way to update saved companies.
-- The maximum number of companies returned by the API is 100. Add pagination behaviour so that more data is retrieved as the user scrolls.
-- (Adaptive) launcher icons.
+I have also made an iOS version: [iOS Firmadetaljer](https://github.com/fredrik9000/Firmadetaljer_iOS)
 
 ## Screenshots
 
-![Screenshot_1568831706](https://user-images.githubusercontent.com/13121494/65176250-b167f900-da54-11e9-8973-5e085ac354cc.png)
+![Screenshot_1568831706](https://user-images.githubusercontent.com/13121494/89735215-34c17d00-da61-11ea-82be-14d89e5fe5bc.png)
 
-![Screenshot_1568831723](https://user-images.githubusercontent.com/13121494/65176255-b4fb8000-da54-11e9-9ba2-c8a32c777a1b.png)
+<p float="left">
+  <img src="https://user-images.githubusercontent.com/13121494/89735214-3428e680-da61-11ea-9d67-fa60693ada93.png" width="414" />
+  <img src="https://user-images.githubusercontent.com/13121494/89735213-33905000-da61-11ea-84be-a0236891b8b1.png" width="414" />
+</p>
 
-![saved_companies_phone_dark](https://user-images.githubusercontent.com/13121494/65176135-75cd2f00-da54-11e9-9cb8-6ae2a401947c.png)
+![Screenshot_1568831723](https://user-images.githubusercontent.com/13121494/89735217-34c17d00-da61-11ea-985d-2c878d7ce05a.png)
 
-![company_details_phone_dark](https://user-images.githubusercontent.com/13121494/65176140-78c81f80-da54-11e9-8814-f5347049031d.png)
+<p float="left">
+  <img src="https://user-images.githubusercontent.com/13121494/89735367-61c25f80-da62-11ea-81d5-ab48a53f9520.png" width="414" />
+  <img src="https://user-images.githubusercontent.com/13121494/89735437-c7aee700-da62-11ea-96c2-d6cf54dbd3c2.png" width="414" />
+</p>
