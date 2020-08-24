@@ -34,7 +34,7 @@ class CompanyRepositoryTest {
         MockitoAnnotations.initMocks(this)
 
         companyService = Retrofit.Builder()
-                .baseUrl("https://data.brreg.no/enhetsregisteret/")
+                .baseUrl("https://data.brreg.no/enhetsregisteret/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(CompanyService::class.java)
@@ -46,7 +46,7 @@ class CompanyRepositoryTest {
     @Test
     fun searchOnSelectedSearchModeByName_ReturnsEmptyListOfCompanies() {
         viewModel.searchMode = SearchMode.FIRM_NAME
-        viewModel.searchOnSelectedSearchMode("This company does not exist")
+        viewModel.searchOnSelectedSearchMode("ThisCompanyDoesNotExist")
         Truth.assertThat(LiveDataUtil.getOrAwaitValue(viewModel.searchResultLiveData).companies?.isEmpty()).isTrue()
     }
 
