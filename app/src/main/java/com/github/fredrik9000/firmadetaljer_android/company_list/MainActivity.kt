@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
             isTwoPane = true
         }
 
-        setupRecyclerView(binding)
+        setupRecyclerView()
 
         adapterSavedList = CompanyListAdapter(this, this, ArrayList(), isTwoPane, true)
         adapterSearchList = CompanyListAdapter(this, this, ArrayList(), isTwoPane, false)
@@ -94,9 +94,9 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
             recyclerView.adapter = adapterSavedList
         }
 
-        setupSearchView(toolbar, binding)
-        setupSearchResultObserver(binding)
-        setupSavedCompaniesObserver(binding)
+        setupSearchView(toolbar)
+        setupSearchResultObserver()
+        setupSavedCompaniesObserver()
 
         // If the following is true that means both the Activity and ViewModel were destroyed,
         // and while having an active search. Therefore we need to do the search again.
@@ -108,7 +108,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         }
     }
 
-    private fun setupRecyclerView(binding: ActivityMainBinding) {
+    private fun setupRecyclerView() {
         recyclerView = binding.includedCompanyList.companyList
         recyclerView.setHasFixedSize(true)
         val layoutManager = LinearLayoutManager(this)
@@ -118,15 +118,15 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
     }
 
     // Saved companies is shown whenever the user isn't searching
-    private fun setupSavedCompaniesObserver(binding: ActivityMainBinding) {
+    private fun setupSavedCompaniesObserver() {
         companyListViewModel.savedCompaniesLiveData.observe(this, Observer { companyList ->
             adapterSavedList.update(companyList)
-            showOrHideOnboardingView(binding)
+            showOrHideOnboardingView()
         })
     }
 
     // Handles search results and updates the list
-    private fun setupSearchResultObserver(binding: ActivityMainBinding) {
+    private fun setupSearchResultObserver() {
         companyListViewModel.searchResultLiveData.observe(this, Observer { companyListResponse ->
             progressBarList.visibility = View.GONE
             if (companyListResponse.companies != null) {
@@ -153,7 +153,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         })
     }
 
-    private fun setupSearchView(toolbar: Toolbar, binding: ActivityMainBinding) {
+    private fun setupSearchView(toolbar: Toolbar) {
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         searchView = toolbar.findViewById(R.id.action_search)
         searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
@@ -185,7 +185,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
 
             override fun onQueryTextChange(newText: String): Boolean {
                 companyListViewModel.searchString = newText
-                showOrHideOnboardingView(binding)
+                showOrHideOnboardingView()
 
                 // Check the current state and set the correct adapter
                 if (companyListViewModel.isSearchingWithValidInput && recyclerView.adapter === adapterSavedList) {
@@ -363,7 +363,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         }
     }
 
-    private fun showOrHideOnboardingView(binding: ActivityMainBinding) {
+    private fun showOrHideOnboardingView() {
         if (!companyListViewModel.isSearchingWithValidInput && companyListViewModel.savedCompaniesLiveData.value.isNullOrEmpty()) {
             binding.includedCompanyList.companyListWithHeader.visibility = View.GONE
             binding.includedCompanyList.onboardingView.visibility = View.VISIBLE
