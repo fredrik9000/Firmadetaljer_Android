@@ -7,6 +7,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.commit
 import com.github.fredrik9000.firmadetaljer_android.BuildConfig
 import com.github.fredrik9000.firmadetaljer_android.LogUtils
 import com.github.fredrik9000.firmadetaljer_android.R
@@ -44,12 +45,13 @@ class CompanyDetailsActivity : AppCompatActivity(), CompanyDetailsNavigation {
 
     override fun handleCompanyNavigationResponse(response: CompanyResponse) {
         progressBarDetails.visibility = View.GONE
-        response.company?.let {
-            inflateCompanyDetailsFragment(it, true)
-        } ?: run {
-            Toast.makeText(applicationContext, R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show()
-            if (BuildConfig.DEBUG) {
-                LogUtils.debug(TAG, "handleCompanyNavigationResponse() called with response error = " + response.error!!)
+        when (response) {
+            is CompanyResponse.Success -> inflateCompanyDetailsFragment(response.company, true)
+            is CompanyResponse.Error -> {
+                Toast.makeText(applicationContext, R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show()
+                if (BuildConfig.DEBUG) {
+                    LogUtils.debug(TAG, "handleCompanyNavigationResponse() called with response error = " + response.error)
+                }
             }
         }
     }
@@ -60,25 +62,29 @@ class CompanyDetailsActivity : AppCompatActivity(), CompanyDetailsNavigation {
     }
 
     override fun navigateToHomepage(url: String) {
-        val arguments = Bundle()
-        arguments.putString(HomepageFragment.ARG_URL, url)
-        val fragment = HomepageFragment().apply { this.arguments = arguments }
-        this.supportFragmentManager.beginTransaction()
-                .replace(R.id.company_details_container, fragment)
-                .addToBackStack(null)
-                .commit()
+        this.supportFragmentManager.commit {
+            replace(R.id.company_details_container, HomepageFragment().apply {
+                this.arguments = Bundle().apply {
+                    putString(HomepageFragment.ARG_URL, url)
+                }
+            })
+
+            addToBackStack(null)
+        }
     }
 
     private fun inflateCompanyDetailsFragment(company: Company, addToBackStack: Boolean) {
-        val arguments = Bundle()
-        arguments.putParcelable(CompanyDetailsFragment.ARG_COMPANY, company)
-        val fragment = CompanyDetailsFragment().apply { this.arguments = arguments }
-        val transaction = this.supportFragmentManager.beginTransaction()
-                .replace(R.id.company_details_container, fragment)
-        if (addToBackStack) {
-            transaction.addToBackStack(null)
+        this.supportFragmentManager.commit {
+            replace(R.id.company_details_container, CompanyDetailsFragment().apply {
+                this.arguments = Bundle().also {
+                    it.putParcelable(CompanyDetailsFragment.ARG_COMPANY, company)
+                }
+            })
+
+            if (addToBackStack) {
+                addToBackStack(null)
+            }
         }
-        transaction.commit()
     }
 
     // When there's nesting of company detail fragments, navigate back to the previous company instead of the search results

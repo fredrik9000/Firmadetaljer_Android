@@ -18,7 +18,7 @@ import androidx.appcompat.widget.ActionMenuView
 import androidx.appcompat.widget.AppCompatRadioButton
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.Observer
+import androidx.fragment.app.commit
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,6 +26,7 @@ import com.github.fredrik9000.firmadetaljer_android.LogUtils
 import com.github.fredrik9000.firmadetaljer_android.R
 import com.github.fredrik9000.firmadetaljer_android.company_details.*
 import com.github.fredrik9000.firmadetaljer_android.databinding.ActivityMainBinding
+import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyListResponse
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import dagger.hilt.android.AndroidEntryPoint
@@ -100,9 +101,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
 
         // If the following is true that means both the Activity and ViewModel were destroyed,
         // and while having an active search. Therefore we need to do the search again.
-        if (companyListViewModel.searchResultLiveData.value?.companies == null &&
-                companyListViewModel.searchResultLiveData.value?.peekError() == null &&
-                companyListViewModel.isSearchingWithValidInput) {
+        if (companyListViewModel.searchResultLiveData.value == null && companyListViewModel.isSearchingWithValidInput) {
             progressBarList.visibility = View.VISIBLE
             companyListViewModel.searchOnSelectedSearchMode(companyListViewModel.searchString)
         }
@@ -119,38 +118,39 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
 
     // Saved companies is shown whenever the user isn't searching
     private fun setupSavedCompaniesObserver() {
-        companyListViewModel.savedCompaniesLiveData.observe(this, Observer { companyList ->
+        companyListViewModel.savedCompaniesLiveData.observe(this) { companyList ->
             adapterSavedList.update(companyList)
             showOrHideOnboardingView()
-        })
+        }
     }
 
     // Handles search results and updates the list
     private fun setupSearchResultObserver() {
-        companyListViewModel.searchResultLiveData.observe(this, Observer { companyListResponse ->
+        companyListViewModel.searchResultLiveData.observe(this) { companyListResponse ->
             progressBarList.visibility = View.GONE
-            if (companyListResponse.companies != null) {
-                adapterSearchList.update(companyListResponse.companies!!)
-            } else {
-                // If there was an error searching (or organization number not found), update with empty results.
-                adapterSearchList.update(ArrayList())
+            when (companyListResponse) {
+                is CompanyListResponse.Success -> adapterSearchList.update(companyListResponse.companies)
+                is CompanyListResponse.Error -> {
+                    // If there was an error searching (or organization number not found), update with empty results.
+                    adapterSearchList.update(ArrayList())
 
-                // Only show a toast message the first time the error is handled (otherwise a rotation would show it again).
-                companyListResponse.getErrorIfNotHandled()?.let { error ->
-                    // When an organization number is not found, the service can return either 400 or 404.
-                    val toastMessage =
-                            if (companyListViewModel.searchMode == SearchMode.ORGANIZATION_NUMBER && error is HttpException && ((error.code() == 400) || (error.code() == 404))) {
-                                resources.getString(R.string.company_not_found)
-                            } else {
-                                resources.getString(R.string.search_request_error_message)
-                            }
-                    Toast.makeText(applicationContext, toastMessage, Toast.LENGTH_SHORT).show()
-                    LogUtils.debug(TAG, "onChanged() called with companyListResponse error = $error")
+                    // Only show a toast message the first time the error is handled (otherwise a rotation would show it again).
+                    companyListResponse.getErrorIfNotHandled()?.let { error ->
+                        // When an organization number is not found, the service can return either 400 or 404.
+                        val toastMessage =
+                                if (companyListViewModel.searchMode == SearchMode.ORGANIZATION_NUMBER && error is HttpException && ((error.code() == 400) || (error.code() == 404))) {
+                                    resources.getString(R.string.company_not_found)
+                                } else {
+                                    resources.getString(R.string.search_request_error_message)
+                                }
+                        Toast.makeText(applicationContext, toastMessage, Toast.LENGTH_SHORT).show()
+                        LogUtils.debug(TAG, "onChanged() called with companyListResponse error = $error")
+                    }
                 }
             }
             binding.includedCompanyList.onboardingView.visibility = View.GONE
             binding.includedCompanyList.companyListWithHeader.visibility = View.VISIBLE
-        })
+        }
     }
 
     private fun setupSearchView(toolbar: Toolbar) {
@@ -265,9 +265,9 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         if (isTwoPane) {
             inflateCompanyDetailsFragment(company, false)
         } else {
-            val intent = Intent(this@MainActivity, CompanyDetailsActivity::class.java)
-            intent.putExtra(CompanyDetailsFragment.ARG_COMPANY, company)
-            this.startActivity(intent)
+            this.startActivity(Intent(this@MainActivity, CompanyDetailsActivity::class.java).apply {
+                putExtra(CompanyDetailsFragment.ARG_COMPANY, company)
+            })
         }
     }
 
@@ -280,11 +280,12 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
 
     override fun handleCompanyNavigationResponse(response: CompanyResponse) {
         progressBarDetails!!.visibility = View.GONE
-        response.company?.let {
-            inflateCompanyDetailsFragment(it, true)
-        } ?: run {
-            Toast.makeText(applicationContext, R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show()
-            LogUtils.debug(TAG, "handleCompanyNavigationResponse() called with response error = " + response.error!!)
+        when (response) {
+            is CompanyResponse.Success -> inflateCompanyDetailsFragment(response.company, true)
+            is CompanyResponse.Error -> {
+                Toast.makeText(applicationContext, R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show()
+                LogUtils.debug(TAG, "handleCompanyNavigationResponse() called with response error = " + response.error)
+            }
         }
     }
 
@@ -294,13 +295,14 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
     }
 
     override fun navigateToHomepage(url: String) {
-        val arguments = Bundle()
-        arguments.putString(HomepageFragment.ARG_URL, url)
-        val fragment = HomepageFragment().apply { this.arguments = arguments }
-        this.supportFragmentManager.beginTransaction()
-                .replace(R.id.company_details_container, fragment)
-                .addToBackStack(null)
-                .commit()
+        this.supportFragmentManager.commit {
+            replace(R.id.company_details_container, HomepageFragment().apply {
+                this.arguments = Bundle().apply {
+                    putString(HomepageFragment.ARG_URL, url)
+                }
+            })
+            addToBackStack(null)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -315,11 +317,11 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
                 return true
             }
             R.id.modify_search_filters -> {
-                val searchFilterDialogFragmentBundle = Bundle()
-                searchFilterDialogFragmentBundle.putSerializable(SearchFilterDialogFragment.ARGUMENT_FILTER_SELECTED, companyListViewModel.selectedNumberOfEmployeesFilter)
-                val searchFilterDialogFragment = SearchFilterDialogFragment()
-                searchFilterDialogFragment.arguments = searchFilterDialogFragmentBundle
-                searchFilterDialogFragment.show(supportFragmentManager, "SearchFilterDialogFragment")
+                SearchFilterDialogFragment().apply {
+                    arguments = Bundle().apply {
+                        putSerializable(SearchFilterDialogFragment.ARGUMENT_FILTER_SELECTED, companyListViewModel.selectedNumberOfEmployeesFilter)
+                    }
+                }.show(supportFragmentManager, "SearchFilterDialogFragment")
                 return true
             }
             R.id.toggle_night_mode -> {
@@ -374,15 +376,16 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
     }
 
     private fun inflateCompanyDetailsFragment(company: Company, addToBackStack: Boolean) {
-        val arguments = Bundle()
-        arguments.putParcelable(CompanyDetailsFragment.ARG_COMPANY, company)
-        val fragment = CompanyDetailsFragment().apply { this.arguments = arguments }
-        val transaction = this.supportFragmentManager.beginTransaction()
-                .replace(R.id.company_details_container, fragment)
-        if (addToBackStack) {
-            transaction.addToBackStack(null)
+        this.supportFragmentManager.commit {
+            replace(R.id.company_details_container, CompanyDetailsFragment().apply {
+                this.arguments = Bundle().apply {
+                    putParcelable(CompanyDetailsFragment.ARG_COMPANY, company)
+                }
+            })
+            if (addToBackStack) {
+                addToBackStack(null)
+            }
         }
-        transaction.commit()
     }
 
     private companion object {

@@ -42,8 +42,7 @@ class CompanyLocationMapActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
 
-        val latlng = getLocationFromAddress(companyAddress)
-        latlng?.let {
+        getLocationFromAddress(companyAddress)?.let {
             map.addMarker(MarkerOptions().position(it))
             map.moveCamera(CameraUpdateFactory.newLatLng(it))
         }  ?: run {
@@ -52,7 +51,6 @@ class CompanyLocationMapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun getLocationFromAddress(strAddress: String): LatLng? {
-
         val coder = Geocoder(this)
         val address: List<Address>?
         var p1: LatLng? = null

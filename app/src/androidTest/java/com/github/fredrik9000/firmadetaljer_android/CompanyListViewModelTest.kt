@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.github.fredrik9000.firmadetaljer_android.company_list.CompanyListViewModel
 import com.github.fredrik9000.firmadetaljer_android.company_list.SearchMode
 import com.github.fredrik9000.firmadetaljer_android.repository.CompanyRepository
+import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyListResponse
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyService
 import com.github.fredrik9000.firmadetaljer_android.repository.room.CompanyDao
 import com.google.common.truth.Truth
@@ -47,7 +48,7 @@ class CompanyRepositoryTest {
     fun searchOnSelectedSearchModeByName_ReturnsEmptyListOfCompanies() {
         viewModel.searchMode = SearchMode.FIRM_NAME
         viewModel.searchOnSelectedSearchMode("ThisCompanyDoesNotExist")
-        Truth.assertThat(LiveDataUtil.getOrAwaitValue(viewModel.searchResultLiveData).companies?.isEmpty()).isTrue()
+        Truth.assertThat((LiveDataUtil.getOrAwaitValue(viewModel.searchResultLiveData) as CompanyListResponse.Success).companies.isEmpty()).isTrue()
     }
 
     @Test
@@ -55,22 +56,22 @@ class CompanyRepositoryTest {
         viewModel.searchMode = SearchMode.ORGANIZATION_NUMBER
         viewModel.searchOnSelectedSearchMode("123456789")
         val searchResultLiveDataValue = LiveDataUtil.getOrAwaitValue(viewModel.searchResultLiveData)
-        val error = searchResultLiveDataValue.peekError()
-        Truth.assertThat(searchResultLiveDataValue.companies == null && error != null && error is HttpException && ((error.code() == 400) || (error.code() == 404))).isTrue()
+        val error = (searchResultLiveDataValue as CompanyListResponse.Error).peekError()
+        Truth.assertThat(error is HttpException && ((error.code() == 400) || (error.code() == 404))).isTrue()
     }
 
     @Test
     fun searchOnSelectedSearchModeByName_ReturnsListOfCompanies() {
         viewModel.searchMode = SearchMode.FIRM_NAME
         viewModel.searchOnSelectedSearchMode("Microsoft")
-        Truth.assertThat(LiveDataUtil.getOrAwaitValue(viewModel.searchResultLiveData).companies?.isNotEmpty()).isTrue()
+        Truth.assertThat((LiveDataUtil.getOrAwaitValue(viewModel.searchResultLiveData) as CompanyListResponse.Success).companies.isNotEmpty()).isTrue()
     }
 
     @Test
     fun searchOnSelectedSearchModeByOrganizationNumber_ReturnsListOfOneCompany() {
         viewModel.searchMode = SearchMode.ORGANIZATION_NUMBER
         viewModel.searchOnSelectedSearchMode("957485030") // Microsoft Norge AS
-        Truth.assertThat(LiveDataUtil.getOrAwaitValue(viewModel.searchResultLiveData).companies?.size == 1).isTrue()
+        Truth.assertThat((LiveDataUtil.getOrAwaitValue(viewModel.searchResultLiveData) as CompanyListResponse.Success).companies.size == 1).isTrue()
     }
 
     @Test
@@ -78,7 +79,7 @@ class CompanyRepositoryTest {
         viewModel.searchMode = SearchMode.ORGANIZATION_NUMBER
         val organizationNumber = "957485030" // Microsoft Norge AS
         viewModel.searchOnSelectedSearchMode(organizationNumber)
-        val searchResultLiveDataValue = LiveDataUtil.getOrAwaitValue(viewModel.searchResultLiveData)
-        Truth.assertThat(searchResultLiveDataValue.companies?.size == 1 && searchResultLiveDataValue.companies?.get(0)?.organisasjonsnummer.toString() == organizationNumber).isTrue()
+        val searchResultLiveDataValue = LiveDataUtil.getOrAwaitValue(viewModel.searchResultLiveData) as CompanyListResponse.Success
+        Truth.assertThat(searchResultLiveDataValue.companies.size == 1 && searchResultLiveDataValue.companies[0].organisasjonsnummer.toString() == organizationNumber).isTrue()
     }
 }

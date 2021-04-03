@@ -23,14 +23,11 @@ class CompanyListAdapter(
     var selectedPosition = UNSELECTED_ITEM_POSITION
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
-        val inflater = LayoutInflater.from(viewGroup.context)
-        val binding = ListviewItemBinding.inflate(inflater, viewGroup, false)
-        return ViewHolder(binding)
+        return ViewHolder(ListviewItemBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false))
     }
 
     override fun onBindViewHolder(companyItemViewHolder: ViewHolder, position: Int) {
-        val companyItem = companyList!![position]
-        companyItemViewHolder.bind(companyItem)
+        companyItemViewHolder.bind(companyList!![position])
         if (highlightSelectedItem) {
             companyItemViewHolder.itemView.setBackgroundColor(if (selectedPosition == position) ContextCompat.getColor(context, R.color.colorSelectedCompany) else Color.TRANSPARENT)
         }

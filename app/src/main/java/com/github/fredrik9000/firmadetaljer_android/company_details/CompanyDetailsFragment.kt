@@ -24,7 +24,7 @@ class CompanyDetailsFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
         val binding = FragmentCompanyDetailsBinding.inflate(inflater, container, false)
 
         val expandableListView = binding.companyDetailsList
@@ -67,9 +67,9 @@ class CompanyDetailsFragment : Fragment() {
     }
 
     private fun navigateToMap(address: String?) {
-        val intent = Intent(activity, CompanyLocationMapActivity::class.java)
-        intent.putExtra(CompanyLocationMapActivity.ADDRESS, address)
-        startActivity(intent)
+        startActivity(Intent(activity, CompanyLocationMapActivity::class.java).apply {
+            putExtra(CompanyLocationMapActivity.ADDRESS, address)
+        })
     }
 
     private fun expandGroups(expandableListView: ExpandableListView, adapter: CompanyDetailsAdapter) {

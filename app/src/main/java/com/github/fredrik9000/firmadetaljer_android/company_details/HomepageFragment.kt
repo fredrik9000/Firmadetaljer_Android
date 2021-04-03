@@ -17,7 +17,7 @@ class HomepageFragment : Fragment() {
         url = requireArguments().getString(ARG_URL)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val webView = WebView(requireContext())
         webView.webViewClient = WebViewClient()
         webView.loadUrl(addHTTPIfNotPresent(url!!))

@@ -8,24 +8,23 @@ class CompanyListResponseTest {
 
     @Test
     fun getErrorIfNotHandled_ReturnsError() {
-        val companyListResponse = CompanyListResponse(Exception())
+        val companyListResponse = CompanyListResponse.Error(Exception())
         val error = companyListResponse.getErrorIfNotHandled()
         Truth.assertThat(error != null && error == companyListResponse.peekError()).isTrue()
     }
 
     @Test
     fun getErrorIfNotHandled_ReturnsErrorWithMessage() {
-        val companyListResponse = CompanyListResponse(Exception("an error happened!"))
+        val companyListResponse = CompanyListResponse.Error(Exception("an error happened!"))
         val error = companyListResponse.getErrorIfNotHandled()
         Truth.assertThat(error!!.message == "an error happened!").isTrue()
     }
 
     @Test
     fun getErrorIfNotHandled_ReturnsNullTheSecondTime() {
-        val companyListResponse = CompanyListResponse(Exception())
+        val companyListResponse = CompanyListResponse.Error(Exception())
         companyListResponse.getErrorIfNotHandled()
         val error = companyListResponse.getErrorIfNotHandled()
-        Truth.assertThat(error == null && companyListResponse.peekError() != null).isTrue()
+        Truth.assertThat(error == null).isTrue()
     }
-
 }
