@@ -72,7 +72,7 @@ class CompanyListAdapter(
         }
     }
 
-    private companion object {
-        const val UNSELECTED_ITEM_POSITION = -1
+    companion object {
+        private const val UNSELECTED_ITEM_POSITION = -1
     }
 }

@@ -8,13 +8,14 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
-import com.github.fredrik9000.firmadetaljer_android.BuildConfig
+import androidx.lifecycle.lifecycleScope
 import com.github.fredrik9000.firmadetaljer_android.LogUtils
 import com.github.fredrik9000.firmadetaljer_android.R
 import com.github.fredrik9000.firmadetaljer_android.databinding.ActivityCompanyDetailsBinding
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class CompanyDetailsActivity : AppCompatActivity(), CompanyDetailsNavigation {
@@ -43,22 +44,19 @@ class CompanyDetailsActivity : AppCompatActivity(), CompanyDetailsNavigation {
         }
     }
 
-    override fun handleCompanyNavigationResponse(response: CompanyResponse) {
-        progressBarDetails.visibility = View.GONE
-        when (response) {
-            is CompanyResponse.Success -> inflateCompanyDetailsFragment(response.company, true)
-            is CompanyResponse.Error -> {
-                Toast.makeText(applicationContext, R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show()
-                if (BuildConfig.DEBUG) {
+    override fun navigateToCompany(organisasjonsnummer: Int) {
+        progressBarDetails.visibility = View.VISIBLE
+        lifecycleScope.launch {
+            val response = companyDetailsViewModel.searchForCompanyWithOrgNumber(organisasjonsnummer)
+            progressBarDetails.visibility = View.GONE
+            when (response) {
+                is CompanyResponse.Success -> inflateCompanyDetailsFragment(response.company, true)
+                is CompanyResponse.Error -> {
+                    Toast.makeText(applicationContext, R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show()
                     LogUtils.debug(TAG, "handleCompanyNavigationResponse() called with response error = " + response.error)
                 }
             }
         }
-    }
-
-    override fun navigateToCompany(organisasjonsnummer: Int) {
-        progressBarDetails.visibility = View.VISIBLE
-        companyDetailsViewModel.searchForCompanyWithOrgNumber(this, organisasjonsnummer)
     }
 
     override fun navigateToHomepage(url: String) {

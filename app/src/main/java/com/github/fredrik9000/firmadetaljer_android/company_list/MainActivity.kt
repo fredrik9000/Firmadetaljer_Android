@@ -19,6 +19,7 @@ import androidx.appcompat.widget.AppCompatRadioButton
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,6 +31,7 @@ import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyListR
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.util.*
 import kotlin.collections.ArrayList
@@ -278,20 +280,19 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         outState.putSerializable(EMPLOYEES_FILTER_KEY, companyListViewModel.selectedNumberOfEmployeesFilter)
     }
 
-    override fun handleCompanyNavigationResponse(response: CompanyResponse) {
-        progressBarDetails!!.visibility = View.GONE
-        when (response) {
-            is CompanyResponse.Success -> inflateCompanyDetailsFragment(response.company, true)
-            is CompanyResponse.Error -> {
-                Toast.makeText(applicationContext, R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show()
-                LogUtils.debug(TAG, "handleCompanyNavigationResponse() called with response error = " + response.error)
-            }
-        }
-    }
-
     override fun navigateToCompany(organisasjonsnummer: Int) {
         progressBarDetails!!.visibility = View.VISIBLE
-        companyDetailsViewModel.searchForCompanyWithOrgNumber(this, organisasjonsnummer)
+        lifecycleScope.launch {
+            val response = companyDetailsViewModel.searchForCompanyWithOrgNumber(organisasjonsnummer)
+            progressBarDetails!!.visibility = View.GONE
+            when (response) {
+                is CompanyResponse.Success -> inflateCompanyDetailsFragment(response.company, true)
+                is CompanyResponse.Error -> {
+                    Toast.makeText(applicationContext, R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show()
+                    LogUtils.debug(TAG, "handleCompanyNavigationResponse() called with response error = " + response.error)
+                }
+            }
+        }
     }
 
     override fun navigateToHomepage(url: String) {
@@ -388,12 +389,11 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         }
     }
 
-    private companion object {
-        const val TAG = "MainActivity"
-        const val SEARCH_KEY = "SEARCH"
-        const val SEARCH_MODE_KEY = "SEARCH_MODE"
-        const val EMPLOYEES_FILTER_KEY = "EMPLOYEES_FILTER"
-        const val DEBOUNCE_TIME_IN_MILLISECONDS = 500L
+    companion object {
+        private const val TAG = "MainActivity"
+        private const val SEARCH_KEY = "SEARCH"
+        private const val SEARCH_MODE_KEY = "SEARCH_MODE"
+        private const val EMPLOYEES_FILTER_KEY = "EMPLOYEES_FILTER"
+        private const val DEBOUNCE_TIME_IN_MILLISECONDS = 500L
     }
-
 }

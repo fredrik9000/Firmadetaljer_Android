@@ -19,12 +19,12 @@ class CompanyListViewModel @Inject constructor(private val repository: CompanyRe
     private val companyNameLiveData = MutableLiveData<String>()
     private val organizationNumberLiveData = MutableLiveData<Int>()
 
-    private val searchByNameResultLiveData: LiveData<CompanyListResponse> = Transformations.switchMap(companyNameLiveData) {
-        text -> repository.searchForCompaniesByName(text, selectedNumberOfEmployeesFilter)
+    private val searchByNameResultLiveData: LiveData<CompanyListResponse> = Transformations.switchMap(companyNameLiveData) { text ->
+        liveData { emit(repository.searchForCompaniesByName(text, selectedNumberOfEmployeesFilter)) }
     }
 
-    private val searchByOrganizationNumberResultLiveData: LiveData<CompanyListResponse> = Transformations.switchMap(organizationNumberLiveData) {
-        orgNumber -> repository.searchForCompaniesByOrgNumber(orgNumber)
+    private val searchByOrganizationNumberResultLiveData: LiveData<CompanyListResponse> = Transformations.switchMap(organizationNumberLiveData) { orgNumber ->
+        liveData { emit(repository.searchForCompaniesByOrgNumber(orgNumber)) }
     }
 
     val savedCompaniesLiveData = repository.savedCompanies
@@ -42,8 +42,8 @@ class CompanyListViewModel @Inject constructor(private val repository: CompanyRe
     val isSearchingWithValidInput: Boolean
         get() = isSearchingWithValidFirmName || isSearchingWithValidOrganizationNumber
 
-    val searchStringExceedsOrganizationNumberLength : Boolean
-        get () = searchString.length > ORGANIZATION_NUMBER_LENGTH
+    val searchStringExceedsOrganizationNumberLength: Boolean
+        get() = searchString.length > ORGANIZATION_NUMBER_LENGTH
 
     init {
         _searchResultLiveData.addSource(searchByNameResultLiveData) {
@@ -87,8 +87,8 @@ class CompanyListViewModel @Inject constructor(private val repository: CompanyRe
         }
     }
 
-    private companion object {
-        const val MINIMUM_FIRM_NAME_SEARCH_LENGTH = 2
-        const val ORGANIZATION_NUMBER_LENGTH = 9
+    companion object {
+        private const val MINIMUM_FIRM_NAME_SEARCH_LENGTH = 2
+        private const val ORGANIZATION_NUMBER_LENGTH = 9
     }
 }

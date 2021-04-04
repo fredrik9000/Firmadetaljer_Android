@@ -1,18 +1,13 @@
 package com.github.fredrik9000.firmadetaljer_android.repository
 
-import androidx.lifecycle.MutableLiveData
-import com.github.fredrik9000.firmadetaljer_android.company_details.CompanyDetailsNavigation
 import com.github.fredrik9000.firmadetaljer_android.company_list.NumberOfEmployeesFilter
-import com.github.fredrik9000.firmadetaljer_android.repository.rest.*
+import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyListResponse
+import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
+import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyService
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.dto.CompanyDTO
-import com.github.fredrik9000.firmadetaljer_android.repository.rest.dto.CompanyWrapperEmbeddedDTO
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import com.github.fredrik9000.firmadetaljer_android.repository.room.CompanyDao
-import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.HttpException
-import retrofit2.Response
-import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,81 +28,53 @@ open class CompanyRepository @Inject constructor(private val companyDao: Company
         companyDao.deleteAll()
     }
 
-    fun searchForCompaniesByName(name: String, selectedNumberOfEmployeesFilter: NumberOfEmployeesFilter): MutableLiveData<CompanyListResponse> {
-        val companyListResponseLiveData = MutableLiveData<CompanyListResponse>()
-        when (selectedNumberOfEmployeesFilter) {
+    suspend fun searchForCompaniesByName(name: String, selectedNumberOfEmployeesFilter: NumberOfEmployeesFilter): CompanyListResponse {
+        val response = when (selectedNumberOfEmployeesFilter) {
             NumberOfEmployeesFilter.ALL_EMPLOYEES -> service.getCompanies(name, null, null)
             NumberOfEmployeesFilter.LESS_THAN_6 -> service.getCompanies(name, null, 5)
             NumberOfEmployeesFilter.BETWEEN_5_AND_201 -> service.getCompanies(name, 6, 200)
             NumberOfEmployeesFilter.MORE_THAN_200 -> service.getCompanies(name, 201, null)
-        }.enqueue(object : Callback<CompanyWrapperEmbeddedDTO> {
-            override fun onResponse(call: Call<CompanyWrapperEmbeddedDTO>, response: Response<CompanyWrapperEmbeddedDTO>) {
-                if (!response.isSuccessful) {
-                    companyListResponseLiveData.value = CompanyListResponse.Error(HttpException(response))
-                    return
-                }
-                val embeddedCompaniesDTO = response.body()!!.embedded
-                val companies = ArrayList<Company>()
+        }
 
-                // If data is null this means no companies were found, so return an empty list
-                if (embeddedCompaniesDTO == null) {
-                    companyListResponseLiveData.value = CompanyListResponse.Success(companies)
-                    return
-                }
+        if (response.code() != 200) {
+            return CompanyListResponse.Error(HttpException(response))
+        } else {
+            response.body()?.let { responseBody ->
+                // If data is null that means no companies were found, so return an empty list
+                val embeddedCompaniesDTO = responseBody.embedded
+                        ?: return CompanyListResponse.Success(listOf())
 
-                for (companyDTO in embeddedCompaniesDTO.enheter!!) {
-                    if (companyDTO.organisasjonsnummer != null) { //Should never be null
-                        companies.add(createCompanyFromDTO(companyDTO))
-                    }
-                }
-
-                companyListResponseLiveData.value = CompanyListResponse.Success(companies)
+                return CompanyListResponse.Success(embeddedCompaniesDTO.enheter!!.filter { it.organisasjonsnummer != null }.map { createCompanyFromDTO(it) })
+            } ?: run {
+                return CompanyListResponse.Error(Exception(OK_STATUS_BUT_NO_BODY_ERROR))
             }
-
-            override fun onFailure(call: Call<CompanyWrapperEmbeddedDTO>, t: Throwable) {
-                companyListResponseLiveData.value = CompanyListResponse.Error(t)
-            }
-        })
-        return companyListResponseLiveData
+        }
     }
 
-    fun searchForCompaniesByOrgNumber(orgNumber: Int): MutableLiveData<CompanyListResponse> {
-        val companyListResponseLiveData = MutableLiveData<CompanyListResponse>()
-        service.getCompanyWithOrgNumber(orgNumber).enqueue(object : Callback<CompanyDTO> {
-            override fun onResponse(call: Call<CompanyDTO>, response: Response<CompanyDTO>) {
-                if (!response.isSuccessful) {
-                    // When a company doesn't exist a 400 or 404 status will return here.
-                    // This is different from when searching for companies by name,
-                    // because then the response will be successful with an empty list.
-                    companyListResponseLiveData.value = CompanyListResponse.Error(HttpException(response))
-                    return
-                }
-                val companyList = ArrayList<Company>()
-                companyList.add(createCompanyFromDTO(response.body()!!))
-                companyListResponseLiveData.value = CompanyListResponse.Success(companyList)
+    suspend fun searchForCompaniesByOrgNumber(orgNumber: Int): CompanyListResponse {
+        val response = service.getCompanyWithOrgNumber(orgNumber)
+        if (response.code() == 200) {
+            response.body()?.let { responseBody ->
+                return CompanyListResponse.Success(listOf(createCompanyFromDTO(responseBody)))
+            } ?: run {
+                return CompanyListResponse.Error(Exception(OK_STATUS_BUT_NO_BODY_ERROR))
             }
-
-            override fun onFailure(call: Call<CompanyDTO>, t: Throwable) {
-                companyListResponseLiveData.value = CompanyListResponse.Error(t)
-            }
-        })
-        return companyListResponseLiveData
+        } else {
+            return CompanyListResponse.Error(HttpException(response))
+        }
     }
 
-    fun searchForCompanyWithOrgNumber(callback: CompanyDetailsNavigation, orgNumber: Int) {
-        service.getCompanyWithOrgNumber(orgNumber).enqueue(object : Callback<CompanyDTO> {
-            override fun onResponse(call: Call<CompanyDTO>, response: Response<CompanyDTO>) {
-                if (!response.isSuccessful) {
-                    callback.handleCompanyNavigationResponse(CompanyResponse.Error(HttpException(response)))
-                    return
-                }
-                callback.handleCompanyNavigationResponse(CompanyResponse.Success(createCompanyFromDTO(response.body()!!)))
+    suspend fun searchForCompanyWithOrgNumber(orgNumber: Int): CompanyResponse {
+        val response = service.getCompanyWithOrgNumber(orgNumber)
+        if (response.code() == 200) {
+            response.body()?.let { responseBody ->
+                return CompanyResponse.Success(createCompanyFromDTO(responseBody))
+            } ?: run {
+                return CompanyResponse.Error(Exception(OK_STATUS_BUT_NO_BODY_ERROR))
             }
-
-            override fun onFailure(call: Call<CompanyDTO>, t: Throwable) {
-                callback.handleCompanyNavigationResponse(CompanyResponse.Error(t))
-            }
-        })
+        } else {
+            return CompanyResponse.Error(HttpException(response))
+        }
     }
 
     private fun createCompanyFromDTO(companyDTO: CompanyDTO): Company {
@@ -140,5 +107,9 @@ open class CompanyRepository @Inject constructor(private val companyDao: Company
         } else {
             addressList.joinToString()
         }
+    }
+
+    companion object {
+        private const val OK_STATUS_BUT_NO_BODY_ERROR = "Response code is 200 but there's no response body!"
     }
 }
