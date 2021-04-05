@@ -16,7 +16,7 @@ import java.util.*
 class CompanyDetailsFragment : Fragment() {
 
     private lateinit var company: Company
-    private lateinit var companyDetailsNavigation: CompanyDetailsNavigation
+    private lateinit var companyDetailsNavigation: CompanyDetailsNavigationActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,7 +77,7 @@ class CompanyDetailsFragment : Fragment() {
             expandableListView.expandGroup(position - 1)
     }
 
-    private fun fillData() : Pair<MutableList<String>, MutableMap<String, List<CompanyDetailsDescription>>> {
+    private fun fillData(): Pair<MutableList<String>, MutableMap<String, List<CompanyDetailsDescription>>> {
         val companyDetailGroups = ArrayList<String>()
         val companyDetailItems = HashMap<String, List<CompanyDetailsDescription>>()
 
@@ -149,7 +149,8 @@ class CompanyDetailsFragment : Fragment() {
             detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_under_tvangsavvikling_eller_tvangsoppløsning), convertYesNoValue(it)))
         }
 
-        val detailsHeading = company.navn ?: resources.getString(R.string.company_detail_heading_details)
+        val detailsHeading = company.navn
+                ?: resources.getString(R.string.company_detail_heading_details)
 
         companyDetailItems[detailsHeading] = detailsList
         companyDetailGroups.add(detailsHeading)
@@ -329,8 +330,8 @@ class CompanyDetailsFragment : Fragment() {
         return Pair(companyDetailGroups, companyDetailItems)
     }
 
-    private fun convertYesNoValue(description: String) : String {
-        return when(description) {
+    private fun convertYesNoValue(description: String): String {
+        return when (description) {
             "true" -> resources.getString(R.string.yes)
             "false" -> resources.getString(R.string.no)
             else -> description
@@ -339,7 +340,7 @@ class CompanyDetailsFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        companyDetailsNavigation = activity as CompanyDetailsNavigation
+        companyDetailsNavigation = activity as CompanyDetailsNavigationActivity
     }
 
     companion object {

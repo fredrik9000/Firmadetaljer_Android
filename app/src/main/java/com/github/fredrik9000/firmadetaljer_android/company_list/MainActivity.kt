@@ -12,14 +12,11 @@ import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.ActionMenuView
 import androidx.appcompat.widget.AppCompatRadioButton
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.commit
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,25 +25,21 @@ import com.github.fredrik9000.firmadetaljer_android.R
 import com.github.fredrik9000.firmadetaljer_android.company_details.*
 import com.github.fredrik9000.firmadetaljer_android.databinding.ActivityMainBinding
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyListResponse
-import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.timerTask
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener, CompanyDetailsNavigation, SearchFilterDialogFragment.OnSearchFilterDialogFragmentInteractionListener {
+class MainActivity : CompanyDetailsNavigationActivity(), CompanyListAdapter.OnItemClickListener, SearchFilterDialogFragment.OnSearchFilterDialogFragmentInteractionListener {
 
     private lateinit var binding: ActivityMainBinding
 
     private val companyListViewModel: CompanyListViewModel by viewModels()
-    private val companyDetailsViewModel: CompanyDetailsViewModel by viewModels()
 
     private lateinit var progressBarList: ProgressBar
-    private var progressBarDetails: ProgressBar? = null // Not present on phones
     private lateinit var searchView: SearchView
     private lateinit var recyclerView: RecyclerView
     private lateinit var toolbarMenu: ActionMenuView
@@ -63,7 +56,6 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         setContentView(binding.root)
         setTitle(R.string.main_activity_title)
         progressBarList = binding.progressCompanyList
-        progressBarDetails = binding.progressCompanyDetails
         val toolbar = binding.includedToolbar.toolbarMain
         setSupportActionBar(toolbar)
 
@@ -74,6 +66,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
             // The detail container view will be present only in the large-screen layouts (res/values-w900dp).
             // If this view is present, then the activity should be in two-pane mode.
             isTwoPane = true
+            progressBarDetails = binding.progressCompanyDetails!!
         }
 
         setupRecyclerView()
@@ -146,7 +139,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
                                     resources.getString(R.string.search_request_error_message)
                                 }
                         Toast.makeText(applicationContext, toastMessage, Toast.LENGTH_SHORT).show()
-                        LogUtils.debug(TAG, "onChanged() called with companyListResponse error = $error")
+                        LogUtils.debug(tag, "onChanged() called with companyListResponse error = $error")
                     }
                 }
             }
@@ -280,32 +273,6 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         outState.putSerializable(EMPLOYEES_FILTER_KEY, companyListViewModel.selectedNumberOfEmployeesFilter)
     }
 
-    override fun navigateToCompany(organisasjonsnummer: Int) {
-        progressBarDetails!!.visibility = View.VISIBLE
-        lifecycleScope.launch {
-            val response = companyDetailsViewModel.searchForCompanyWithOrgNumber(organisasjonsnummer)
-            progressBarDetails!!.visibility = View.GONE
-            when (response) {
-                is CompanyResponse.Success -> inflateCompanyDetailsFragment(response.company, true)
-                is CompanyResponse.Error -> {
-                    Toast.makeText(applicationContext, R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show()
-                    LogUtils.debug(TAG, "handleCompanyNavigationResponse() called with response error = " + response.error)
-                }
-            }
-        }
-    }
-
-    override fun navigateToHomepage(url: String) {
-        this.supportFragmentManager.commit {
-            replace(R.id.company_details_container, HomepageFragment().apply {
-                this.arguments = Bundle().apply {
-                    putString(HomepageFragment.ARG_URL, url)
-                }
-            })
-            addToBackStack(null)
-        }
-    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, toolbarMenu.menu)
         return true
@@ -376,21 +343,7 @@ class MainActivity : AppCompatActivity(), CompanyListAdapter.OnItemClickListener
         }
     }
 
-    private fun inflateCompanyDetailsFragment(company: Company, addToBackStack: Boolean) {
-        this.supportFragmentManager.commit {
-            replace(R.id.company_details_container, CompanyDetailsFragment().apply {
-                this.arguments = Bundle().apply {
-                    putParcelable(CompanyDetailsFragment.ARG_COMPANY, company)
-                }
-            })
-            if (addToBackStack) {
-                addToBackStack(null)
-            }
-        }
-    }
-
     companion object {
-        private const val TAG = "MainActivity"
         private const val SEARCH_KEY = "SEARCH"
         private const val SEARCH_MODE_KEY = "SEARCH_MODE"
         private const val EMPLOYEES_FILTER_KEY = "EMPLOYEES_FILTER"

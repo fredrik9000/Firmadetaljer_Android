@@ -2,26 +2,12 @@ package com.github.fredrik9000.firmadetaljer_android.company_details
 
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
-import android.widget.ProgressBar
-import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.commit
-import androidx.lifecycle.lifecycleScope
-import com.github.fredrik9000.firmadetaljer_android.LogUtils
-import com.github.fredrik9000.firmadetaljer_android.R
 import com.github.fredrik9000.firmadetaljer_android.databinding.ActivityCompanyDetailsBinding
-import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CompanyDetailsActivity : AppCompatActivity(), CompanyDetailsNavigation {
-
-    private val companyDetailsViewModel: CompanyDetailsViewModel by viewModels()
-    private lateinit var progressBarDetails: ProgressBar
+class CompanyDetailsActivity : CompanyDetailsNavigationActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,47 +30,6 @@ class CompanyDetailsActivity : AppCompatActivity(), CompanyDetailsNavigation {
         }
     }
 
-    override fun navigateToCompany(organisasjonsnummer: Int) {
-        progressBarDetails.visibility = View.VISIBLE
-        lifecycleScope.launch {
-            val response = companyDetailsViewModel.searchForCompanyWithOrgNumber(organisasjonsnummer)
-            progressBarDetails.visibility = View.GONE
-            when (response) {
-                is CompanyResponse.Success -> inflateCompanyDetailsFragment(response.company, true)
-                is CompanyResponse.Error -> {
-                    Toast.makeText(applicationContext, R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show()
-                    LogUtils.debug(TAG, "handleCompanyNavigationResponse() called with response error = " + response.error)
-                }
-            }
-        }
-    }
-
-    override fun navigateToHomepage(url: String) {
-        this.supportFragmentManager.commit {
-            replace(R.id.company_details_container, HomepageFragment().apply {
-                this.arguments = Bundle().apply {
-                    putString(HomepageFragment.ARG_URL, url)
-                }
-            })
-
-            addToBackStack(null)
-        }
-    }
-
-    private fun inflateCompanyDetailsFragment(company: Company, addToBackStack: Boolean) {
-        this.supportFragmentManager.commit {
-            replace(R.id.company_details_container, CompanyDetailsFragment().apply {
-                this.arguments = Bundle().also {
-                    it.putParcelable(CompanyDetailsFragment.ARG_COMPANY, company)
-                }
-            })
-
-            if (addToBackStack) {
-                addToBackStack(null)
-            }
-        }
-    }
-
     // When there's nesting of company detail fragments, navigate back to the previous company instead of the search results
     // This will only happen when one has navigated to a parent company
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -96,9 +41,5 @@ class CompanyDetailsActivity : AppCompatActivity(), CompanyDetailsNavigation {
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    companion object {
-        private const val TAG = "CompanyDetailsActivity"
     }
 }
