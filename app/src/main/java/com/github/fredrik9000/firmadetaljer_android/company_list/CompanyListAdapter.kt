@@ -52,7 +52,7 @@ class CompanyListAdapter(
 
         init {
             parentLayout.setOnClickListener {
-                val position = adapterPosition
+                val position = bindingAdapterPosition
 
                 if (highlightSelectedItem) {
                     notifyItemChanged(selectedPosition) // Update previously selected item

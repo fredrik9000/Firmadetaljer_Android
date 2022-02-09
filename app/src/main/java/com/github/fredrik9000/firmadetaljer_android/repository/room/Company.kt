@@ -3,7 +3,7 @@ package com.github.fredrik9000.firmadetaljer_android.repository.room
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 // Property names are in Norwegian as this is the language of the rest API which gets the data.
 // This app is for Norwegian firms only, and some of these values are specific to Norway.
