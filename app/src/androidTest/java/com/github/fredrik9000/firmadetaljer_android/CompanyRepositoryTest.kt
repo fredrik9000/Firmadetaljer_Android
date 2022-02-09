@@ -6,16 +6,20 @@ import com.github.fredrik9000.firmadetaljer_android.company_list.SearchMode
 import com.github.fredrik9000.firmadetaljer_android.repository.CompanyRepository
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyListResponse
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyService
+import com.github.fredrik9000.firmadetaljer_android.repository.rest.dto.CompanyServiceImpl
 import com.github.fredrik9000.firmadetaljer_android.repository.room.CompanyDao
 import com.google.common.truth.Truth
+import io.ktor.client.*
+import io.ktor.client.engine.android.*
+import io.ktor.client.features.*
+import io.ktor.client.features.json.*
+import io.ktor.client.features.json.serializer.*
+import io.ktor.client.features.logging.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import retrofit2.HttpException
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class CompanyRepositoryTest {
 
@@ -32,13 +36,21 @@ class CompanyRepositoryTest {
 
     @Before
     fun init() {
-        MockitoAnnotations.initMocks(this)
+        MockitoAnnotations.openMocks(this)
 
-        companyService = Retrofit.Builder()
-                .baseUrl("https://data.brreg.no/enhetsregisteret/api/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(CompanyService::class.java)
+        companyService = CompanyServiceImpl(client = HttpClient(Android) {
+            install(Logging) {
+                logger = Logger.DEFAULT
+                level = LogLevel.ALL
+            }
+            install(JsonFeature) {
+                serializer = KotlinxSerializer(
+                    kotlinx.serialization.json.Json {
+                        ignoreUnknownKeys = true
+                    }
+                )
+            }
+        })
 
         repository = CompanyRepository(companyDao, companyService)
         viewModel = CompanyListViewModel(repository)
@@ -57,7 +69,7 @@ class CompanyRepositoryTest {
         viewModel.searchOnSelectedSearchMode("123456789")
         val searchResultLiveDataValue = LiveDataUtil.getOrAwaitValue(viewModel.searchResultLiveData)
         val error = (searchResultLiveDataValue as CompanyListResponse.Error).peekError()
-        Truth.assertThat(error is HttpException && ((error.code() == 400) || (error.code() == 404))).isTrue()
+        Truth.assertThat(error is ClientRequestException).isTrue()
     }
 
     @Test

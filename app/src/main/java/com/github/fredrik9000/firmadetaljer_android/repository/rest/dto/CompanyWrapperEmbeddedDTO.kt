@@ -1,8 +1,10 @@
 package com.github.fredrik9000.firmadetaljer_android.repository.rest.dto
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 class CompanyWrapperEmbeddedDTO {
-    @SerializedName("_embedded")
+    @SerialName("_embedded")
     val embedded: CompanyWrapperEnheterDTO? = null
 }

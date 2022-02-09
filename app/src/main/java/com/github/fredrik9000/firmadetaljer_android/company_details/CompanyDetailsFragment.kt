@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import com.github.fredrik9000.firmadetaljer_android.R
 import com.github.fredrik9000.firmadetaljer_android.databinding.FragmentCompanyDetailsBinding
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
-import java.util.*
 
 class CompanyDetailsFragment : Fragment() {
 
@@ -330,11 +329,10 @@ class CompanyDetailsFragment : Fragment() {
         return Pair(companyDetailGroups, companyDetailItems)
     }
 
-    private fun convertYesNoValue(description: String): String {
+    private fun convertYesNoValue(description: Boolean): String {
         return when (description) {
-            "true" -> resources.getString(R.string.yes)
-            "false" -> resources.getString(R.string.no)
-            else -> description
+            true -> resources.getString(R.string.yes)
+            false -> resources.getString(R.string.no)
         }
     }
 

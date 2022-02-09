@@ -1,12 +1,17 @@
 package com.github.fredrik9000.firmadetaljer_android.di
 
+import android.util.Log
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyService
+import com.github.fredrik9000.firmadetaljer_android.repository.rest.dto.CompanyServiceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import io.ktor.client.*
+import io.ktor.client.engine.android.*
+import io.ktor.client.features.json.*
+import io.ktor.client.features.json.serializer.*
+import io.ktor.client.features.logging.*
 import javax.inject.Singleton
 
 @Module
@@ -14,16 +19,29 @@ import javax.inject.Singleton
 object ApiModule {
     @Singleton
     @Provides
-    fun provideRetrofitInstance() : Retrofit {
-        return Retrofit.Builder()
-                .baseUrl("https://data.brreg.no/enhetsregisteret/api/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
+    fun provideKtorClient() : HttpClient {
+        return HttpClient(Android) {
+            install(Logging) {
+                logger = object: Logger {
+                    override fun log(message: String) {
+                        Log.d("Ktor", message)
+                    }
+                }
+                level = LogLevel.BODY
+            }
+            install(JsonFeature) {
+                serializer = KotlinxSerializer(
+                    kotlinx.serialization.json.Json {
+                        ignoreUnknownKeys = true
+                    }
+                )
+            }
+        }
     }
 
     @Singleton
     @Provides
-    fun provideCompanyService(retrofit: Retrofit) : CompanyService {
-        return retrofit.create(CompanyService::class.java)
+    fun provideCompanyService(ktorClient: HttpClient) : CompanyService {
+        return CompanyServiceImpl(client = ktorClient)
     }
 }

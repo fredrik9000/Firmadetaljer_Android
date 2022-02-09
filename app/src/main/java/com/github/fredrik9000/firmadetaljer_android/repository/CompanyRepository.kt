@@ -7,7 +7,6 @@ import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyServi
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.dto.CompanyDTO
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import com.github.fredrik9000.firmadetaljer_android.repository.room.CompanyDao
-import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,51 +28,43 @@ open class CompanyRepository @Inject constructor(private val companyDao: Company
     }
 
     suspend fun searchForCompaniesByName(name: String, selectedNumberOfEmployeesFilter: NumberOfEmployeesFilter): CompanyListResponse {
-        val response = when (selectedNumberOfEmployeesFilter) {
-            NumberOfEmployeesFilter.ALL_EMPLOYEES -> service.getCompanies(name, null, null)
-            NumberOfEmployeesFilter.LESS_THAN_6 -> service.getCompanies(name, null, 5)
-            NumberOfEmployeesFilter.BETWEEN_5_AND_201 -> service.getCompanies(name, 6, 200)
-            NumberOfEmployeesFilter.MORE_THAN_200 -> service.getCompanies(name, 201, null)
-        }
-
-        if (response.code() != 200) {
-            return CompanyListResponse.Error(HttpException(response))
-        } else {
-            response.body()?.let { responseBody ->
-                // If data is null that means no companies were found, so return an empty list
-                val embeddedCompaniesDTO = responseBody.embedded
-                        ?: return CompanyListResponse.Success(listOf())
-
-                return CompanyListResponse.Success(embeddedCompaniesDTO.enheter!!.filter { it.organisasjonsnummer != null }.map { createCompanyFromDTO(it) })
-            } ?: run {
-                return CompanyListResponse.Error(Exception(OK_STATUS_BUT_NO_BODY_ERROR))
+        return try {
+            val companyWrapperEmbeddedResponse = when (selectedNumberOfEmployeesFilter) {
+                NumberOfEmployeesFilter.ALL_EMPLOYEES -> service.getCompanies(name, null, null)
+                NumberOfEmployeesFilter.LESS_THAN_6 -> service.getCompanies(name, null, 5)
+                NumberOfEmployeesFilter.BETWEEN_5_AND_201 -> service.getCompanies(name, 6, 200)
+                NumberOfEmployeesFilter.MORE_THAN_200 -> service.getCompanies(name, 201, null)
             }
+
+            val embeddedCompaniesDTO = companyWrapperEmbeddedResponse.embedded ?: return CompanyListResponse.Success(listOf())
+
+            return CompanyListResponse.Success(embeddedCompaniesDTO.enheter!!.filter { it.organisasjonsnummer != null }.map { createCompanyFromDTO(it) })
+        } catch (e: Exception) {
+            CompanyListResponse.Error(e)
         }
     }
 
     suspend fun searchForCompaniesByOrgNumber(orgNumber: Int): CompanyListResponse {
-        val response = service.getCompanyWithOrgNumber(orgNumber)
-        if (response.code() == 200) {
-            response.body()?.let { responseBody ->
-                return CompanyListResponse.Success(listOf(createCompanyFromDTO(responseBody)))
+        try {
+            service.getCompanyWithOrgNumber(orgNumber)?.let {
+                return CompanyListResponse.Success(listOf(createCompanyFromDTO(it)))
             } ?: run {
                 return CompanyListResponse.Error(Exception(OK_STATUS_BUT_NO_BODY_ERROR))
             }
-        } else {
-            return CompanyListResponse.Error(HttpException(response))
+        } catch (e: Exception) {
+            return CompanyListResponse.Error(e)
         }
     }
 
     suspend fun searchForCompanyWithOrgNumber(orgNumber: Int): CompanyResponse {
-        val response = service.getCompanyWithOrgNumber(orgNumber)
-        if (response.code() == 200) {
-            response.body()?.let { responseBody ->
-                return CompanyResponse.Success(createCompanyFromDTO(responseBody))
+        try {
+            service.getCompanyWithOrgNumber(orgNumber)?.let {
+                return CompanyResponse.Success(createCompanyFromDTO(it))
             } ?: run {
                 return CompanyResponse.Error(Exception(OK_STATUS_BUT_NO_BODY_ERROR))
             }
-        } else {
-            return CompanyResponse.Error(HttpException(response))
+        } catch (e: Exception) {
+            return CompanyResponse.Error(e)
         }
     }
 

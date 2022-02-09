@@ -22,14 +22,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.fredrik9000.firmadetaljer_android.LogUtils
 import com.github.fredrik9000.firmadetaljer_android.R
-import com.github.fredrik9000.firmadetaljer_android.company_details.*
+import com.github.fredrik9000.firmadetaljer_android.company_details.CompanyDetailsActivity
+import com.github.fredrik9000.firmadetaljer_android.company_details.CompanyDetailsFragment
+import com.github.fredrik9000.firmadetaljer_android.company_details.CompanyDetailsNavigationActivity
 import com.github.fredrik9000.firmadetaljer_android.databinding.ActivityMainBinding
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyListResponse
 import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import dagger.hilt.android.AndroidEntryPoint
-import retrofit2.HttpException
+import io.ktor.client.features.*
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.concurrent.timerTask
 
 @AndroidEntryPoint
@@ -131,9 +132,9 @@ class MainActivity : CompanyDetailsNavigationActivity(), CompanyListAdapter.OnIt
 
                     // Only show a toast message the first time the error is handled (otherwise a rotation would show it again).
                     companyListResponse.getErrorIfNotHandled()?.let { error ->
-                        // When an organization number is not found, the service can return either 400 or 404.
+                        // When an organization number is not found, the service can return either 400 or 404 which will result in a ClientRequestException.
                         val toastMessage =
-                                if (companyListViewModel.searchMode == SearchMode.ORGANIZATION_NUMBER && error is HttpException && ((error.code() == 400) || (error.code() == 404))) {
+                                if (companyListViewModel.searchMode == SearchMode.ORGANIZATION_NUMBER && error is ClientRequestException) {
                                     resources.getString(R.string.company_not_found)
                                 } else {
                                     resources.getString(R.string.search_request_error_message)

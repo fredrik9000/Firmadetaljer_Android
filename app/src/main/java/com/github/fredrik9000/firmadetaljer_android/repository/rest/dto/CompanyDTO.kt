@@ -1,6 +1,9 @@
 package com.github.fredrik9000.firmadetaljer_android.repository.rest.dto
 
+import kotlinx.serialization.Serializable
+
 // Property names are in Norwegian as this is the language of the rest API
+@Serializable
 class CompanyDTO {
     val organisasjonsnummer: String? = null
 
@@ -11,15 +14,15 @@ class CompanyDTO {
     val datoEierskifte: String? = null
     val organisasjonsform: OrganisasjonsformDTO? = null
     val hjemmeside: String? = null
-    val registertIFrivillighetsregisteret: String? = null
-    val registrertIMvaregisteret: String? = null
-    val registrertIForetaksregisteret: String? = null
-    val registrertIStiftelsesregisteret: String? = null
+    val registertIFrivillighetsregisteret: Boolean? = null
+    val registrertIMvaregisteret: Boolean? = null
+    val registrertIForetaksregisteret: Boolean? = null
+    val registrertIStiftelsesregisteret: Boolean? = null
     val antallAnsatte: Int? = null
     val sisteInnsendteAarsregnskap: Int? = null
-    val konkurs: String? = null
-    val underAvvikling: String? = null
-    val underTvangsavviklingEllerTvangsopplosning: String? = null
+    val konkurs: Boolean? = null
+    val underAvvikling: Boolean? = null
+    val underTvangsavviklingEllerTvangsopplosning: Boolean? = null
     val overordnetEnhet: String? = null
 
     val institusjonellSektorkode: KodeDTO? = null
