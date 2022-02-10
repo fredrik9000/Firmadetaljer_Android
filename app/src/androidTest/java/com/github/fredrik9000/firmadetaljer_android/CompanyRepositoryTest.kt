@@ -4,10 +4,10 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.github.fredrik9000.firmadetaljer_android.company_list.CompanyListViewModel
 import com.github.fredrik9000.firmadetaljer_android.company_list.SearchMode
 import com.github.fredrik9000.firmadetaljer_android.repository.CompanyRepository
+import com.github.fredrik9000.firmadetaljer_android.repository.data.CompanyDataSource
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyListResponse
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyService
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.dto.CompanyServiceImpl
-import com.github.fredrik9000.firmadetaljer_android.repository.room.CompanyDao
 import com.google.common.truth.Truth
 import io.ktor.client.*
 import io.ktor.client.engine.android.*
@@ -32,7 +32,7 @@ class CompanyRepositoryTest {
     private lateinit var viewModel : CompanyListViewModel
 
     @Mock
-    private lateinit var companyDao: CompanyDao
+    private lateinit var companyDataSource: CompanyDataSource
 
     @Before
     fun init() {
@@ -52,7 +52,7 @@ class CompanyRepositoryTest {
             }
         })
 
-        repository = CompanyRepository(companyDao, companyService)
+        repository = CompanyRepository(companyDataSource, companyService)
         viewModel = CompanyListViewModel(repository)
     }
 
@@ -60,7 +60,7 @@ class CompanyRepositoryTest {
     fun searchOnSelectedSearchModeByName_ReturnsEmptyListOfCompanies() {
         viewModel.searchMode = SearchMode.FIRM_NAME
         viewModel.searchOnSelectedSearchMode("ThisCompanyDoesNotExist")
-        Truth.assertThat((LiveDataUtil.getOrAwaitValue(viewModel.searchResultLiveData) as CompanyListResponse.Success).companies.isEmpty()).isTrue()
+        Truth.assertThat((LiveDataUtil.getOrAwaitValue(viewModel.searchResultLiveData) as CompanyListResponse.Success).companyEntities.isEmpty()).isTrue()
     }
 
     @Test
@@ -76,14 +76,14 @@ class CompanyRepositoryTest {
     fun searchOnSelectedSearchModeByName_ReturnsListOfCompanies() {
         viewModel.searchMode = SearchMode.FIRM_NAME
         viewModel.searchOnSelectedSearchMode("Microsoft")
-        Truth.assertThat((LiveDataUtil.getOrAwaitValue(viewModel.searchResultLiveData) as CompanyListResponse.Success).companies.isNotEmpty()).isTrue()
+        Truth.assertThat((LiveDataUtil.getOrAwaitValue(viewModel.searchResultLiveData) as CompanyListResponse.Success).companyEntities.isNotEmpty()).isTrue()
     }
 
     @Test
     fun searchOnSelectedSearchModeByOrganizationNumber_ReturnsListOfOneCompany() {
         viewModel.searchMode = SearchMode.ORGANIZATION_NUMBER
         viewModel.searchOnSelectedSearchMode("957485030") // Microsoft Norge AS
-        Truth.assertThat((LiveDataUtil.getOrAwaitValue(viewModel.searchResultLiveData) as CompanyListResponse.Success).companies.size == 1).isTrue()
+        Truth.assertThat((LiveDataUtil.getOrAwaitValue(viewModel.searchResultLiveData) as CompanyListResponse.Success).companyEntities.size == 1).isTrue()
     }
 
     @Test
@@ -92,6 +92,6 @@ class CompanyRepositoryTest {
         val organizationNumber = "957485030" // Microsoft Norge AS
         viewModel.searchOnSelectedSearchMode(organizationNumber)
         val searchResultLiveDataValue = LiveDataUtil.getOrAwaitValue(viewModel.searchResultLiveData) as CompanyListResponse.Success
-        Truth.assertThat(searchResultLiveDataValue.companies.size == 1 && searchResultLiveDataValue.companies[0].organisasjonsnummer.toString() == organizationNumber).isTrue()
+        Truth.assertThat(searchResultLiveDataValue.companyEntities.size == 1 && searchResultLiveDataValue.companyEntities[0].organisasjonsnummer.toString() == organizationNumber).isTrue()
     }
 }

@@ -3,7 +3,6 @@ package com.github.fredrik9000.firmadetaljer_android.company_details
 import android.os.Bundle
 import android.view.MenuItem
 import com.github.fredrik9000.firmadetaljer_android.databinding.ActivityCompanyDetailsBinding
-import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,7 +25,7 @@ class CompanyDetailsActivity : CompanyDetailsNavigationActivity() {
         //
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity using a fragment transaction.
-            inflateCompanyDetailsFragment(intent.getParcelableExtra<Company>(CompanyDetailsFragment.ARG_COMPANY) as Company, false)
+            inflateCompanyDetailsFragment(intent.getIntExtra(CompanyDetailsFragment.ARG_COMPANY_ORG_NUMBER, -1), false)
         }
     }
 

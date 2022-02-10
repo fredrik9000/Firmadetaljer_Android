@@ -11,7 +11,6 @@ import androidx.lifecycle.lifecycleScope
 import com.github.fredrik9000.firmadetaljer_android.LogUtils
 import com.github.fredrik9000.firmadetaljer_android.R
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
-import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
 import kotlinx.coroutines.launch
 
 /**
@@ -35,7 +34,7 @@ abstract class CompanyDetailsNavigationActivity : AppCompatActivity() {
             val response = companyDetailsViewModel.searchForCompanyWithOrgNumber(organisasjonsnummer)
             progressBarDetails.visibility = View.GONE
             when (response) {
-                is CompanyResponse.Success -> inflateCompanyDetailsFragment(response.company, true)
+                is CompanyResponse.Success -> inflateCompanyDetailsFragment(response.companyEntity.organisasjonsnummer, true)
                 is CompanyResponse.Error -> {
                     Toast.makeText(applicationContext, R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show()
                     LogUtils.debug(tag, "handleCompanyNavigationResponse() called with response error = " + response.error)
@@ -56,11 +55,11 @@ abstract class CompanyDetailsNavigationActivity : AppCompatActivity() {
         }
     }
 
-    protected fun inflateCompanyDetailsFragment(company: Company, addToBackStack: Boolean) {
+    protected fun inflateCompanyDetailsFragment(orgNumber: Int, addToBackStack: Boolean) {
         this.supportFragmentManager.commit {
             replace(R.id.company_details_container, CompanyDetailsFragment().apply {
                 this.arguments = Bundle().also {
-                    it.putParcelable(CompanyDetailsFragment.ARG_COMPANY, company)
+                    it.putInt(CompanyDetailsFragment.ARG_COMPANY_ORG_NUMBER, orgNumber)
                 }
             })
 

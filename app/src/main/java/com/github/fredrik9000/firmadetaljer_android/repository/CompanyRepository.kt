@@ -1,30 +1,34 @@
 package com.github.fredrik9000.firmadetaljer_android.repository
 
 import com.github.fredrik9000.firmadetaljer_android.company_list.NumberOfEmployeesFilter
+import com.github.fredrik9000.firmadetaljer_android.repository.data.CompanyDataSource
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyListResponse
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyResponse
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyService
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.dto.CompanyDTO
-import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
-import com.github.fredrik9000.firmadetaljer_android.repository.room.CompanyDao
+import companydb.CompanyEntity
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-open class CompanyRepository @Inject constructor(private val companyDao: CompanyDao,
+open class CompanyRepository @Inject constructor(private val companyDataSource: CompanyDataSource,
                                                  private val service: CompanyService) {
 
-    val savedCompanies = companyDao.companiesOrderedByName
+    val savedCompanies = companyDataSource.getCompanies()
 
     // When a company is updated it should appear at the top of the viewed companies list.
     // In order to achieve this the company (if exists) is deleted before being inserted again.
-    suspend fun upsert(company: Company) {
-        companyDao.deleteByOrganizationNumber(company.organisasjonsnummer)
-        companyDao.insert(company)
+    suspend fun upsert(companyEntity: CompanyEntity) {
+        companyDataSource.deleteCompanyByOrgNumber(companyEntity.organisasjonsnummer)
+        companyDataSource.insertCompany(companyEntity)
+    }
+
+    suspend fun getCompanyByOrgNumber(orgNumber: Int): CompanyEntity? {
+        return companyDataSource.getCompanyByOrgNumber(orgNumber)
     }
 
     suspend fun deleteAllCompanies() {
-        companyDao.deleteAll()
+        companyDataSource.deleteAllCompanies()
     }
 
     suspend fun searchForCompaniesByName(name: String, selectedNumberOfEmployeesFilter: NumberOfEmployeesFilter): CompanyListResponse {
@@ -68,8 +72,8 @@ open class CompanyRepository @Inject constructor(private val companyDao: Company
         }
     }
 
-    private fun createCompanyFromDTO(companyDTO: CompanyDTO): Company {
-        return Company(0, companyDTO.organisasjonsnummer!!.toInt(), companyDTO.navn, companyDTO.stiftelsesdato,
+    private fun createCompanyFromDTO(companyDTO: CompanyDTO): CompanyEntity {
+        return CompanyEntity(0, companyDTO.organisasjonsnummer!!.toInt(), companyDTO.navn, companyDTO.stiftelsesdato,
                 companyDTO.registreringsdatoEnhetsregisteret, companyDTO.oppstartsdato, companyDTO.datoEierskifte,
                 companyDTO.organisasjonsform?.beskrivelse, companyDTO.hjemmeside, companyDTO.registertIFrivillighetsregisteret,
                 companyDTO.registrertIMvaregisteret, companyDTO.registrertIForetaksregisteret, companyDTO.registrertIStiftelsesregisteret,

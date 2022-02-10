@@ -8,19 +8,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ExpandableListView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.github.fredrik9000.firmadetaljer_android.R
 import com.github.fredrik9000.firmadetaljer_android.databinding.FragmentCompanyDetailsBinding
-import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
+import companydb.CompanyEntity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class CompanyDetailsFragment : Fragment() {
 
-    private lateinit var company: Company
+    private lateinit var companyEntity: CompanyEntity
     private lateinit var companyDetailsNavigation: CompanyDetailsNavigationActivity
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        company = requireArguments().getParcelable(ARG_COMPANY)!!
-    }
+    private val companyDetailsViewModel: CompanyDetailsViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -28,39 +28,44 @@ class CompanyDetailsFragment : Fragment() {
 
         val expandableListView = binding.companyDetailsList
 
-        val (companyDetailGroups, companyDetailItems) = fillData()
+        val companyOrgNumber = requireArguments().getInt(ARG_COMPANY_ORG_NUMBER)
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            companyEntity = companyDetailsViewModel.getCompanyByOrgNumber(companyOrgNumber)!!
 
-        val adapter = CompanyDetailsAdapter(this.requireContext(), companyDetailGroups, companyDetailItems)
-        expandableListView.setAdapter(adapter)
+            val (companyDetailGroups, companyDetailItems) = fillData()
 
-        expandableListView.setOnChildClickListener { _, _, groupPosition, childPosition, _ ->
-            val companyDetailsDescription = companyDetailItems[companyDetailGroups[groupPosition]]!![childPosition]
-            // TODO: It's not good to use the labels as identifiers here. Should instead use something that is sure to be unique if the text changes.
-            when (companyDetailsDescription.label) {
-                resources.getString(R.string.company_detail_details_overordnet_enhet) -> {
-                    companyDetailsNavigation.navigateToCompany(company.overordnetEnhet!!)
-                    return@setOnChildClickListener true
+            val adapter = CompanyDetailsAdapter(this@CompanyDetailsFragment.requireContext(), companyDetailGroups, companyDetailItems)
+            expandableListView.setAdapter(adapter)
+
+            expandableListView.setOnChildClickListener { _, _, groupPosition, childPosition, _ ->
+                val companyDetailsDescription = companyDetailItems[companyDetailGroups[groupPosition]]!![childPosition]
+                // TODO: It's not good to use the labels as identifiers here. Should instead use something that is sure to be unique if the text changes.
+                when (companyDetailsDescription.label) {
+                    resources.getString(R.string.company_detail_details_overordnet_enhet) -> {
+                        companyDetailsNavigation.navigateToCompany(companyEntity.overordnetEnhet!!.toInt())
+                        return@setOnChildClickListener true
+                    }
+                    resources.getString(R.string.company_detail_details_hjemmeside) -> {
+                        companyDetailsNavigation.navigateToHomepage(companyEntity.hjemmeside!!)
+                        return@setOnChildClickListener true
+                    }
+                    resources.getString(R.string.company_detail_adresse_postadresse) -> {
+                        navigateToMap(companyEntity.postadresseAdresse)
+                        return@setOnChildClickListener true
+                    }
+                    resources.getString(R.string.company_detail_adresse_forretningsadresse) -> {
+                        navigateToMap(companyEntity.forretningsadresseAdresse)
+                        return@setOnChildClickListener true
+                    }
+                    resources.getString(R.string.company_detail_adresse_beliggenhetsadresse) -> {
+                        navigateToMap(companyEntity.beliggenhetsadresseAdresse)
+                        return@setOnChildClickListener true
+                    }
+                    else -> false
                 }
-                resources.getString(R.string.company_detail_details_hjemmeside) -> {
-                    companyDetailsNavigation.navigateToHomepage(company.hjemmeside!!)
-                    return@setOnChildClickListener true
-                }
-                resources.getString(R.string.company_detail_adresse_postadresse) -> {
-                    navigateToMap(company.postadresseAdresse)
-                    return@setOnChildClickListener true
-                }
-                resources.getString(R.string.company_detail_adresse_forretningsadresse) -> {
-                    navigateToMap(company.forretningsadresseAdresse)
-                    return@setOnChildClickListener true
-                }
-                resources.getString(R.string.company_detail_adresse_beliggenhetsadresse) -> {
-                    navigateToMap(company.beliggenhetsadresseAdresse)
-                    return@setOnChildClickListener true
-                }
-                else -> false
             }
+            expandGroups(expandableListView, adapter)
         }
-        expandGroups(expandableListView, adapter)
 
         return binding.root
     }
@@ -82,73 +87,73 @@ class CompanyDetailsFragment : Fragment() {
 
         val detailsList = ArrayList<CompanyDetailsDescription>()
 
-        detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_organisasjonsnummer), (company.organisasjonsnummer).toString()))
+        detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_organisasjonsnummer), (companyEntity.organisasjonsnummer).toString()))
 
-        company.hjemmeside?.let {
+        companyEntity.hjemmeside?.let {
             detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_hjemmeside), it))
         }
 
-        company.overordnetEnhet?.let {
+        companyEntity.overordnetEnhet?.let {
             detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_overordnet_enhet), it.toString()))
         }
 
-        company.stiftelsesdato?.let {
+        companyEntity.stiftelsesdato?.let {
             detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_stiftelsesdato), it))
         }
 
-        company.organisasjonsform?.let {
+        companyEntity.organisasjonsform?.let {
             detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_organisasjonsform), it))
         }
 
-        company.antallAnsatte?.let {
+        companyEntity.antallAnsatte?.let {
             detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_antall_ansatte), it.toString()))
         }
 
-        company.registreringsdatoEnhetsregisteret?.let {
+        companyEntity.registreringsdatoEnhetsregisteret?.let {
             detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_enhetsregisteret), it))
         }
 
-        company.oppstartsdato?.let {
+        companyEntity.oppstartsdato?.let {
             detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_oppstartsdato), it))
         }
 
-        company.datoEierskifte?.let {
+        companyEntity.datoEierskifte?.let {
             detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_eierskife), it))
         }
 
-        company.registertIFrivillighetsregisteret?.let {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_frivillighetsregisteret), convertYesNoValue(it)))
+        companyEntity.registertIFrivillighetsregisteret?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_frivillighetsregisteret), convertToYesNoString(it)))
         }
 
-        company.registrertIMvaregisteret?.let {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_mva_registeret), convertYesNoValue(it)))
+        companyEntity.registrertIMvaregisteret?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_mva_registeret), convertToYesNoString(it)))
         }
 
-        company.registrertIForetaksregisteret?.let {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_foretaksregisteret), convertYesNoValue(it)))
+        companyEntity.registrertIForetaksregisteret?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_foretaksregisteret), convertToYesNoString(it)))
         }
 
-        company.registrertIStiftelsesregisteret?.let {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_stiftelsesregisteret), convertYesNoValue(it)))
+        companyEntity.registrertIStiftelsesregisteret?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_stiftelsesregisteret), convertToYesNoString(it)))
         }
 
-        company.sisteInnsendteAarsregnskap?.let {
+        companyEntity.sisteInnsendteAarsregnskap?.let {
             detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_sist_innsendte_årsregnskap), it.toString()))
         }
 
-        company.konkurs?.let {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_konkurs), convertYesNoValue(it)))
+        companyEntity.konkurs?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_konkurs), convertToYesNoString(it)))
         }
 
-        company.underAvvikling?.let {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_under_avvikling), convertYesNoValue(it)))
+        companyEntity.underAvvikling?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_under_avvikling), convertToYesNoString(it)))
         }
 
-        company.underTvangsavviklingEllerTvangsopplosning?.let {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_under_tvangsavvikling_eller_tvangsoppløsning), convertYesNoValue(it)))
+        companyEntity.underTvangsavviklingEllerTvangsopplosning?.let {
+            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_under_tvangsavvikling_eller_tvangsoppløsning), convertToYesNoString(it)))
         }
 
-        val detailsHeading = company.navn
+        val detailsHeading = companyEntity.navn
                 ?: resources.getString(R.string.company_detail_heading_details)
 
         companyDetailItems[detailsHeading] = detailsList
@@ -156,31 +161,31 @@ class CompanyDetailsFragment : Fragment() {
 
         val forretningsadresseList = ArrayList<CompanyDetailsDescription>()
 
-        company.forretningsadresseAdresse?.let {
+        companyEntity.forretningsadresseAdresse?.let {
             forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_forretningsadresse), it))
         }
 
-        company.forretningsadressePostnummer?.let {
+        companyEntity.forretningsadressePostnummer?.let {
             forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_postnummer), it))
         }
 
-        company.forretningsadressePoststed?.let {
+        companyEntity.forretningsadressePoststed?.let {
             forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_poststed), it))
         }
 
-        company.forretningsadresseKommunenummer?.let {
+        companyEntity.forretningsadresseKommunenummer?.let {
             forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_kommunenummer), it))
         }
 
-        company.forretningsadresseKommune?.let {
+        companyEntity.forretningsadresseKommune?.let {
             forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_kommune), it))
         }
 
-        company.forretningsadresseLandkode?.let {
+        companyEntity.forretningsadresseLandkode?.let {
             forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_landskode), it))
         }
 
-        company.forretningsadresseLand?.let {
+        companyEntity.forretningsadresseLand?.let {
             forretningsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_land), it))
         }
 
@@ -192,31 +197,31 @@ class CompanyDetailsFragment : Fragment() {
 
         val beliggenhetsadresseList = ArrayList<CompanyDetailsDescription>()
 
-        company.beliggenhetsadresseAdresse?.let {
+        companyEntity.beliggenhetsadresseAdresse?.let {
             beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_beliggenhetsadresse), it))
         }
 
-        company.beliggenhetsadressePostnummer?.let {
+        companyEntity.beliggenhetsadressePostnummer?.let {
             beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_postnummer), it))
         }
 
-        company.beliggenhetsadressePoststed?.let {
+        companyEntity.beliggenhetsadressePoststed?.let {
             beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_poststed), it))
         }
 
-        company.beliggenhetsadresseKommunenummer?.let {
+        companyEntity.beliggenhetsadresseKommunenummer?.let {
             beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_kommunenummer), it))
         }
 
-        company.beliggenhetsadresseKommune?.let {
+        companyEntity.beliggenhetsadresseKommune?.let {
             beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_kommune), it))
         }
 
-        company.beliggenhetsadresseLandkode?.let {
+        companyEntity.beliggenhetsadresseLandkode?.let {
             beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_landskode), it))
         }
 
-        company.beliggenhetsadresseLand?.let {
+        companyEntity.beliggenhetsadresseLand?.let {
             beliggenhetsadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_land), it))
         }
 
@@ -228,31 +233,31 @@ class CompanyDetailsFragment : Fragment() {
 
         val postadresseList = ArrayList<CompanyDetailsDescription>()
 
-        company.postadresseAdresse?.let {
+        companyEntity.postadresseAdresse?.let {
             postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_postadresse), it))
         }
 
-        company.postadressePostnummer?.let {
+        companyEntity.postadressePostnummer?.let {
             postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_postnummer), it))
         }
 
-        company.postadressePoststed?.let {
+        companyEntity.postadressePoststed?.let {
             postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_poststed), it))
         }
 
-        company.postadresseKommunenummer?.let {
+        companyEntity.postadresseKommunenummer?.let {
             postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_kommunenummer), it))
         }
 
-        company.postadresseKommune?.let {
+        companyEntity.postadresseKommune?.let {
             postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_kommune), it))
         }
 
-        company.postadresseLandkode?.let {
+        companyEntity.postadresseLandkode?.let {
             postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_landskode), it))
         }
 
-        company.postadresseLand?.let {
+        companyEntity.postadresseLand?.let {
             postadresseList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_adresse_land), it))
         }
 
@@ -264,11 +269,11 @@ class CompanyDetailsFragment : Fragment() {
 
         val institusjonellSektorKodeList = ArrayList<CompanyDetailsDescription>()
 
-        company.institusjonellSektorkodeKode?.let {
+        companyEntity.institusjonellSektorkodeKode?.let {
             institusjonellSektorKodeList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_kode), it))
         }
 
-        company.institusjonellSektorkodeBeskrivelse?.let {
+        companyEntity.institusjonellSektorkodeBeskrivelse?.let {
             institusjonellSektorKodeList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_beskrivelse), it))
         }
 
@@ -280,11 +285,11 @@ class CompanyDetailsFragment : Fragment() {
 
         val naeringskode1List = ArrayList<CompanyDetailsDescription>()
 
-        company.naeringskode1Kode?.let {
+        companyEntity.naeringskode1Kode?.let {
             naeringskode1List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_kode), it))
         }
 
-        company.naeringskode1Beskrivelse?.let {
+        companyEntity.naeringskode1Beskrivelse?.let {
             naeringskode1List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_beskrivelse), it))
         }
 
@@ -296,11 +301,11 @@ class CompanyDetailsFragment : Fragment() {
 
         val naeringskode2List = ArrayList<CompanyDetailsDescription>()
 
-        company.naeringskode2Kode?.let {
+        companyEntity.naeringskode2Kode?.let {
             naeringskode2List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_kode), it))
         }
 
-        company.naeringskode2Beskrivelse?.let {
+        companyEntity.naeringskode2Beskrivelse?.let {
             naeringskode2List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_beskrivelse), it))
         }
 
@@ -312,11 +317,11 @@ class CompanyDetailsFragment : Fragment() {
 
         val naeringskode3List = ArrayList<CompanyDetailsDescription>()
 
-        company.naeringskode3Kode?.let {
+        companyEntity.naeringskode3Kode?.let {
             naeringskode3List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_kode), it))
         }
 
-        company.naeringskode3Beskrivelse?.let {
+        companyEntity.naeringskode3Beskrivelse?.let {
             naeringskode3List.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_kode_beskrivelse), it))
         }
 
@@ -329,8 +334,8 @@ class CompanyDetailsFragment : Fragment() {
         return Pair(companyDetailGroups, companyDetailItems)
     }
 
-    private fun convertYesNoValue(description: Boolean): String {
-        return when (description) {
+    private fun convertToYesNoString(valueIsTrue: Boolean): String {
+        return when (valueIsTrue) {
             true -> resources.getString(R.string.yes)
             false -> resources.getString(R.string.no)
         }
@@ -342,6 +347,6 @@ class CompanyDetailsFragment : Fragment() {
     }
 
     companion object {
-        const val ARG_COMPANY = "COMPANY"
+        const val ARG_COMPANY_ORG_NUMBER = "COMPANY_ORG_NUMBER"
     }
 }

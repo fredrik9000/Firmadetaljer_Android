@@ -1,14 +1,16 @@
 package com.github.fredrik9000.firmadetaljer_android.di
 
 import android.content.Context
-import androidx.room.Room
-import com.github.fredrik9000.firmadetaljer_android.repository.room.CompanyDao
-import com.github.fredrik9000.firmadetaljer_android.repository.room.CompanyDatabase
+import com.github.fredrik9000.firmadetaljer_android.repository.data.CompanyDataSource
+import com.github.fredrik9000.firmadetaljer_android.repository.data.CompanyDataSourceImpl
+import com.squareup.sqldelight.android.AndroidSqliteDriver
+import com.squareup.sqldelight.db.SqlDriver
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import sqldelight.companydb.CompanyDatabase
 import javax.inject.Singleton
 
 @Module
@@ -16,15 +18,17 @@ import javax.inject.Singleton
 object DBModule {
     @Provides
     @Singleton
-    internal fun provideDatabase(@ApplicationContext application: Context) : CompanyDatabase {
-        return Room.databaseBuilder(application, CompanyDatabase::class.java, "company_database")
-                .fallbackToDestructiveMigration()
-                .build()
+    internal fun provideSqlDriver(@ApplicationContext application: Context) : SqlDriver {
+        return AndroidSqliteDriver(
+            schema = CompanyDatabase.Schema,
+            context = application,
+            name = "company.db"
+        )
     }
 
     @Provides
     @Singleton
-    internal fun provideCompanyDao(companyDatabase: CompanyDatabase): CompanyDao {
-        return companyDatabase.companyDao()
+    internal fun provideCompanyDataSource(driver: SqlDriver): CompanyDataSource {
+        return CompanyDataSourceImpl(CompanyDatabase(driver))
     }
 }

@@ -1,9 +1,9 @@
 package com.github.fredrik9000.firmadetaljer_android.repository.rest
 
-import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
+import companydb.CompanyEntity
 
 sealed class CompanyListResponse {
-    class Success(val companies: List<Company>) : CompanyListResponse()
+    class Success(val companyEntities: List<CompanyEntity>) : CompanyListResponse()
     class Error(private val error: Throwable) : CompanyListResponse() {
         private var isErrorHandled = false
 

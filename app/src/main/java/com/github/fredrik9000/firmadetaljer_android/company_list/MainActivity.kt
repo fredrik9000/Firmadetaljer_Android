@@ -17,6 +17,7 @@ import androidx.appcompat.widget.ActionMenuView
 import androidx.appcompat.widget.AppCompatRadioButton
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,9 +28,10 @@ import com.github.fredrik9000.firmadetaljer_android.company_details.CompanyDetai
 import com.github.fredrik9000.firmadetaljer_android.company_details.CompanyDetailsNavigationActivity
 import com.github.fredrik9000.firmadetaljer_android.databinding.ActivityMainBinding
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyListResponse
-import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
+import companydb.CompanyEntity
 import dagger.hilt.android.AndroidEntryPoint
 import io.ktor.client.features.*
+import kotlinx.coroutines.flow.collectLatest
 import java.util.*
 import kotlin.concurrent.timerTask
 
@@ -114,9 +116,11 @@ class MainActivity : CompanyDetailsNavigationActivity(), CompanyListAdapter.OnIt
 
     // Saved companies is shown whenever the user isn't searching
     private fun setupSavedCompaniesObserver() {
-        companyListViewModel.savedCompaniesLiveData.observe(this) { companyList ->
-            adapterSavedList.update(companyList)
-            showOrHideOnboardingView()
+        lifecycleScope.launchWhenStarted {
+            companyListViewModel.savedCompaniesFlow.collectLatest { companyList ->
+                adapterSavedList.update(companyList)
+                showOrHideOnboardingView()
+            }
         }
     }
 
@@ -125,7 +129,7 @@ class MainActivity : CompanyDetailsNavigationActivity(), CompanyListAdapter.OnIt
         companyListViewModel.searchResultLiveData.observe(this) { companyListResponse ->
             progressBarList.visibility = View.GONE
             when (companyListResponse) {
-                is CompanyListResponse.Success -> adapterSearchList.update(companyListResponse.companies)
+                is CompanyListResponse.Success -> adapterSearchList.update(companyListResponse.companyEntities)
                 is CompanyListResponse.Error -> {
                     // If there was an error searching (or organization number not found), update with empty results.
                     adapterSearchList.update(ArrayList())
@@ -253,16 +257,16 @@ class MainActivity : CompanyDetailsNavigationActivity(), CompanyListAdapter.OnIt
         }
     }
 
-    override fun onItemClick(company: Company, isViewedCompaniesList: Boolean) {
+    override fun onItemClick(companyEntity: CompanyEntity, isViewedCompaniesList: Boolean) {
         if (!isViewedCompaniesList) {
-            companyListViewModel.upsert(company) // Save company so that it will be shown in the viewed companies list
+            companyListViewModel.upsert(companyEntity) // Save company so that it will be shown in the viewed companies list
         }
 
         if (isTwoPane) {
-            inflateCompanyDetailsFragment(company, false)
+            inflateCompanyDetailsFragment(companyEntity.organisasjonsnummer, false)
         } else {
             this.startActivity(Intent(this@MainActivity, CompanyDetailsActivity::class.java).apply {
-                putExtra(CompanyDetailsFragment.ARG_COMPANY, company)
+                putExtra(CompanyDetailsFragment.ARG_COMPANY_ORG_NUMBER, companyEntity.organisasjonsnummer)
             })
         }
     }
@@ -335,7 +339,7 @@ class MainActivity : CompanyDetailsNavigationActivity(), CompanyListAdapter.OnIt
     }
 
     private fun showOrHideOnboardingView() {
-        if (!companyListViewModel.isSearchingWithValidInput && companyListViewModel.savedCompaniesLiveData.value.isNullOrEmpty()) {
+        if (!companyListViewModel.isSearchingWithValidInput && adapterSavedList.itemCount == 0) {
             binding.includedCompanyList.companyListWithHeader.visibility = View.GONE
             binding.includedCompanyList.onboardingView.visibility = View.VISIBLE
         } else {

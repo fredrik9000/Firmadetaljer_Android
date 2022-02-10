@@ -8,16 +8,15 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.github.fredrik9000.firmadetaljer_android.R
 import com.github.fredrik9000.firmadetaljer_android.databinding.ListviewItemBinding
-import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
+import companydb.CompanyEntity
 
-// This class isn't very decoupled due to having the isViewedCompaniesList variable.
-// TODO: Improve upon implementation
+// TODO: This class isn't very decoupled due to having the isViewedCompaniesList variable.
 class CompanyListAdapter(
-        private val context: Context,
-        private val clickListener: OnItemClickListener?,
-        private var companyList: List<Company>?,
-        private val highlightSelectedItem: Boolean,
-        private val isViewedCompaniesList: Boolean)
+    private val context: Context,
+    private val clickListener: OnItemClickListener?,
+    private var companyList: List<CompanyEntity>?,
+    private val highlightSelectedItem: Boolean,
+    private val isViewedCompaniesList: Boolean)
     : RecyclerView.Adapter<CompanyListAdapter.ViewHolder>() {
 
     var selectedPosition = UNSELECTED_ITEM_POSITION
@@ -37,14 +36,14 @@ class CompanyListAdapter(
         return companyList!!.size
     }
 
-    fun update(companyList: List<Company>) {
+    fun update(companyList: List<CompanyEntity>) {
         selectedPosition = UNSELECTED_ITEM_POSITION // When the list updates remove the selected item highlight
         this.companyList = companyList
         this.notifyDataSetChanged()
     }
 
     interface OnItemClickListener {
-        fun onItemClick(company: Company, isViewedCompaniesList: Boolean)
+        fun onItemClick(companyEntity: CompanyEntity, isViewedCompaniesList: Boolean)
     }
 
     inner class ViewHolder(private val binding: ListviewItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -66,8 +65,8 @@ class CompanyListAdapter(
             }
         }
 
-        fun bind(company: Company) {
-            binding.company = company
+        fun bind(companyEntity: CompanyEntity) {
+            binding.companyEntity = companyEntity
             binding.executePendingBindings()
         }
     }

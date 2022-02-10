@@ -1,0 +1,71 @@
+import java.lang.Boolean;
+
+CREATE TABLE companyEntity (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    organisasjonsnummer INTEGER AS Int NOT NULL,
+    navn TEXT,
+    stiftelsesdato TEXT,
+    registreringsdatoEnhetsregisteret TEXT,
+    oppstartsdato TEXT,
+    datoEierskifte TEXT,
+    organisasjonsform TEXT,
+    hjemmeside TEXT,
+    registertIFrivillighetsregisteret INTEGER AS Boolean,
+    registrertIMvaregisteret INTEGER AS Boolean,
+    registrertIForetaksregisteret INTEGER AS Boolean,
+    registrertIStiftelsesregisteret INTEGER AS Boolean,
+    antallAnsatte INTEGER AS Int,
+    sisteInnsendteAarsregnskap INTEGER AS Int,
+    konkurs INTEGER AS Boolean,
+    underAvvikling INTEGER AS Boolean,
+    underTvangsavviklingEllerTvangsopplosning INTEGER AS Boolean,
+    overordnetEnhet INTEGER AS Int,
+    institusjonellSektorkodeKode TEXT,
+    institusjonellSektorkodeBeskrivelse TEXT,
+    naeringskode1Kode TEXT,
+    naeringskode1Beskrivelse TEXT,
+    naeringskode2Kode TEXT,
+    naeringskode2Beskrivelse TEXT,
+    naeringskode3Kode TEXT,
+    naeringskode3Beskrivelse TEXT,
+    postadresseAdresse TEXT,
+    postadressePostnummer TEXT,
+    postadressePoststed TEXT,
+    postadresseKommunenummer TEXT,
+    postadresseKommune TEXT,
+    postadresseLandkode TEXT,
+    postadresseLand TEXT,
+    forretningsadresseAdresse TEXT,
+    forretningsadressePostnummer TEXT,
+    forretningsadressePoststed TEXT,
+    forretningsadresseKommunenummer TEXT,
+    forretningsadresseKommune TEXT,
+    forretningsadresseLandkode TEXT,
+    forretningsadresseLand TEXT,
+    beliggenhetsadresseAdresse TEXT,
+    beliggenhetsadressePostnummer TEXT,
+    beliggenhetsadressePoststed TEXT,
+    beliggenhetsadresseKommunenummer TEXT,
+    beliggenhetsadresseKommune TEXT,
+    beliggenhetsadresseLandkode TEXT,
+    beliggenhetsadresseLand TEXT
+);
+
+getCompaniesOrderedByName:
+SELECT * FROM companyEntity
+ORDER BY navn ASC;
+
+getCompanyByOrgNumber:
+SELECT * FROM companyEntity
+WHERE organisasjonsnummer = :orgNumber;
+
+insertCompany:
+INSERT INTO companyEntity
+VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+
+deleteCompanyByOrgNumber:
+DELETE FROM companyEntity
+WHERE organisasjonsnummer = :orgNumber;
+
+deleteAllCompanies:
+DELETE FROM companyEntity;

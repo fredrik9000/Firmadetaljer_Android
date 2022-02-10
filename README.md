@@ -2,13 +2,15 @@
 
 This is an Android application where you can search for information about Norwegian companies. The search is done against the Brønnøysundsregistrene API: https://wiki.brreg.no/display/DBNPUB/API
 
-The app is written in Kotlin, and has a modern MVVM architecture. The app uses the repository pattern and Android architecture components, such as:
+The app is written in Kotlin, and has a modern MVVM architecture with technologies such as:
 
-- ViewModel
-- Room
-- LiveData
+- SQLDelight
+- Ktor
+- Flow
 - Data Binding and View Binding
 - Dagger-Hilt for dependency injection
+- Google Maps
+- ViewModel and the repository pattern
 
 This app does not use a single activity architecture, but my todo list app does: [Android Todo List](https://github.com/fredrik9000/TodoList_Android) 
 

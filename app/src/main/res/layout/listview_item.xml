@@ -16,7 +16,7 @@
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:maxLines="1"
-            android:text="@{company.navn}"
+            android:text="@{companyEntity.navn}"
             android:textAppearance="?android:attr/textAppearance"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="@dimen/list_item_text_size" />
@@ -25,8 +25,8 @@
     <data>
 
         <variable
-            name="company"
-            type="com.github.fredrik9000.firmadetaljer_android.repository.room.Company" />
+            name="companyEntity"
+            type="companydb.CompanyEntity" />
     </data>
 
 </layout>

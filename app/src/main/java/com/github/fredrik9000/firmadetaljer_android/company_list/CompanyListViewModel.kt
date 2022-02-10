@@ -4,7 +4,7 @@ import android.text.TextUtils
 import androidx.lifecycle.*
 import com.github.fredrik9000.firmadetaljer_android.repository.CompanyRepository
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyListResponse
-import com.github.fredrik9000.firmadetaljer_android.repository.room.Company
+import companydb.CompanyEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,7 +27,7 @@ class CompanyListViewModel @Inject constructor(private val repository: CompanyRe
         liveData { emit(repository.searchForCompaniesByOrgNumber(orgNumber)) }
     }
 
-    val savedCompaniesLiveData = repository.savedCompanies
+    val savedCompaniesFlow = repository.savedCompanies
 
     var searchMode = SearchMode.FIRM_NAME
     var searchString = ""
@@ -75,9 +75,9 @@ class CompanyListViewModel @Inject constructor(private val repository: CompanyRe
         organizationNumberLiveData.value = orgNumber
     }
 
-    fun upsert(company: Company) {
+    fun upsert(companyEntity: CompanyEntity) {
         viewModelScope.launch {
-            repository.upsert(company)
+            repository.upsert(companyEntity)
         }
     }
 
