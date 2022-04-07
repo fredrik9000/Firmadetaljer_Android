@@ -18,7 +18,7 @@ import javax.inject.Singleton
 object DBModule {
     @Provides
     @Singleton
-    internal fun provideSqlDriver(@ApplicationContext application: Context) : SqlDriver {
+    internal fun provideSqlDriver(@ApplicationContext application: Context): SqlDriver {
         return AndroidSqliteDriver(
             schema = CompanyDatabase.Schema,
             context = application,
@@ -29,6 +29,6 @@ object DBModule {
     @Provides
     @Singleton
     internal fun provideCompanyDataSource(driver: SqlDriver): CompanyDataSource {
-        return CompanyDataSourceImpl(CompanyDatabase(driver))
+        return CompanyDataSourceImpl(db = CompanyDatabase(driver))
     }
 }

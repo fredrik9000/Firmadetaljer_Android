@@ -11,8 +11,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-open class CompanyRepository @Inject constructor(private val companyDataSource: CompanyDataSource,
-                                                 private val service: CompanyService) {
+open class CompanyRepository @Inject constructor(
+    private val companyDataSource: CompanyDataSource,
+    private val service: CompanyService
+) {
 
     val savedCompanies = companyDataSource.getCompanies()
 
@@ -34,15 +36,21 @@ open class CompanyRepository @Inject constructor(private val companyDataSource: 
     suspend fun searchForCompaniesByName(name: String, selectedNumberOfEmployeesFilter: NumberOfEmployeesFilter): CompanyListResponse {
         return try {
             val companyWrapperEmbeddedResponse = when (selectedNumberOfEmployeesFilter) {
-                NumberOfEmployeesFilter.ALL_EMPLOYEES -> service.getCompanies(name, null, null)
-                NumberOfEmployeesFilter.LESS_THAN_6 -> service.getCompanies(name, null, 5)
-                NumberOfEmployeesFilter.BETWEEN_5_AND_201 -> service.getCompanies(name, 6, 200)
-                NumberOfEmployeesFilter.MORE_THAN_200 -> service.getCompanies(name, 201, null)
+                NumberOfEmployeesFilter.ALL_EMPLOYEES -> service.getCompanies(navn = name, fraAntallAnsatte = null, tilAntallAnsatte = null)
+                NumberOfEmployeesFilter.LESS_THAN_6 -> service.getCompanies(navn = name, fraAntallAnsatte = null, tilAntallAnsatte = 5)
+                NumberOfEmployeesFilter.BETWEEN_5_AND_201 -> service.getCompanies(navn = name, fraAntallAnsatte = 6, tilAntallAnsatte = 200)
+                NumberOfEmployeesFilter.MORE_THAN_200 -> service.getCompanies(navn = name, fraAntallAnsatte = 201, tilAntallAnsatte = null)
             }
 
             val embeddedCompaniesDTO = companyWrapperEmbeddedResponse.embedded ?: return CompanyListResponse.Success(listOf())
 
-            return CompanyListResponse.Success(embeddedCompaniesDTO.enheter!!.filter { it.organisasjonsnummer != null }.map { createCompanyFromDTO(it) })
+            return CompanyListResponse.Success(
+                companyEntities = embeddedCompaniesDTO.enheter!!.filter {
+                    it.organisasjonsnummer != null
+                }.map {
+                    createCompanyFromDTO(it)
+                }
+            )
         } catch (e: Exception) {
             CompanyListResponse.Error(e)
         }
@@ -51,7 +59,7 @@ open class CompanyRepository @Inject constructor(private val companyDataSource: 
     suspend fun searchForCompaniesByOrgNumber(orgNumber: Int): CompanyListResponse {
         try {
             service.getCompanyWithOrgNumber(orgNumber)?.let {
-                return CompanyListResponse.Success(listOf(createCompanyFromDTO(it)))
+                return CompanyListResponse.Success(companyEntities = listOf(createCompanyFromDTO(it)))
             } ?: run {
                 return CompanyListResponse.Error(Exception(OK_STATUS_BUT_NO_BODY_ERROR))
             }
@@ -63,7 +71,7 @@ open class CompanyRepository @Inject constructor(private val companyDataSource: 
     suspend fun searchForCompanyWithOrgNumber(orgNumber: Int): CompanyResponse {
         try {
             service.getCompanyWithOrgNumber(orgNumber)?.let {
-                return CompanyResponse.Success(createCompanyFromDTO(it))
+                return CompanyResponse.Success(companyEntity = createCompanyFromDTO(it))
             } ?: run {
                 return CompanyResponse.Error(Exception(OK_STATUS_BUT_NO_BODY_ERROR))
             }
@@ -73,27 +81,56 @@ open class CompanyRepository @Inject constructor(private val companyDataSource: 
     }
 
     private fun createCompanyFromDTO(companyDTO: CompanyDTO): CompanyEntity {
-        return CompanyEntity(0, companyDTO.organisasjonsnummer!!.toInt(), companyDTO.navn, companyDTO.stiftelsesdato,
-                companyDTO.registreringsdatoEnhetsregisteret, companyDTO.oppstartsdato, companyDTO.datoEierskifte,
-                companyDTO.organisasjonsform?.beskrivelse, companyDTO.hjemmeside, companyDTO.registertIFrivillighetsregisteret,
-                companyDTO.registrertIMvaregisteret, companyDTO.registrertIForetaksregisteret, companyDTO.registrertIStiftelsesregisteret,
-                companyDTO.antallAnsatte, companyDTO.sisteInnsendteAarsregnskap, companyDTO.konkurs,
-                companyDTO.underAvvikling, companyDTO.underTvangsavviklingEllerTvangsopplosning, companyDTO.overordnetEnhet?.toInt(),
-                companyDTO.institusjonellSektorkode?.kode, companyDTO.institusjonellSektorkode?.beskrivelse,
-                companyDTO.naeringskode1?.kode, companyDTO.naeringskode1?.beskrivelse,
-                companyDTO.naeringskode2?.kode, companyDTO.naeringskode2?.beskrivelse,
-                companyDTO.naeringskode3?.kode, companyDTO.naeringskode3?.beskrivelse,
-                buildAddressString(companyDTO.postadresse?.adresse), companyDTO.postadresse?.postnummer,
-                companyDTO.postadresse?.poststed, companyDTO.postadresse?.kommunenummer,
-                companyDTO.postadresse?.kommune, companyDTO.postadresse?.landkode,
-                companyDTO.postadresse?.land, buildAddressString(companyDTO.forretningsadresse?.adresse),
-                companyDTO.forretningsadresse?.postnummer, companyDTO.forretningsadresse?.poststed,
-                companyDTO.forretningsadresse?.kommunenummer, companyDTO.forretningsadresse?.kommune,
-                companyDTO.forretningsadresse?.landkode, companyDTO.forretningsadresse?.land,
-                buildAddressString(companyDTO.beliggenhetsadresse?.adresse), companyDTO.beliggenhetsadresse?.postnummer,
-                companyDTO.beliggenhetsadresse?.poststed, companyDTO.beliggenhetsadresse?.kommunenummer,
-                companyDTO.beliggenhetsadresse?.kommune, companyDTO.beliggenhetsadresse?.landkode,
-                companyDTO.beliggenhetsadresse?.land)
+        return CompanyEntity(
+            id = 0,
+            organisasjonsnummer = companyDTO.organisasjonsnummer!!.toInt(),
+            navn = companyDTO.navn,
+            stiftelsesdato = companyDTO.stiftelsesdato,
+            registreringsdatoEnhetsregisteret = companyDTO.registreringsdatoEnhetsregisteret,
+            oppstartsdato = companyDTO.oppstartsdato,
+            datoEierskifte = companyDTO.datoEierskifte,
+            organisasjonsform = companyDTO.organisasjonsform?.beskrivelse,
+            hjemmeside = companyDTO.hjemmeside,
+            registertIFrivillighetsregisteret = companyDTO.registertIFrivillighetsregisteret,
+            registrertIMvaregisteret = companyDTO.registrertIMvaregisteret,
+            registrertIForetaksregisteret = companyDTO.registrertIForetaksregisteret,
+            registrertIStiftelsesregisteret = companyDTO.registrertIStiftelsesregisteret,
+            antallAnsatte = companyDTO.antallAnsatte,
+            sisteInnsendteAarsregnskap = companyDTO.sisteInnsendteAarsregnskap,
+            konkurs = companyDTO.konkurs,
+            underAvvikling = companyDTO.underAvvikling,
+            underTvangsavviklingEllerTvangsopplosning = companyDTO.underTvangsavviklingEllerTvangsopplosning,
+            overordnetEnhet = companyDTO.overordnetEnhet?.toInt(),
+            institusjonellSektorkodeKode = companyDTO.institusjonellSektorkode?.kode,
+            institusjonellSektorkodeBeskrivelse = companyDTO.institusjonellSektorkode?.beskrivelse,
+            naeringskode1Kode = companyDTO.naeringskode1?.kode,
+            naeringskode1Beskrivelse = companyDTO.naeringskode1?.beskrivelse,
+            naeringskode2Kode = companyDTO.naeringskode2?.kode,
+            naeringskode2Beskrivelse = companyDTO.naeringskode2?.beskrivelse,
+            naeringskode3Kode = companyDTO.naeringskode3?.kode,
+            naeringskode3Beskrivelse = companyDTO.naeringskode3?.beskrivelse,
+            postadresseAdresse = buildAddressString(companyDTO.postadresse?.adresse),
+            postadressePostnummer = companyDTO.postadresse?.postnummer,
+            postadressePoststed = companyDTO.postadresse?.poststed,
+            postadresseKommunenummer = companyDTO.postadresse?.kommunenummer,
+            postadresseKommune = companyDTO.postadresse?.kommune,
+            postadresseLandkode = companyDTO.postadresse?.landkode,
+            postadresseLand = companyDTO.postadresse?.land,
+            forretningsadresseAdresse = buildAddressString(companyDTO.forretningsadresse?.adresse),
+            forretningsadressePostnummer = companyDTO.forretningsadresse?.postnummer,
+            forretningsadressePoststed = companyDTO.forretningsadresse?.poststed,
+            forretningsadresseKommunenummer = companyDTO.forretningsadresse?.kommunenummer,
+            forretningsadresseKommune = companyDTO.forretningsadresse?.kommune,
+            forretningsadresseLandkode = companyDTO.forretningsadresse?.landkode,
+            forretningsadresseLand = companyDTO.forretningsadresse?.land,
+            beliggenhetsadresseAdresse = buildAddressString(companyDTO.beliggenhetsadresse?.adresse),
+            beliggenhetsadressePostnummer = companyDTO.beliggenhetsadresse?.postnummer,
+            beliggenhetsadressePoststed = companyDTO.beliggenhetsadresse?.poststed,
+            beliggenhetsadresseKommunenummer = companyDTO.beliggenhetsadresse?.kommunenummer,
+            beliggenhetsadresseKommune = companyDTO.beliggenhetsadresse?.kommune,
+            beliggenhetsadresseLandkode = companyDTO.beliggenhetsadresse?.landkode,
+            beliggenhetsadresseLand = companyDTO.beliggenhetsadresse?.land
+        )
     }
 
     private fun buildAddressString(addressList: List<String>?): String? {

@@ -43,7 +43,7 @@ class SearchFilterDialogFragment : DialogFragment() {
 
         val selectButton: Button = view.findViewById(R.id.select_filter_button)
         selectButton.setOnClickListener {
-            listener!!.onSearchFilterDialogFragmentInteraction(selectedFilter)
+            listener!!.onSearchFilterDialogFragmentInteraction(filter = selectedFilter)
             dismiss()
         }
 
@@ -72,4 +72,3 @@ class SearchFilterDialogFragment : DialogFragment() {
         const val ARGUMENT_FILTER_SELECTED = "ARGUMENT_FILTER_SELECTED"
     }
 }
-

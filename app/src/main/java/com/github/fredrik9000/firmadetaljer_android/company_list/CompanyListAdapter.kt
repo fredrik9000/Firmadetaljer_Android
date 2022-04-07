@@ -16,8 +16,8 @@ class CompanyListAdapter(
     private val clickListener: OnItemClickListener?,
     private var companyList: List<CompanyEntity>?,
     private val highlightSelectedItem: Boolean,
-    private val isViewedCompaniesList: Boolean)
-    : RecyclerView.Adapter<CompanyListAdapter.ViewHolder>() {
+    private val isViewedCompaniesList: Boolean
+) : RecyclerView.Adapter<CompanyListAdapter.ViewHolder>() {
 
     var selectedPosition = UNSELECTED_ITEM_POSITION
 
@@ -28,7 +28,13 @@ class CompanyListAdapter(
     override fun onBindViewHolder(companyItemViewHolder: ViewHolder, position: Int) {
         companyItemViewHolder.bind(companyList!![position])
         if (highlightSelectedItem) {
-            companyItemViewHolder.itemView.setBackgroundColor(if (selectedPosition == position) ContextCompat.getColor(context, R.color.colorSelectedCompany) else Color.TRANSPARENT)
+            companyItemViewHolder.itemView.setBackgroundColor(
+                if (selectedPosition == position) {
+                    ContextCompat.getColor(context, R.color.colorSelectedCompany)
+                } else {
+                    Color.TRANSPARENT
+                }
+            )
         }
     }
 

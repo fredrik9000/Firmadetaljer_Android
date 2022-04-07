@@ -121,5 +121,4 @@ class CompanyListViewModelTest {
         viewModel.trimSearchStringByOrganizationNumberLength()
         Truth.assertThat(viewModel.searchString.length == 9).isTrue()
     }
-
 }

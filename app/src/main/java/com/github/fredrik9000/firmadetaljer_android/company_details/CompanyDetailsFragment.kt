@@ -22,8 +22,10 @@ class CompanyDetailsFragment : Fragment() {
     private lateinit var companyDetailsNavigation: CompanyDetailsNavigationActivity
     private val companyDetailsViewModel: CompanyDetailsViewModel by viewModels()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         val binding = FragmentCompanyDetailsBinding.inflate(inflater, container, false)
 
         val expandableListView = binding.companyDetailsList
@@ -87,7 +89,12 @@ class CompanyDetailsFragment : Fragment() {
 
         val detailsList = ArrayList<CompanyDetailsDescription>()
 
-        detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_organisasjonsnummer), (companyEntity.organisasjonsnummer).toString()))
+        detailsList.add(
+            CompanyDetailsDescription(
+                resources.getString(R.string.company_detail_details_organisasjonsnummer),
+                (companyEntity.organisasjonsnummer).toString()
+            )
+        )
 
         companyEntity.hjemmeside?.let {
             detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_hjemmeside), it))
@@ -122,19 +129,39 @@ class CompanyDetailsFragment : Fragment() {
         }
 
         companyEntity.registertIFrivillighetsregisteret?.let {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_frivillighetsregisteret), convertToYesNoString(it)))
+            detailsList.add(
+                CompanyDetailsDescription(
+                    resources.getString(R.string.company_detail_details_registrert_i_frivillighetsregisteret),
+                    convertToYesNoString(it)
+                )
+            )
         }
 
         companyEntity.registrertIMvaregisteret?.let {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_mva_registeret), convertToYesNoString(it)))
+            detailsList.add(
+                CompanyDetailsDescription(
+                    resources.getString(R.string.company_detail_details_registrert_i_mva_registeret),
+                    convertToYesNoString(it)
+                )
+            )
         }
 
         companyEntity.registrertIForetaksregisteret?.let {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_foretaksregisteret), convertToYesNoString(it)))
+            detailsList.add(
+                CompanyDetailsDescription(
+                    resources.getString(R.string.company_detail_details_registrert_i_foretaksregisteret),
+                    convertToYesNoString(it)
+                )
+            )
         }
 
         companyEntity.registrertIStiftelsesregisteret?.let {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_registrert_i_stiftelsesregisteret), convertToYesNoString(it)))
+            detailsList.add(
+                CompanyDetailsDescription(
+                    resources.getString(R.string.company_detail_details_registrert_i_stiftelsesregisteret),
+                    convertToYesNoString(it)
+                )
+            )
         }
 
         companyEntity.sisteInnsendteAarsregnskap?.let {
@@ -150,11 +177,15 @@ class CompanyDetailsFragment : Fragment() {
         }
 
         companyEntity.underTvangsavviklingEllerTvangsopplosning?.let {
-            detailsList.add(CompanyDetailsDescription(resources.getString(R.string.company_detail_details_under_tvangsavvikling_eller_tvangsoppløsning), convertToYesNoString(it)))
+            detailsList.add(
+                CompanyDetailsDescription(
+                    resources.getString(R.string.company_detail_details_under_tvangsavvikling_eller_tvangsoppløsning),
+                    convertToYesNoString(it)
+                )
+            )
         }
 
-        val detailsHeading = companyEntity.navn
-                ?: resources.getString(R.string.company_detail_heading_details)
+        val detailsHeading = companyEntity.navn ?: resources.getString(R.string.company_detail_heading_details)
 
         companyDetailItems[detailsHeading] = detailsList
         companyDetailGroups.add(detailsHeading)

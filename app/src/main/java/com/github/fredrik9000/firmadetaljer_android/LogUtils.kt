@@ -4,7 +4,7 @@ import android.util.Log
 
 object LogUtils {
     @JvmStatic
-    fun debug(tag:String, message:String) {
+    fun debug(tag: String, message: String) {
         if (BuildConfig.DEBUG) {
             Log.d(tag, message)
         }

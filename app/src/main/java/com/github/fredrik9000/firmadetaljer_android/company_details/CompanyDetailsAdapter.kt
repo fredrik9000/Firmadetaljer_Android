@@ -11,9 +11,10 @@ import androidx.core.content.ContextCompat
 import com.github.fredrik9000.firmadetaljer_android.R
 
 class CompanyDetailsAdapter(
-        private val context: Context,
-        private val companyDetailGroups: List<String>,
-        private val companyDetailItems: Map<String, List<CompanyDetailsDescription>>) : BaseExpandableListAdapter() {
+    private val context: Context,
+    private val companyDetailGroups: List<String>,
+    private val companyDetailItems: Map<String, List<CompanyDetailsDescription>>
+) : BaseExpandableListAdapter() {
 
     override fun getGroupCount(): Int {
         return companyDetailGroups.size
@@ -74,10 +75,11 @@ class CompanyDetailsAdapter(
         descriptionTextView.text = child.description
 
         if (child.label == context.resources.getString(R.string.company_detail_details_hjemmeside)
-                || child.label == context.resources.getString(R.string.company_detail_details_overordnet_enhet)
-                || child.label == context.resources.getString(R.string.company_detail_adresse_postadresse)
-                || child.label == context.resources.getString(R.string.company_detail_adresse_forretningsadresse)
-                || child.label == context.resources.getString(R.string.company_detail_adresse_beliggenhetsadresse)) {
+            || child.label == context.resources.getString(R.string.company_detail_details_overordnet_enhet)
+            || child.label == context.resources.getString(R.string.company_detail_adresse_postadresse)
+            || child.label == context.resources.getString(R.string.company_detail_adresse_forretningsadresse)
+            || child.label == context.resources.getString(R.string.company_detail_adresse_beliggenhetsadresse)
+        ) {
             viewMutable.findViewById<ImageView>(R.id.arrow_forward).visibility = View.VISIBLE
             descriptionTextView.setTextColor(ContextCompat.getColor(context, R.color.colorTextDetailDescriptionNavigatable))
             descriptionTextView.alpha = 1.0F
@@ -99,7 +101,7 @@ class CompanyDetailsAdapter(
                 || child.label == context.resources.getString(R.string.company_detail_adresse_beliggenhetsadresse)
     }
 
-    private fun getDescriptionTextColor(context: Context) : Int {
+    private fun getDescriptionTextColor(context: Context): Int {
         val typedArray = context.obtainStyledAttributes(null, intArrayOf(android.R.attr.textColorPrimary))
         try {
             return typedArray.getColor(0, ContextCompat.getColor(context, R.color.colorTextListDescriptionPrimaryFallback))

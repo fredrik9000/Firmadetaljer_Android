@@ -7,7 +7,7 @@ import com.github.fredrik9000.firmadetaljer_android.repository.CompanyRepository
 import com.github.fredrik9000.firmadetaljer_android.repository.data.CompanyDataSource
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyListResponse
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyService
-import com.github.fredrik9000.firmadetaljer_android.repository.rest.dto.CompanyServiceImpl
+import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyServiceImpl
 import com.google.common.truth.Truth
 import io.ktor.client.*
 import io.ktor.client.engine.android.*

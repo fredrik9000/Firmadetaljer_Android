@@ -26,8 +26,7 @@ class CompanyLocationMapActivity : AppCompatActivity(), OnMapReadyCallback {
         companyAddress = intent.getStringExtra(ADDRESS)!!
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        val mapFragment = supportFragmentManager
-                .findFragmentById(R.id.map) as SupportMapFragment
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
     }
 
@@ -45,7 +44,7 @@ class CompanyLocationMapActivity : AppCompatActivity(), OnMapReadyCallback {
         getLocationFromAddress(companyAddress)?.let {
             map.addMarker(MarkerOptions().position(it))
             map.moveCamera(CameraUpdateFactory.newLatLng(it))
-        }  ?: run {
+        } ?: run {
             Toast.makeText(applicationContext, R.string.location_not_found, Toast.LENGTH_LONG).show()
         }
     }

@@ -36,7 +36,8 @@ import java.util.*
 import kotlin.concurrent.timerTask
 
 @AndroidEntryPoint
-class MainActivity : CompanyDetailsNavigationActivity(), CompanyListAdapter.OnItemClickListener, SearchFilterDialogFragment.OnSearchFilterDialogFragmentInteractionListener {
+class MainActivity : CompanyDetailsNavigationActivity(), CompanyListAdapter.OnItemClickListener,
+    SearchFilterDialogFragment.OnSearchFilterDialogFragmentInteractionListener {
 
     private lateinit var binding: ActivityMainBinding
 
@@ -74,8 +75,21 @@ class MainActivity : CompanyDetailsNavigationActivity(), CompanyListAdapter.OnIt
 
         setupRecyclerView()
 
-        adapterSavedList = CompanyListAdapter(this, this, ArrayList(), isTwoPane, true)
-        adapterSearchList = CompanyListAdapter(this, this, ArrayList(), isTwoPane, false)
+        adapterSavedList = CompanyListAdapter(
+            context = this,
+            clickListener = this,
+            companyList = ArrayList(),
+            highlightSelectedItem = isTwoPane,
+            isViewedCompaniesList = true
+        )
+
+        adapterSearchList = CompanyListAdapter(
+            context = this,
+            clickListener = this,
+            companyList = ArrayList(),
+            highlightSelectedItem = isTwoPane,
+            isViewedCompaniesList = false
+        )
 
         savedInstanceState?.let {
             companyListViewModel.searchString = it.getString(SEARCH_KEY) ?: ""
@@ -101,7 +115,7 @@ class MainActivity : CompanyDetailsNavigationActivity(), CompanyListAdapter.OnIt
         // and while having an active search. Therefore we need to do the search again.
         if (companyListViewModel.searchResultLiveData.value == null && companyListViewModel.isSearchingWithValidInput) {
             progressBarList.visibility = View.VISIBLE
-            companyListViewModel.searchOnSelectedSearchMode(companyListViewModel.searchString)
+            companyListViewModel.searchOnSelectedSearchMode(query = companyListViewModel.searchString)
         }
     }
 
@@ -110,8 +124,7 @@ class MainActivity : CompanyDetailsNavigationActivity(), CompanyListAdapter.OnIt
         recyclerView.setHasFixedSize(true)
         val layoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
-        recyclerView.addItemDecoration(DividerItemDecoration(recyclerView.context,
-                layoutManager.orientation))
+        recyclerView.addItemDecoration(DividerItemDecoration(recyclerView.context, layoutManager.orientation))
     }
 
     // Saved companies is shown whenever the user isn't searching
@@ -129,20 +142,20 @@ class MainActivity : CompanyDetailsNavigationActivity(), CompanyListAdapter.OnIt
         companyListViewModel.searchResultLiveData.observe(this) { companyListResponse ->
             progressBarList.visibility = View.GONE
             when (companyListResponse) {
-                is CompanyListResponse.Success -> adapterSearchList.update(companyListResponse.companyEntities)
+                is CompanyListResponse.Success -> adapterSearchList.update(companyList = companyListResponse.companyEntities)
                 is CompanyListResponse.Error -> {
                     // If there was an error searching (or organization number not found), update with empty results.
-                    adapterSearchList.update(ArrayList())
+                    adapterSearchList.update(companyList = ArrayList())
 
                     // Only show a toast message the first time the error is handled (otherwise a rotation would show it again).
                     companyListResponse.getErrorIfNotHandled()?.let { error ->
                         // When an organization number is not found, the service can return either 400 or 404 which will result in a ClientRequestException.
                         val toastMessage =
-                                if (companyListViewModel.searchMode == SearchMode.ORGANIZATION_NUMBER && error is ClientRequestException) {
-                                    resources.getString(R.string.company_not_found)
-                                } else {
-                                    resources.getString(R.string.search_request_error_message)
-                                }
+                            if (companyListViewModel.searchMode == SearchMode.ORGANIZATION_NUMBER && error is ClientRequestException) {
+                                resources.getString(R.string.company_not_found)
+                            } else {
+                                resources.getString(R.string.search_request_error_message)
+                            }
                         Toast.makeText(applicationContext, toastMessage, Toast.LENGTH_SHORT).show()
                         LogUtils.debug(tag, "onChanged() called with companyListResponse error = $error")
                     }
@@ -176,7 +189,7 @@ class MainActivity : CompanyDetailsNavigationActivity(), CompanyListAdapter.OnIt
             override fun onQueryTextSubmit(query: String): Boolean {
                 if (companyListViewModel.isSearchingWithValidInput) {
                     progressBarList.visibility = View.VISIBLE
-                    companyListViewModel.searchOnSelectedSearchMode(query)
+                    companyListViewModel.searchOnSelectedSearchMode(query = query)
                     searchView.clearFocus() // clearFocus() closes the full screen search view for phones in landscape mode.
                     return true
                 }

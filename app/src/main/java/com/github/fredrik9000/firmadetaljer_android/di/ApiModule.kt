@@ -2,7 +2,7 @@ package com.github.fredrik9000.firmadetaljer_android.di
 
 import android.util.Log
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyService
-import com.github.fredrik9000.firmadetaljer_android.repository.rest.dto.CompanyServiceImpl
+import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyServiceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,10 +19,10 @@ import javax.inject.Singleton
 object ApiModule {
     @Singleton
     @Provides
-    fun provideKtorClient() : HttpClient {
+    fun provideKtorClient(): HttpClient {
         return HttpClient(Android) {
             install(Logging) {
-                logger = object: Logger {
+                logger = object : Logger {
                     override fun log(message: String) {
                         Log.d("Ktor", message)
                     }
@@ -41,7 +41,7 @@ object ApiModule {
 
     @Singleton
     @Provides
-    fun provideCompanyService(ktorClient: HttpClient) : CompanyService {
+    fun provideCompanyService(ktorClient: HttpClient): CompanyService {
         return CompanyServiceImpl(client = ktorClient)
     }
 }

@@ -1,10 +1,11 @@
-package com.github.fredrik9000.firmadetaljer_android.repository.rest.dto
+package com.github.fredrik9000.firmadetaljer_android.repository.rest
 
-import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyService
+import com.github.fredrik9000.firmadetaljer_android.repository.rest.dto.CompanyDTO
+import com.github.fredrik9000.firmadetaljer_android.repository.rest.dto.CompanyWrapperEmbeddedDTO
 import io.ktor.client.*
 import io.ktor.client.request.*
 
-class CompanyServiceImpl(private val client: HttpClient): CompanyService {
+class CompanyServiceImpl(private val client: HttpClient) : CompanyService {
 
     override suspend fun getCompanies(navn: String, fraAntallAnsatte: Int?, tilAntallAnsatte: Int?): CompanyWrapperEmbeddedDTO {
         return client.get {

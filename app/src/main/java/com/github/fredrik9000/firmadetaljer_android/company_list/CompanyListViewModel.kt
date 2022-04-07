@@ -20,12 +20,13 @@ class CompanyListViewModel @Inject constructor(private val repository: CompanyRe
     private val organizationNumberLiveData = MutableLiveData<Int>()
 
     private val searchByNameResultLiveData: LiveData<CompanyListResponse> = Transformations.switchMap(companyNameLiveData) { text ->
-        liveData { emit(repository.searchForCompaniesByName(text, selectedNumberOfEmployeesFilter)) }
+        liveData { emit(repository.searchForCompaniesByName(name = text, selectedNumberOfEmployeesFilter = selectedNumberOfEmployeesFilter)) }
     }
 
-    private val searchByOrganizationNumberResultLiveData: LiveData<CompanyListResponse> = Transformations.switchMap(organizationNumberLiveData) { orgNumber ->
-        liveData { emit(repository.searchForCompaniesByOrgNumber(orgNumber)) }
-    }
+    private val searchByOrganizationNumberResultLiveData: LiveData<CompanyListResponse> =
+        Transformations.switchMap(organizationNumberLiveData) { orgNumber ->
+            liveData { emit(repository.searchForCompaniesByOrgNumber(orgNumber)) }
+        }
 
     val savedCompaniesFlow = repository.savedCompanies
 
@@ -34,7 +35,9 @@ class CompanyListViewModel @Inject constructor(private val repository: CompanyRe
     var selectedNumberOfEmployeesFilter = NumberOfEmployeesFilter.ALL_EMPLOYEES
 
     val isSearchingWithValidOrganizationNumber: Boolean
-        get() = searchMode == SearchMode.ORGANIZATION_NUMBER && searchString.length >= ORGANIZATION_NUMBER_LENGTH && TextUtils.isDigitsOnly(searchString)
+        get() = searchMode == SearchMode.ORGANIZATION_NUMBER && searchString.length >= ORGANIZATION_NUMBER_LENGTH && TextUtils.isDigitsOnly(
+            searchString
+        )
 
     val isSearchingWithValidFirmName: Boolean
         get() = searchMode == SearchMode.FIRM_NAME && searchString.length >= MINIMUM_FIRM_NAME_SEARCH_LENGTH
