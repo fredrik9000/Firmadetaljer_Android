@@ -25,7 +25,10 @@ class CompanyDetailsActivity : CompanyDetailsNavigationActivity() {
         //
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity using a fragment transaction.
-            inflateCompanyDetailsFragment(orgNumber = intent.getIntExtra(CompanyDetailsFragment.ARG_COMPANY_ORG_NUMBER, -1), addToBackStack = false)
+            inflateCompanyDetailsFragment(
+                orgNumber = intent.getIntExtra(CompanyDetailsFragment.ARG_COMPANY_ORG_NUMBER, -1),
+                addToBackStack = false
+            )
         }
     }
 

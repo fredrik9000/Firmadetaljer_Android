@@ -59,7 +59,13 @@ class CompanyDetailsAdapter(
         return viewMutable
     }
 
-    override fun getChildView(groupPosition: Int, childPosition: Int, isLastChild: Boolean, view: View?, viewGroup: ViewGroup): View {
+    override fun getChildView(
+        groupPosition: Int,
+        childPosition: Int,
+        isLastChild: Boolean,
+        view: View?,
+        viewGroup: ViewGroup
+    ): View {
         var viewMutable = view
         val child = getChild(groupPosition, childPosition) as CompanyDetailsDescription
 
@@ -74,11 +80,7 @@ class CompanyDetailsAdapter(
         val descriptionTextView = viewMutable.findViewById<TextView>(R.id.description)
         descriptionTextView.text = child.description
 
-        if (child.label == context.resources.getString(R.string.company_detail_details_hjemmeside)
-            || child.label == context.resources.getString(R.string.company_detail_details_overordnet_enhet)
-            || child.label == context.resources.getString(R.string.company_detail_adresse_postadresse)
-            || child.label == context.resources.getString(R.string.company_detail_adresse_forretningsadresse)
-            || child.label == context.resources.getString(R.string.company_detail_adresse_beliggenhetsadresse)
+        if (isLink(child = child)
         ) {
             viewMutable.findViewById<ImageView>(R.id.arrow_forward).visibility = View.VISIBLE
             descriptionTextView.setTextColor(ContextCompat.getColor(context, R.color.colorTextDetailDescriptionNavigatable))
@@ -94,12 +96,15 @@ class CompanyDetailsAdapter(
 
     override fun isChildSelectable(groupPosition: Int, childPosition: Int): Boolean {
         val child = getChild(groupPosition, childPosition) as CompanyDetailsDescription
-        return child.label == context.resources.getString(R.string.company_detail_details_hjemmeside)
+        return isLink(child = child)
+    }
+
+    private fun isLink(child: CompanyDetailsDescription) =
+        child.label == context.resources.getString(R.string.company_detail_details_hjemmeside)
                 || child.label == context.resources.getString(R.string.company_detail_details_overordnet_enhet)
                 || child.label == context.resources.getString(R.string.company_detail_adresse_postadresse)
                 || child.label == context.resources.getString(R.string.company_detail_adresse_forretningsadresse)
                 || child.label == context.resources.getString(R.string.company_detail_adresse_beliggenhetsadresse)
-    }
 
     private fun getDescriptionTextColor(context: Context): Int {
         val typedArray = context.obtainStyledAttributes(null, intArrayOf(android.R.attr.textColorPrimary))

@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RadioGroup
 import androidx.annotation.NonNull
-import androidx.annotation.Nullable
 import androidx.fragment.app.DialogFragment
 import com.github.fredrik9000.firmadetaljer_android.R
 
@@ -17,8 +16,11 @@ class SearchFilterDialogFragment : DialogFragment() {
     private var listener: OnSearchFilterDialogFragmentInteractionListener? = null
     private lateinit var selectedFilter: NumberOfEmployeesFilter
 
-    @Nullable
-    override fun onCreateView(@NonNull inflater: LayoutInflater, @Nullable container: ViewGroup?, @Nullable savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         selectedFilter = requireArguments().getSerializable(ARGUMENT_FILTER_SELECTED) as NumberOfEmployeesFilter
 
         val selectedFilterId = when (selectedFilter) {
@@ -56,6 +58,7 @@ class SearchFilterDialogFragment : DialogFragment() {
 
     override fun onAttach(@NonNull context: Context) {
         super.onAttach(context)
+
         listener = if (context is OnSearchFilterDialogFragmentInteractionListener) {
             context
         } else {

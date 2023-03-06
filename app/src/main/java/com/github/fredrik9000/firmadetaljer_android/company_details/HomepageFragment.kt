@@ -20,7 +20,7 @@ class HomepageFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val webView = WebView(requireContext())
         webView.webViewClient = WebViewClient()
-        webView.loadUrl(addHTTPIfNotPresent(url!!))
+        webView.loadUrl(addHTTPIfNotPresent(url = url!!))
         return webView
     }
 
@@ -35,5 +35,4 @@ class HomepageFragment : Fragment() {
     companion object {
         const val ARG_URL = "URL"
     }
-
 }

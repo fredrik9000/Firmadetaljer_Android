@@ -19,9 +19,17 @@ class CompanyListViewModel @Inject constructor(private val repository: CompanyRe
     private val companyNameLiveData = MutableLiveData<String>()
     private val organizationNumberLiveData = MutableLiveData<Int>()
 
-    private val searchByNameResultLiveData: LiveData<CompanyListResponse> = Transformations.switchMap(companyNameLiveData) { text ->
-        liveData { emit(repository.searchForCompaniesByName(name = text, selectedNumberOfEmployeesFilter = selectedNumberOfEmployeesFilter)) }
-    }
+    private val searchByNameResultLiveData: LiveData<CompanyListResponse> =
+        Transformations.switchMap(companyNameLiveData) { text ->
+            liveData {
+                emit(
+                    repository.searchForCompaniesByName(
+                        name = text,
+                        selectedNumberOfEmployeesFilter = selectedNumberOfEmployeesFilter
+                    )
+                )
+            }
+        }
 
     private val searchByOrganizationNumberResultLiveData: LiveData<CompanyListResponse> =
         Transformations.switchMap(organizationNumberLiveData) { orgNumber ->

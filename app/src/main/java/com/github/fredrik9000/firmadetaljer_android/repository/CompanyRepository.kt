@@ -33,16 +33,36 @@ open class CompanyRepository @Inject constructor(
         companyDataSource.deleteAllCompanies()
     }
 
-    suspend fun searchForCompaniesByName(name: String, selectedNumberOfEmployeesFilter: NumberOfEmployeesFilter): CompanyListResponse {
+    suspend fun searchForCompaniesByName(
+        name: String,
+        selectedNumberOfEmployeesFilter: NumberOfEmployeesFilter
+    ): CompanyListResponse {
         return try {
             val companyWrapperEmbeddedResponse = when (selectedNumberOfEmployeesFilter) {
-                NumberOfEmployeesFilter.ALL_EMPLOYEES -> service.getCompanies(navn = name, fraAntallAnsatte = null, tilAntallAnsatte = null)
-                NumberOfEmployeesFilter.LESS_THAN_6 -> service.getCompanies(navn = name, fraAntallAnsatte = null, tilAntallAnsatte = 5)
-                NumberOfEmployeesFilter.BETWEEN_5_AND_201 -> service.getCompanies(navn = name, fraAntallAnsatte = 6, tilAntallAnsatte = 200)
-                NumberOfEmployeesFilter.MORE_THAN_200 -> service.getCompanies(navn = name, fraAntallAnsatte = 201, tilAntallAnsatte = null)
+                NumberOfEmployeesFilter.ALL_EMPLOYEES -> service.getCompanies(
+                    navn = name,
+                    fraAntallAnsatte = null,
+                    tilAntallAnsatte = null
+                )
+                NumberOfEmployeesFilter.LESS_THAN_6 -> service.getCompanies(
+                    navn = name,
+                    fraAntallAnsatte = null,
+                    tilAntallAnsatte = 5
+                )
+                NumberOfEmployeesFilter.BETWEEN_5_AND_201 -> service.getCompanies(
+                    navn = name,
+                    fraAntallAnsatte = 6,
+                    tilAntallAnsatte = 200
+                )
+                NumberOfEmployeesFilter.MORE_THAN_200 -> service.getCompanies(
+                    navn = name,
+                    fraAntallAnsatte = 201,
+                    tilAntallAnsatte = null
+                )
             }
 
-            val embeddedCompaniesDTO = companyWrapperEmbeddedResponse.embedded ?: return CompanyListResponse.Success(listOf())
+            val embeddedCompaniesDTO =
+                companyWrapperEmbeddedResponse.embedded ?: return CompanyListResponse.Success(listOf())
 
             return CompanyListResponse.Success(
                 companyEntities = embeddedCompaniesDTO.enheter!!.filter {

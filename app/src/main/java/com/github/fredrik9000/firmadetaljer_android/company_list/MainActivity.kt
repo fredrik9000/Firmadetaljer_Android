@@ -4,7 +4,6 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -30,7 +29,7 @@ import com.github.fredrik9000.firmadetaljer_android.databinding.ActivityMainBind
 import com.github.fredrik9000.firmadetaljer_android.repository.rest.CompanyListResponse
 import companydb.CompanyEntity
 import dagger.hilt.android.AndroidEntryPoint
-import io.ktor.client.features.*
+import io.ktor.client.plugins.*
 import kotlinx.coroutines.flow.collectLatest
 import java.util.*
 import kotlin.concurrent.timerTask
@@ -94,7 +93,8 @@ class MainActivity : CompanyDetailsNavigationActivity(), CompanyListAdapter.OnIt
         savedInstanceState?.let {
             companyListViewModel.searchString = it.getString(SEARCH_KEY) ?: ""
             companyListViewModel.searchMode = it.getSerializable(SEARCH_MODE_KEY) as SearchMode
-            companyListViewModel.selectedNumberOfEmployeesFilter = it.getSerializable(EMPLOYEES_FILTER_KEY) as NumberOfEmployeesFilter
+            companyListViewModel.selectedNumberOfEmployeesFilter =
+                it.getSerializable(EMPLOYEES_FILTER_KEY) as NumberOfEmployeesFilter
         }
 
         // In case the activity gets recreated (for example by rotating the device)
@@ -156,6 +156,7 @@ class MainActivity : CompanyDetailsNavigationActivity(), CompanyListAdapter.OnIt
                             } else {
                                 resources.getString(R.string.search_request_error_message)
                             }
+
                         Toast.makeText(applicationContext, toastMessage, Toast.LENGTH_SHORT).show()
                         LogUtils.debug(tag, "onChanged() called with companyListResponse error = $error")
                     }
@@ -184,7 +185,12 @@ class MainActivity : CompanyDetailsNavigationActivity(), CompanyListAdapter.OnIt
             searchView.clearFocus()
         }
 
-        // Search view listerners
+        // Setup listeners
+        setupSearchViewTextListener()
+        setupSearchModeToggleListener()
+    }
+
+    private fun setupSearchViewTextListener() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 if (companyListViewModel.isSearchingWithValidInput) {
@@ -241,8 +247,9 @@ class MainActivity : CompanyDetailsNavigationActivity(), CompanyListAdapter.OnIt
                 }
             }
         })
+    }
 
-        // Search mode buttons listener
+    private fun setupSearchModeToggleListener() {
         binding.includedToolbar.searchModeToggle.setOnCheckedChangeListener { radioGroup, checkedId ->
             if (!radioGroup.findViewById<AppCompatRadioButton>(checkedId).isPressed) {
                 // onCheckedChanged was triggered by the system, for example when rotating.
@@ -264,9 +271,15 @@ class MainActivity : CompanyDetailsNavigationActivity(), CompanyListAdapter.OnIt
     private fun buildSearchResultHeaderText(): String {
         return when (companyListViewModel.selectedNumberOfEmployeesFilter) {
             NumberOfEmployeesFilter.ALL_EMPLOYEES -> resources.getString(R.string.search_results_header)
-            NumberOfEmployeesFilter.LESS_THAN_6 -> resources.getString(R.string.search_results_header) + " (" + resources.getString(R.string.filter_employees_less_than_or_equal_to_5) + ")"
-            NumberOfEmployeesFilter.BETWEEN_5_AND_201 -> resources.getString(R.string.search_results_header) + " (" + resources.getString(R.string.filter_employees_between_5_and_201) + ")"
-            NumberOfEmployeesFilter.MORE_THAN_200 -> resources.getString(R.string.search_results_header) + " (" + resources.getString(R.string.filter_employees_more_than_200) + ")"
+            NumberOfEmployeesFilter.LESS_THAN_6 -> resources.getString(R.string.search_results_header) + " (" + resources.getString(
+                R.string.filter_employees_less_than_or_equal_to_5
+            ) + ")"
+            NumberOfEmployeesFilter.BETWEEN_5_AND_201 -> resources.getString(R.string.search_results_header) + " (" + resources.getString(
+                R.string.filter_employees_between_5_and_201
+            ) + ")"
+            NumberOfEmployeesFilter.MORE_THAN_200 -> resources.getString(R.string.search_results_header) + " (" + resources.getString(
+                R.string.filter_employees_more_than_200
+            ) + ")"
         }
     }
 
@@ -305,7 +318,10 @@ class MainActivity : CompanyDetailsNavigationActivity(), CompanyListAdapter.OnIt
             R.id.modify_search_filters -> {
                 SearchFilterDialogFragment().apply {
                     arguments = Bundle().apply {
-                        putSerializable(SearchFilterDialogFragment.ARGUMENT_FILTER_SELECTED, companyListViewModel.selectedNumberOfEmployeesFilter)
+                        putSerializable(
+                            SearchFilterDialogFragment.ARGUMENT_FILTER_SELECTED,
+                            companyListViewModel.selectedNumberOfEmployeesFilter
+                        )
                     }
                 }.show(supportFragmentManager, "SearchFilterDialogFragment")
                 return true
@@ -320,16 +336,6 @@ class MainActivity : CompanyDetailsNavigationActivity(), CompanyListAdapter.OnIt
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
-        }
-    }
-
-    override fun onBackPressed() {
-        // Fix for memory leak in the Android framework that happens on Android 10:
-        // https://issuetracker.google.com/issues/139738913
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && isTaskRoot) {
-            finishAfterTransition()
-        } else {
-            super.onBackPressed()
         }
     }
 

@@ -34,10 +34,16 @@ abstract class CompanyDetailsNavigationActivity : AppCompatActivity() {
             val response = companyDetailsViewModel.searchForCompanyWithOrgNumber(organisasjonsnummer)
             progressBarDetails.visibility = View.GONE
             when (response) {
-                is CompanyResponse.Success -> inflateCompanyDetailsFragment(response.companyEntity.organisasjonsnummer, true)
+                is CompanyResponse.Success -> inflateCompanyDetailsFragment(
+                    response.companyEntity.organisasjonsnummer,
+                    true
+                )
                 is CompanyResponse.Error -> {
                     Toast.makeText(applicationContext, R.string.company_detail_not_loaded, Toast.LENGTH_SHORT).show()
-                    LogUtils.debug(tag, "handleCompanyNavigationResponse() called with response error = " + response.error)
+                    LogUtils.debug(
+                        tag = tag,
+                        message = "handleCompanyNavigationResponse() called with response error = " + response.error
+                    )
                 }
             }
         }
